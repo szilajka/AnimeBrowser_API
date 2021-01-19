@@ -11,6 +11,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IS4.Identity", "src\IS4.Ide
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AnimeBrowser.API", "src\AnimeBrowser.API\AnimeBrowser.API.csproj", "{68C2B3F2-DBEA-4F52-ADDA-8916152A6767}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnimeBrowser.BL", "src\AnimeBrowser.BL\AnimeBrowser.BL.csproj", "{47A40CE9-BE59-4D26-8C0F-BB803BE3F217}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnimeBrowser.Data", "src\AnimeBrowser.Data\AnimeBrowser.Data.csproj", "{E3016FB9-D46B-4795-A457-38ACF455908B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnimeBrowser.Common", "src\AnimeBrowser.Common\AnimeBrowser.Common.csproj", "{5A701159-4DCF-4D69-B052-A5FE6F3C3672}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,6 +31,18 @@ Global
 		{68C2B3F2-DBEA-4F52-ADDA-8916152A6767}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{68C2B3F2-DBEA-4F52-ADDA-8916152A6767}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{68C2B3F2-DBEA-4F52-ADDA-8916152A6767}.Release|Any CPU.Build.0 = Release|Any CPU
+		{47A40CE9-BE59-4D26-8C0F-BB803BE3F217}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{47A40CE9-BE59-4D26-8C0F-BB803BE3F217}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{47A40CE9-BE59-4D26-8C0F-BB803BE3F217}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{47A40CE9-BE59-4D26-8C0F-BB803BE3F217}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E3016FB9-D46B-4795-A457-38ACF455908B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E3016FB9-D46B-4795-A457-38ACF455908B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E3016FB9-D46B-4795-A457-38ACF455908B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E3016FB9-D46B-4795-A457-38ACF455908B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5A701159-4DCF-4D69-B052-A5FE6F3C3672}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A701159-4DCF-4D69-B052-A5FE6F3C3672}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A701159-4DCF-4D69-B052-A5FE6F3C3672}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A701159-4DCF-4D69-B052-A5FE6F3C3672}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -32,6 +50,9 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{5DC4FD91-6B89-4E1B-A98B-784E41F03FEE} = {5D55E5B8-D88A-4394-9C97-1CF3330D42F9}
 		{68C2B3F2-DBEA-4F52-ADDA-8916152A6767} = {808AD85B-71FC-41E8-B1BA-A9F0A5285660}
+		{47A40CE9-BE59-4D26-8C0F-BB803BE3F217} = {808AD85B-71FC-41E8-B1BA-A9F0A5285660}
+		{E3016FB9-D46B-4795-A457-38ACF455908B} = {808AD85B-71FC-41E8-B1BA-A9F0A5285660}
+		{5A701159-4DCF-4D69-B052-A5FE6F3C3672} = {808AD85B-71FC-41E8-B1BA-A9F0A5285660}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9E1CD417-7C6A-44A4-8083-A9DCAF434238}
