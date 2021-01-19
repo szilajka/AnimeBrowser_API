@@ -1,16 +1,13 @@
+using AnimeBrowser.Data.Entities;
+using AnimeBrowser.Data.Entities.Identity;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace AnimeBrowser_API
 {
@@ -26,7 +23,8 @@ namespace AnimeBrowser_API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
+            services.AddDbContext<AnimeBrowserContext>(options => options.UseNpgsql(Configuration.GetConnectionString("AnimeBrowser")));
+            services.AddIdentity<User, IdentityRole>();
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
