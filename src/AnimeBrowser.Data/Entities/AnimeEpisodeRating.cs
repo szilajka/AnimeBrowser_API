@@ -1,5 +1,7 @@
 ﻿#nullable disable
 
+using AnimeBrowser.Data.Entities.Identity;
+
 namespace AnimeBrowser.Data.Entities
 {
     public partial class AnimeEpisodeRating

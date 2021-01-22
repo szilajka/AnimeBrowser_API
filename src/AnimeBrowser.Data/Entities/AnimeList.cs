@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using AnimeBrowser.Data.Entities.Identity;
+using System.Collections.Generic;
 
 #nullable disable
 
