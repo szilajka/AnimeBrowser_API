@@ -9,9 +9,9 @@ namespace AnimeBrowser.Data.Entities.Identity
     {
         public User()
         {
-            AnimeEpisodeRatings = new HashSet<AnimeEpisodeRating>();
-            AnimeLists = new HashSet<AnimeList>();
-            AnimeRatings = new HashSet<AnimeRating>();
+            EpisodeRatings = new HashSet<EpisodeRating>();
+            MediaLists = new HashSet<MediaList>();
+            SeasonRatings = new HashSet<SeasonRating>();
             UserClaims = new HashSet<UserClaim>();
             UserLogins = new HashSet<UserLogin>();
             UserRoles = new HashSet<UserRole>();
@@ -34,9 +34,9 @@ namespace AnimeBrowser.Data.Entities.Identity
         public bool LockoutEnabled { get; set; }
         public int AccessFailedCount { get; set; }
 
-        public virtual ICollection<AnimeEpisodeRating> AnimeEpisodeRatings { get; set; }
-        public virtual ICollection<AnimeList> AnimeLists { get; set; }
-        public virtual ICollection<AnimeRating> AnimeRatings { get; set; }
+        public virtual ICollection<EpisodeRating> EpisodeRatings { get; set; }
+        public virtual ICollection<MediaList> MediaLists { get; set; }
+        public virtual ICollection<SeasonRating> SeasonRatings { get; set; }
         public virtual ICollection<UserClaim> UserClaims { get; set; }
         public virtual ICollection<UserLogin> UserLogins { get; set; }
         public virtual ICollection<UserRole> UserRoles { get; set; }

@@ -2,12 +2,12 @@
 
 namespace AnimeBrowser.Data.Entities
 {
-    public partial class AnimeName
+    public partial class AnimeInfoName
     {
         public long Id { get; set; }
         public string Title { get; set; }
-        public long AnimeId { get; set; }
+        public long AnimeInfoId { get; set; }
 
-        public virtual Anime Anime { get; set; }
+        public virtual AnimeInfo AnimeInfo { get; set; }
     }
 }

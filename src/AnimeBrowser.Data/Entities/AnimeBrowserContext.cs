@@ -16,21 +16,20 @@ namespace AnimeBrowser.Data.Entities
         {
         }
 
-        public virtual DbSet<Anime> Animes { get; set; }
-        public virtual DbSet<AnimeEpisode> AnimeEpisodes { get; set; }
-        public virtual DbSet<AnimeEpisodeRating> AnimeEpisodeRatings { get; set; }
-        public virtual DbSet<AnimeGenre> AnimeGenres { get; set; }
-        public virtual DbSet<AnimeList> AnimeLists { get; set; }
-        public virtual DbSet<AnimeName> AnimeNames { get; set; }
-        public virtual DbSet<AnimeRating> AnimeRatings { get; set; }
-        public virtual DbSet<EpisodeUserList> EpisodeUserLists { get; set; }
+        public virtual DbSet<AnimeInfo> AnimeInfos { get; set; }
+        public virtual DbSet<AnimeInfoName> AnimeInfoNames { get; set; }
+        public virtual DbSet<Episode> Episodes { get; set; }
+        public virtual DbSet<EpisodeMediaList> EpisodeMediaLists { get; set; }
+        public virtual DbSet<EpisodeRating> EpisodeRatings { get; set; }
         public virtual DbSet<Genre> Genres { get; set; }
+        public virtual DbSet<MediaList> MediaLists { get; set; }
         public virtual DbSet<Role> Roles { get; set; }
         public virtual DbSet<RoleClaim> RoleClaims { get; set; }
         public virtual DbSet<Season> Seasons { get; set; }
+        public virtual DbSet<SeasonGenre> SeasonGenres { get; set; }
+        public virtual DbSet<SeasonMediaList> SeasonMediaLists { get; set; }
         public virtual DbSet<SeasonName> SeasonNames { get; set; }
         public virtual DbSet<SeasonRating> SeasonRatings { get; set; }
-        public virtual DbSet<SeasonUserList> SeasonUserLists { get; set; }
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<UserClaim> UserClaims { get; set; }
         public virtual DbSet<UserLogin> UserLogins { get; set; }
@@ -50,31 +49,17 @@ namespace AnimeBrowser.Data.Entities
         {
             modelBuilder.HasAnnotation("Relational:Collation", "Hungarian_Hungary.1250");
 
-            modelBuilder.Entity<Anime>(entity =>
+            modelBuilder.Entity<AnimeInfo>(entity =>
             {
-                entity.ToTable("anime");
+                entity.ToTable("anime_info");
 
                 entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.AirStatus).HasColumnName("air_status");
 
                 entity.Property(e => e.Description)
                     .HasColumnType("character varying")
                     .HasColumnName("description");
 
-                entity.Property(e => e.EndDate)
-                    .HasColumnType("date")
-                    .HasColumnName("end_date");
-
-                entity.Property(e => e.IsReboot).HasColumnName("is_reboot");
-
-                entity.Property(e => e.IsRemake).HasColumnName("is_remake");
-
-                entity.Property(e => e.IsRemaster).HasColumnName("is_remaster");
-
-                entity.Property(e => e.StartDate)
-                    .HasColumnType("date")
-                    .HasColumnName("start_date");
+                entity.Property(e => e.IsNsfw).HasColumnName("is_nsfw");
 
                 entity.Property(e => e.Title)
                     .IsRequired()
@@ -82,9 +67,29 @@ namespace AnimeBrowser.Data.Entities
                     .HasColumnName("title");
             });
 
-            modelBuilder.Entity<AnimeEpisode>(entity =>
+            modelBuilder.Entity<AnimeInfoName>(entity =>
             {
-                entity.ToTable("anime_episode");
+                entity.ToTable("anime_info_name");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.AnimeInfoId).HasColumnName("anime_info_id");
+
+                entity.Property(e => e.Title)
+                    .IsRequired()
+                    .HasMaxLength(255)
+                    .HasColumnName("title");
+
+                entity.HasOne(d => d.AnimeInfo)
+                    .WithMany(p => p.AnimeInfoNames)
+                    .HasForeignKey(d => d.AnimeInfoId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("fk_anime_info_name_anime_info_id");
+            });
+
+            modelBuilder.Entity<Episode>(entity =>
+            {
+                entity.ToTable("episode");
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
@@ -94,7 +99,7 @@ namespace AnimeBrowser.Data.Entities
 
                 entity.Property(e => e.AirStatus).HasColumnName("air_status");
 
-                entity.Property(e => e.AnimeId).HasColumnName("anime_id");
+                entity.Property(e => e.AnimeInfoId).HasColumnName("anime_info_id");
 
                 entity.Property(e => e.Cover).HasColumnName("cover");
 
@@ -114,147 +119,22 @@ namespace AnimeBrowser.Data.Entities
                     .HasMaxLength(255)
                     .HasColumnName("title");
 
-                entity.HasOne(d => d.Anime)
-                    .WithMany(p => p.AnimeEpisodes)
-                    .HasForeignKey(d => d.AnimeId)
+                entity.HasOne(d => d.AnimeInfo)
+                    .WithMany(p => p.Episodes)
+                    .HasForeignKey(d => d.AnimeInfoId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("fk_anime_episode_anime_id");
+                    .HasConstraintName("fk_episode_anime_info_id");
+
+                entity.HasOne(d => d.Season)
+                    .WithMany(p => p.Episodes)
+                    .HasForeignKey(d => d.SeasonId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("fk_episode_season_id");
             });
 
-            modelBuilder.Entity<AnimeEpisodeRating>(entity =>
+            modelBuilder.Entity<EpisodeMediaList>(entity =>
             {
-                entity.ToTable("anime_episode_rating");
-
-                entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.EpisodeId).HasColumnName("episode_id");
-
-                entity.Property(e => e.Message)
-                    .HasColumnType("character varying")
-                    .HasColumnName("message");
-
-                entity.Property(e => e.Rating).HasColumnName("rating");
-
-                entity.Property(e => e.UserId)
-                    .IsRequired()
-                    .HasColumnName("user_id");
-
-                entity.HasOne(d => d.Episode)
-                    .WithMany(p => p.AnimeEpisodeRatings)
-                    .HasForeignKey(d => d.EpisodeId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("fk_anime_episode_rating_episode_id");
-
-                entity.HasOne(d => d.User)
-                    .WithMany(p => p.AnimeEpisodeRatings)
-                    .HasForeignKey(d => d.UserId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("fk_anime_episode_rating_user_id");
-            });
-
-            modelBuilder.Entity<AnimeGenre>(entity =>
-            {
-                entity.ToTable("anime_genre");
-
-                entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.AnimeId).HasColumnName("anime_id");
-
-                entity.Property(e => e.GenreId).HasColumnName("genre_id");
-
-                entity.HasOne(d => d.Anime)
-                    .WithMany(p => p.AnimeGenres)
-                    .HasForeignKey(d => d.AnimeId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("fk_anime_genre_anime_id");
-
-                entity.HasOne(d => d.Genre)
-                    .WithMany(p => p.AnimeGenres)
-                    .HasForeignKey(d => d.GenreId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("fk_anime_genre_genre_id");
-            });
-
-            modelBuilder.Entity<AnimeList>(entity =>
-            {
-                entity.ToTable("anime_list");
-
-                entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.IsPublic).HasColumnName("is_public");
-
-                entity.Property(e => e.ListType).HasColumnName("list_type");
-
-                entity.Property(e => e.Name)
-                    .IsRequired()
-                    .HasMaxLength(200)
-                    .HasColumnName("name");
-
-                entity.Property(e => e.UserId)
-                    .IsRequired()
-                    .HasColumnName("user_id");
-
-                entity.HasOne(d => d.User)
-                    .WithMany(p => p.AnimeLists)
-                    .HasForeignKey(d => d.UserId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("fk_anime_list_user_id");
-            });
-
-            modelBuilder.Entity<AnimeName>(entity =>
-            {
-                entity.ToTable("anime_name");
-
-                entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.AnimeId).HasColumnName("anime_id");
-
-                entity.Property(e => e.Title)
-                    .IsRequired()
-                    .HasMaxLength(500)
-                    .HasColumnName("title");
-
-                entity.HasOne(d => d.Anime)
-                    .WithMany(p => p.AnimeNames)
-                    .HasForeignKey(d => d.AnimeId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("fk_anime_name_anime_id");
-            });
-
-            modelBuilder.Entity<AnimeRating>(entity =>
-            {
-                entity.ToTable("anime_rating");
-
-                entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.AnimeId).HasColumnName("anime_id");
-
-                entity.Property(e => e.Message)
-                    .HasColumnType("character varying")
-                    .HasColumnName("message");
-
-                entity.Property(e => e.Rating).HasColumnName("rating");
-
-                entity.Property(e => e.UserId)
-                    .IsRequired()
-                    .HasColumnName("user_id");
-
-                entity.HasOne(d => d.Anime)
-                    .WithMany(p => p.AnimeRatings)
-                    .HasForeignKey(d => d.AnimeId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("fk_anime_rating_anime_id");
-
-                entity.HasOne(d => d.User)
-                    .WithMany(p => p.AnimeRatings)
-                    .HasForeignKey(d => d.UserId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("fk_anime_rating_user_id");
-            });
-
-            modelBuilder.Entity<EpisodeUserList>(entity =>
-            {
-                entity.ToTable("episode_user_list");
+                entity.ToTable("episode_media_list");
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
@@ -263,24 +143,52 @@ namespace AnimeBrowser.Data.Entities
                 entity.Property(e => e.ListId).HasColumnName("list_id");
 
                 entity.HasOne(d => d.Episode)
-                    .WithMany(p => p.EpisodeUserLists)
+                    .WithMany(p => p.EpisodeMediaLists)
                     .HasForeignKey(d => d.EpisodeId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("fk_episode_user_list_episode_id");
+                    .HasConstraintName("fk_episode_media_list_episode_id");
 
                 entity.HasOne(d => d.List)
-                    .WithMany(p => p.EpisodeUserLists)
+                    .WithMany(p => p.EpisodeMediaLists)
                     .HasForeignKey(d => d.ListId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("fk_episode_user_list_list_id");
+                    .HasConstraintName("fk_episode_media_list_list_id");
+            });
+
+            modelBuilder.Entity<EpisodeRating>(entity =>
+            {
+                entity.ToTable("episode_rating");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.EpisodeId).HasColumnName("episode_id");
+
+                entity.Property(e => e.Message)
+                    .HasMaxLength(30000)
+                    .HasColumnName("message");
+
+                entity.Property(e => e.Rating).HasColumnName("rating");
+
+                entity.Property(e => e.UserId)
+                    .IsRequired()
+                    .HasColumnName("user_id");
+
+                entity.HasOne(d => d.Episode)
+                    .WithMany(p => p.EpisodeRatings)
+                    .HasForeignKey(d => d.EpisodeId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("fk_episode_rating_episode_id");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.EpisodeRatings)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("fk_episode_rating_user_id");
             });
 
             modelBuilder.Entity<Genre>(entity =>
             {
                 entity.ToTable("genre");
-
-                entity.HasIndex(e => e.GenreName, "genre_genre_name_key")
-                    .IsUnique();
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
@@ -291,8 +199,33 @@ namespace AnimeBrowser.Data.Entities
 
                 entity.Property(e => e.GenreName)
                     .IsRequired()
-                    .HasMaxLength(50)
+                    .HasMaxLength(100)
                     .HasColumnName("genre_name");
+            });
+
+            modelBuilder.Entity<MediaList>(entity =>
+            {
+                entity.ToTable("media_list");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.IsPublic).HasColumnName("is_public");
+
+                entity.Property(e => e.ListType).HasColumnName("list_type");
+
+                entity.Property(e => e.Name)
+                    .HasMaxLength(500)
+                    .HasColumnName("name");
+
+                entity.Property(e => e.UserId)
+                    .IsRequired()
+                    .HasColumnName("user_id");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.MediaLists)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("fk_media_list_user_id");
             });
 
             modelBuilder.Entity<Role>(entity =>
@@ -328,7 +261,7 @@ namespace AnimeBrowser.Data.Entities
 
                 entity.Property(e => e.AirStatus).HasColumnName("air_status");
 
-                entity.Property(e => e.AnimeId).HasColumnName("anime_id");
+                entity.Property(e => e.AnimeInfoId).HasColumnName("anime_info_id");
 
                 entity.Property(e => e.Cover).HasColumnName("cover");
 
@@ -353,6 +286,63 @@ namespace AnimeBrowser.Data.Entities
                 entity.Property(e => e.StartDate)
                     .HasColumnType("date")
                     .HasColumnName("start_date");
+
+                entity.Property(e => e.Title)
+                    .IsRequired()
+                    .HasMaxLength(255)
+                    .HasColumnName("title");
+
+                entity.HasOne(d => d.AnimeInfo)
+                    .WithMany(p => p.Seasons)
+                    .HasForeignKey(d => d.AnimeInfoId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("fk_season_anime_info_id");
+            });
+
+            modelBuilder.Entity<SeasonGenre>(entity =>
+            {
+                entity.ToTable("season_genre");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.GenreId).HasColumnName("genre_id");
+
+                entity.Property(e => e.SeasonId).HasColumnName("season_id");
+
+                entity.HasOne(d => d.Genre)
+                    .WithMany(p => p.SeasonGenres)
+                    .HasForeignKey(d => d.GenreId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("fk_season_genre_genre_id");
+
+                entity.HasOne(d => d.Season)
+                    .WithMany(p => p.SeasonGenres)
+                    .HasForeignKey(d => d.SeasonId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("fk_season_genre_season_id");
+            });
+
+            modelBuilder.Entity<SeasonMediaList>(entity =>
+            {
+                entity.ToTable("season_media_list");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.ListId).HasColumnName("list_id");
+
+                entity.Property(e => e.SeasonId).HasColumnName("season_id");
+
+                entity.HasOne(d => d.List)
+                    .WithMany(p => p.SeasonMediaLists)
+                    .HasForeignKey(d => d.ListId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("fk_season_media_list_list_id");
+
+                entity.HasOne(d => d.Season)
+                    .WithMany(p => p.SeasonMediaLists)
+                    .HasForeignKey(d => d.SeasonId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("fk_season_media_list_season_id");
             });
 
             modelBuilder.Entity<SeasonName>(entity =>
@@ -365,7 +355,7 @@ namespace AnimeBrowser.Data.Entities
 
                 entity.Property(e => e.Title)
                     .IsRequired()
-                    .HasMaxLength(500)
+                    .HasMaxLength(255)
                     .HasColumnName("title");
 
                 entity.HasOne(d => d.Season)
@@ -382,7 +372,7 @@ namespace AnimeBrowser.Data.Entities
                 entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.Message)
-                    .HasColumnType("character varying")
+                    .HasMaxLength(30000)
                     .HasColumnName("message");
 
                 entity.Property(e => e.Rating).HasColumnName("rating");
@@ -398,29 +388,12 @@ namespace AnimeBrowser.Data.Entities
                     .HasForeignKey(d => d.SeasonId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("fk_season_rating_season_id");
-            });
 
-            modelBuilder.Entity<SeasonUserList>(entity =>
-            {
-                entity.ToTable("season_user_list");
-
-                entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.ListId).HasColumnName("list_id");
-
-                entity.Property(e => e.SeasonId).HasColumnName("season_id");
-
-                entity.HasOne(d => d.List)
-                    .WithMany(p => p.SeasonUserLists)
-                    .HasForeignKey(d => d.ListId)
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.SeasonRatings)
+                    .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("fk_season_user_list_list_id");
-
-                entity.HasOne(d => d.Season)
-                    .WithMany(p => p.SeasonUserLists)
-                    .HasForeignKey(d => d.SeasonId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("fk_season_user_list_anime_id");
+                    .HasConstraintName("fk_season_rating_user_id");
             });
 
             modelBuilder.Entity<User>(entity =>

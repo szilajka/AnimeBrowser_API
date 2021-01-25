@@ -1,4 +1,6 @@
-﻿#nullable disable
+﻿using AnimeBrowser.Data.Entities.Identity;
+
+#nullable disable
 
 namespace AnimeBrowser.Data.Entities
 {
@@ -11,5 +13,6 @@ namespace AnimeBrowser.Data.Entities
         public string UserId { get; set; }
 
         public virtual Season Season { get; set; }
+        public virtual User User { get; set; }
     }
 }

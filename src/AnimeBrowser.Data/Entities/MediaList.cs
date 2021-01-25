@@ -5,12 +5,12 @@ using System.Collections.Generic;
 
 namespace AnimeBrowser.Data.Entities
 {
-    public partial class AnimeList
+    public partial class MediaList
     {
-        public AnimeList()
+        public MediaList()
         {
-            EpisodeUserLists = new HashSet<EpisodeUserList>();
-            SeasonUserLists = new HashSet<SeasonUserList>();
+            EpisodeMediaLists = new HashSet<EpisodeMediaList>();
+            SeasonMediaLists = new HashSet<SeasonMediaList>();
         }
 
         public long Id { get; set; }
@@ -20,7 +20,7 @@ namespace AnimeBrowser.Data.Entities
         public string UserId { get; set; }
 
         public virtual User User { get; set; }
-        public virtual ICollection<EpisodeUserList> EpisodeUserLists { get; set; }
-        public virtual ICollection<SeasonUserList> SeasonUserLists { get; set; }
+        public virtual ICollection<EpisodeMediaList> EpisodeMediaLists { get; set; }
+        public virtual ICollection<SeasonMediaList> SeasonMediaLists { get; set; }
     }
 }
