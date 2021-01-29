@@ -25,10 +25,23 @@ namespace AnimeBrowser_API
         {
             services.AddDbContext<AnimeBrowserContext>(options => options.UseNpgsql(Configuration.GetConnectionString("AnimeBrowser")));
             services.AddIdentity<User, IdentityRole>();
+
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "AnimeBrowser_API", Version = "v1" });
+            });
+
+            services.AddAuthentication("Bearer")
+              .AddJwtBearer("Bearer", options =>
+              {
+                  options.Authority = Configuration.GetValue<string>("IdentityServerSettings:AuthorityUrl", "https://localhost:44310");  //IS4 url-e
+                  //options.TokenValidationParameters.ValidTypes = 
+              });
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("ABAdministrator", policy => policy.RequireRole("ab_api_admin"));
             });
         }
 
@@ -43,9 +56,9 @@ namespace AnimeBrowser_API
             }
 
             app.UseHttpsRedirection();
-
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
