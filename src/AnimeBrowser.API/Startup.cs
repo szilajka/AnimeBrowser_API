@@ -1,5 +1,6 @@
 using AnimeBrowser.Data.Entities;
 using AnimeBrowser.Data.Entities.Identity;
+using JsonApiDotNetCore.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -25,6 +26,7 @@ namespace AnimeBrowser_API
         {
             services.AddDbContext<AnimeBrowserContext>(options => options.UseNpgsql(Configuration.GetConnectionString("AnimeBrowser")));
             services.AddIdentity<User, IdentityRole>();
+            services.AddJsonApi<AnimeBrowserContext>();
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
@@ -57,6 +59,7 @@ namespace AnimeBrowser_API
 
             app.UseHttpsRedirection();
             app.UseRouting();
+            app.UseJsonApi();
 
             app.UseAuthentication();
             app.UseAuthorization();
