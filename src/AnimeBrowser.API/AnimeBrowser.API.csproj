@@ -5,7 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="JsonApiDotNetCore" Version="4.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.2" NoWarn="NU1605" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="5.0.2" NoWarn="NU1605" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.2">
@@ -17,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AnimeBrowser.BL\AnimeBrowser.BL.csproj" />
     <ProjectReference Include="..\AnimeBrowser.Common\AnimeBrowser.Common.csproj" />
     <ProjectReference Include="..\AnimeBrowser.Data\AnimeBrowser.Data.csproj" />
   </ItemGroup>

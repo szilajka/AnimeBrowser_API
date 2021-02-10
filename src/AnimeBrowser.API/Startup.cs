@@ -1,9 +1,6 @@
 using AnimeBrowser.Data.Entities;
-using AnimeBrowser.Data.Entities.Identity;
-using JsonApiDotNetCore.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,16 +22,7 @@ namespace AnimeBrowser_API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<AnimeBrowserContext>(options => options.UseNpgsql(Configuration.GetConnectionString("AnimeBrowser")));
-            services.AddJsonApi<AnimeBrowserContext>(options =>
-            {
-                options.Namespace = "api/v1";
-                options.ValidateModelState = true;
-                options.DefaultPageSize = null;
-                options.MaximumPageNumber = null;
-                options.MaximumPageSize = null;
-                options.IncludeTotalResourceCount = true;
-            });
+            services.AddDbContext<AnimeBrowserContext>(options => options.UseNpgsql(Configuration.GetConnectionString("AnimeBrowser")).EnableSensitiveDataLogging());
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
@@ -46,9 +34,6 @@ namespace AnimeBrowser_API
               .AddJwtBearer("Bearer", options =>
               {
                   options.Authority = Configuration.GetValue<string>("IdentityServerSettings:AuthorityUrl", "https://localhost:44310");  //IS4 url-e
-                  //options.Audience = Configuration.GetValue<string>("IdentityServerSettings:Audience", "AnimeBrowser_API AnimeBrowser_API_Admin"); //Azok az API resource-ok, amiket az egyes client-ek megkaphatnak
-                  //options.TokenValidationParameters.ValidTypes = 
-                  //options.TokenValidationParameters.ValidAudiences = Configuration.GetValue<IEnumerable<string>>("IdentityServerSettings:ValidAudiences", new List<string> { "AnimeBrowser_API", "AnimeBrowser_API_Admin" });
                   options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
                   {
                       ValidAudiences = Configuration.GetValue<IEnumerable<string>>("IdentityServerSettings:ValidAudiences", new List<string> { "AnimeBrowser_API", "AnimeBrowser_API_Admin" }),
@@ -93,7 +78,6 @@ namespace AnimeBrowser_API
 
             app.UseHttpsRedirection();
             app.UseRouting();
-            app.UseJsonApi();
 
             app.UseAuthentication();
             app.UseAuthorization();
