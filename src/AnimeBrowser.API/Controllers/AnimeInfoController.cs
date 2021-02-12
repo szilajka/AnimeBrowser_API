@@ -2,13 +2,11 @@
 using AnimeBrowser.Common.Exceptions;
 using AnimeBrowser.Common.Helpers;
 using AnimeBrowser.Common.Models.RequestModels;
-using AnimeBrowser.Data.Entities;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Serilog;
-using System.Collections.Generic;
-using System.Threading;
+using System;
 using System.Threading.Tasks;
 
 namespace AnimeBrowser.API.Controllers
@@ -43,18 +41,22 @@ namespace AnimeBrowser.API.Controllers
         {
             try
             {
-                Log.Information($"{MethodNameHelper.GetCurrentMethodName()} method started. animeInfo: [{animeInfo}]");
+                Log.Information($"{MethodNameHelper.GetCurrentMethodName()} method started. animeInfo: [{animeInfo}].");
 
                 var createdAnimeInfo = await animeInfoCreateHandler.CreateAnimeInfo(animeInfo);
 
                 Log.Information($"{MethodNameHelper.GetCurrentMethodName()} method finished with result: [{createdAnimeInfo }].");
                 return Ok(createdAnimeInfo);
-                //return Ok();
             }
             catch (ValidationException valEx)
             {
-                Log.Warning($"Validation error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{valEx.Message}]");
+                Log.Warning($"Validation error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{valEx.Message}].");
                 return BadRequest(valEx.Errors);
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"Error in [{MethodNameHelper.GetCurrentMethodName()}]. Message: [{ex.Message}].");
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
 

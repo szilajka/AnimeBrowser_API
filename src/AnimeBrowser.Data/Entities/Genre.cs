@@ -1,5 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Encodings.Web;
+using System.Text.Json;
+using System.Text.Unicode;
 
 #nullable disable
 
@@ -25,5 +28,12 @@ namespace AnimeBrowser.Data.Entities
         public string Description { get; set; }
 
         public virtual ICollection<SeasonGenre> SeasonGenres { get; set; }
+
+
+        public override string ToString() => JsonSerializer.Serialize(this, new JsonSerializerOptions
+        {
+            WriteIndented = true,
+            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)
+        });
     }
 }

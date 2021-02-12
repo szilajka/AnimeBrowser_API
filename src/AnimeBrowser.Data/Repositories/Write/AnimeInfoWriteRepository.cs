@@ -1,0 +1,29 @@
+﻿using AnimeBrowser.Common.Helpers;
+using AnimeBrowser.Data.Entities;
+using AnimeBrowser.Data.Interfaces.Write;
+using Serilog;
+using System.Threading.Tasks;
+
+namespace AnimeBrowser.Data.Repositories.Write
+{
+    public class AnimeInfoWriteRepository : IAnimeInfoWrite
+    {
+        private readonly AnimeBrowserContext context;
+
+        public AnimeInfoWriteRepository(AnimeBrowserContext context)
+        {
+            this.context = context;
+        }
+
+        public async Task<AnimeInfo> CreateAnimeInfo(AnimeInfo animeInfo)
+        {
+            Log.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method started. AnimeInfo: [{animeInfo}].");
+
+            await context.AddAsync(animeInfo);
+            await context.SaveChangesAsync();
+
+            Log.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. Created id: [{animeInfo.Id}].");
+            return animeInfo;
+        }
+    }
+}

@@ -10,4 +10,12 @@
     <PackageReference Include="Serilog" Version="2.10.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\AnimeBrowser.Common\AnimeBrowser.Common.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Interfaces\Read\" />
+  </ItemGroup>
+
 </Project>

@@ -1,5 +1,8 @@
 ﻿using AnimeBrowser.Data.Entities.Identity;
 using System.Collections.Generic;
+using System.Text.Encodings.Web;
+using System.Text.Json;
+using System.Text.Unicode;
 
 #nullable disable
 
@@ -22,5 +25,12 @@ namespace AnimeBrowser.Data.Entities
         public virtual User User { get; set; }
         public virtual ICollection<EpisodeMediaList> EpisodeMediaLists { get; set; }
         public virtual ICollection<SeasonMediaList> SeasonMediaLists { get; set; }
+
+
+        public override string ToString() => JsonSerializer.Serialize(this, new JsonSerializerOptions
+        {
+            WriteIndented = true,
+            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)
+        });
     }
 }
