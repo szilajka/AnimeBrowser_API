@@ -1,4 +1,6 @@
+using AnimeBrowser.BL.Helpers;
 using AnimeBrowser.Data.Entities;
+using AnimeBrowser.Data.Helpers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -65,6 +67,9 @@ namespace AnimeBrowser_API
                 options.AddPolicy("SeasonAdmin", policy => policy.RequireAuthenticatedUser().RequireClaim("scope", "season-admin"));
                 options.AddPolicy("UserListAdmin", policy => policy.RequireAuthenticatedUser().RequireClaim("scope", "user_list-admin"));
             });
+
+            services.AddRepositories();
+            services.AddBlHandlers();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
