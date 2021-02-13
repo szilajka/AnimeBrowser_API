@@ -60,12 +60,12 @@ namespace AnimeBrowser_API
                 options.AddPolicy("UserListWrite", policy => policy.RequireAuthenticatedUser().RequireClaim("scope", "user_list-write"));
                 options.AddPolicy("RatingWrite", policy => policy.RequireAuthenticatedUser().RequireClaim("scope", "rating-write"));
                 //Admin
-                options.AddPolicy("AnimeInfoAdmin", policy => policy.RequireAuthenticatedUser().RequireClaim("scope", "anime_info-admin"));
-                options.AddPolicy("EpisodeAdmin", policy => policy.RequireAuthenticatedUser().RequireClaim("scope", "episode-admin"));
-                options.AddPolicy("GenreAdmin", policy => policy.RequireAuthenticatedUser().RequireClaim("scope", "genre-admin"));
-                options.AddPolicy("RatingAdmin", policy => policy.RequireAuthenticatedUser().RequireClaim("scope", "rating-admin"));
-                options.AddPolicy("SeasonAdmin", policy => policy.RequireAuthenticatedUser().RequireClaim("scope", "season-admin"));
-                options.AddPolicy("UserListAdmin", policy => policy.RequireAuthenticatedUser().RequireClaim("scope", "user_list-admin"));
+                options.AddPolicy("AnimeInfoAdmin", policy => policy.RequireAuthenticatedUser().RequireClaim(System.Security.Claims.ClaimTypes.Role, "ab_api_admin").RequireClaim("scope", "anime_info-admin"));
+                options.AddPolicy("EpisodeAdmin", policy => policy.RequireAuthenticatedUser().RequireClaim(System.Security.Claims.ClaimTypes.Role, "ab_api_admin").RequireClaim("scope", "episode-admin"));
+                options.AddPolicy("GenreAdmin", policy => policy.RequireAuthenticatedUser().RequireClaim(System.Security.Claims.ClaimTypes.Role, "ab_api_admin").RequireClaim("scope", "genre-admin"));
+                options.AddPolicy("RatingAdmin", policy => policy.RequireAuthenticatedUser().RequireClaim(System.Security.Claims.ClaimTypes.Role, "ab_api_admin").RequireClaim("scope", "rating-admin"));
+                options.AddPolicy("SeasonAdmin", policy => policy.RequireAuthenticatedUser().RequireClaim(System.Security.Claims.ClaimTypes.Role, "ab_api_admin").RequireClaim("scope", "season-admin"));
+                options.AddPolicy("UserListAdmin", policy => policy.RequireAuthenticatedUser().RequireClaim(System.Security.Claims.ClaimTypes.Role, "ab_api_admin").RequireClaim("scope", "user_list-admin"));
             });
 
             services.AddRepositories();

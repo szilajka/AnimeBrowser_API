@@ -16,6 +16,7 @@ namespace AnimeBrowser.API.Controllers
     public class AnimeInfoController : ControllerBase
     {
         private readonly IAnimeInfoCreation animeInfoCreateHandler;
+        private readonly ILogger logger = Log.ForContext<AnimeInfoController>();
 
         public AnimeInfoController(IAnimeInfoCreation animeInfoCreateHandler)
         {
@@ -41,21 +42,21 @@ namespace AnimeBrowser.API.Controllers
         {
             try
             {
-                Log.Information($"{MethodNameHelper.GetCurrentMethodName()} method started. animeInfo: [{animeInfo}].");
+                logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method started. animeInfo: [{animeInfo}].");
 
                 var createdAnimeInfo = await animeInfoCreateHandler.CreateAnimeInfo(animeInfo);
 
-                Log.Information($"{MethodNameHelper.GetCurrentMethodName()} method finished with result: [{createdAnimeInfo }].");
+                logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method finished with result: [{createdAnimeInfo }].");
                 return Ok(createdAnimeInfo);
             }
             catch (ValidationException valEx)
             {
-                Log.Warning($"Validation error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{valEx.Message}].");
+                logger.Warning(valEx, $"Validation error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{valEx.Message}].");
                 return BadRequest(valEx.Errors);
             }
             catch (Exception ex)
             {
-                Log.Error($"Error in [{MethodNameHelper.GetCurrentMethodName()}]. Message: [{ex.Message}].");
+                logger.Error(ex, $"Error in [{MethodNameHelper.GetCurrentMethodName()}]. Message: [{ex.Message}].");
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }

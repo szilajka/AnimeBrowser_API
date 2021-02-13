@@ -13,7 +13,7 @@ namespace AnimeBrowser.Common.Models.RequestModels
         public override string ToString() => JsonSerializer.Serialize(this, new JsonSerializerOptions
         {
             WriteIndented = true,
-            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)
+            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
         });
     }
 }
