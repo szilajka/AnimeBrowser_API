@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AnimeBrowser.Common", "src\
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{A2E1A8CD-0FCD-4602-B9CE-851154EBA199}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnimeBrowser.UnitTests", "test\AnimeBrowser.UnitTests\AnimeBrowser.UnitTests.csproj", "{28D1B35C-9086-47E5-AEF5-3DCDBD710324}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AnimeBrowser.UnitTests", "test\AnimeBrowser.UnitTests\AnimeBrowser.UnitTests.csproj", "{28D1B35C-9086-47E5-AEF5-3DCDBD710324}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

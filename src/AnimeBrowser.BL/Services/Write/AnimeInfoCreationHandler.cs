@@ -33,8 +33,8 @@ namespace AnimeBrowser.BL.Services.Write
                     throw new EmptyObjectException<AnimeInfoCreationRequestModel>("The given anime info object is empty!");
                 }
 
-                animeInfoRequestModel.Title = animeInfoRequestModel?.Title?.Trim();
-                animeInfoRequestModel.Description = animeInfoRequestModel?.Description?.Trim();
+                animeInfoRequestModel.Title = animeInfoRequestModel.Title?.Trim();
+                animeInfoRequestModel.Description = animeInfoRequestModel.Description?.Trim();
 
                 var validator = new AnimeInfoCreationValidator();
                 var validationResult = await validator.ValidateAsync(animeInfoRequestModel);
