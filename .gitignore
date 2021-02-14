@@ -495,5 +495,7 @@ MigrationBackup/
 
 IS4_AdminUI/**
 IS4_AdminUI/
-Log/**
-Logs/**
+**/Log/**
+**/Logs/**
+coveragereport/
+coveragereports/

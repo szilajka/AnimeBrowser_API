@@ -9,6 +9,7 @@ namespace AnimeBrowser.Data.Repositories.Write
     public class AnimeInfoWriteRepository : IAnimeInfoWrite
     {
         private readonly AnimeBrowserContext context;
+        private readonly ILogger logger = Log.ForContext<AnimeInfoWriteRepository>();
 
         public AnimeInfoWriteRepository(AnimeBrowserContext context)
         {
@@ -17,12 +18,12 @@ namespace AnimeBrowser.Data.Repositories.Write
 
         public async Task<AnimeInfo> CreateAnimeInfo(AnimeInfo animeInfo)
         {
-            Log.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method started. AnimeInfo: [{animeInfo}].");
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method started. AnimeInfo: [{animeInfo}].");
 
             await context.AddAsync(animeInfo);
             await context.SaveChangesAsync();
 
-            Log.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. Created id: [{animeInfo.Id}].");
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. Created id: [{animeInfo.Id}].");
             return animeInfo;
         }
     }

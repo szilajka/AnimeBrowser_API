@@ -13,6 +13,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AnimeBrowser.Data", "src\An
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AnimeBrowser.Common", "src\AnimeBrowser.Common\AnimeBrowser.Common.csproj", "{5A701159-4DCF-4D69-B052-A5FE6F3C3672}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{A2E1A8CD-0FCD-4602-B9CE-851154EBA199}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnimeBrowser.UnitTests", "test\AnimeBrowser.UnitTests\AnimeBrowser.UnitTests.csproj", "{28D1B35C-9086-47E5-AEF5-3DCDBD710324}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +39,10 @@ Global
 		{5A701159-4DCF-4D69-B052-A5FE6F3C3672}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5A701159-4DCF-4D69-B052-A5FE6F3C3672}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5A701159-4DCF-4D69-B052-A5FE6F3C3672}.Release|Any CPU.Build.0 = Release|Any CPU
+		{28D1B35C-9086-47E5-AEF5-3DCDBD710324}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{28D1B35C-9086-47E5-AEF5-3DCDBD710324}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{28D1B35C-9086-47E5-AEF5-3DCDBD710324}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{28D1B35C-9086-47E5-AEF5-3DCDBD710324}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -44,6 +52,7 @@ Global
 		{47A40CE9-BE59-4D26-8C0F-BB803BE3F217} = {808AD85B-71FC-41E8-B1BA-A9F0A5285660}
 		{E3016FB9-D46B-4795-A457-38ACF455908B} = {808AD85B-71FC-41E8-B1BA-A9F0A5285660}
 		{5A701159-4DCF-4D69-B052-A5FE6F3C3672} = {808AD85B-71FC-41E8-B1BA-A9F0A5285660}
+		{28D1B35C-9086-47E5-AEF5-3DCDBD710324} = {A2E1A8CD-0FCD-4602-B9CE-851154EBA199}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9E1CD417-7C6A-44A4-8083-A9DCAF434238}

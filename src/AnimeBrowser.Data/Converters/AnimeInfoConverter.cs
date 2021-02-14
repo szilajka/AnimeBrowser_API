@@ -10,8 +10,8 @@ namespace AnimeBrowser.Data.Converters
         {
             var animeInfo = new AnimeInfo
             {
-                Title = requestModel.Title.Trim(),
-                Description = requestModel.Description.Trim(),
+                Title = requestModel.Title?.Trim(),
+                Description = requestModel.Description?.Trim(),
                 IsNsfw = requestModel.IsNsfw
             };
             return animeInfo;
@@ -22,8 +22,8 @@ namespace AnimeBrowser.Data.Converters
             var responseModel = new AnimeInfoCreationResponseModel
             {
                 Id = animeInfo.Id,
-                Title = animeInfo.Title.Trim(),
-                Description = animeInfo.Description.Trim(),
+                Title = animeInfo.Title?.Trim(),
+                Description = animeInfo.Description?.Trim(),
                 IsNsfw = animeInfo.IsNsfw
             };
             return responseModel;
