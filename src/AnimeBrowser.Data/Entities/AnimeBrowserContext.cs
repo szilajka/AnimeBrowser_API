@@ -1,10 +1,12 @@
 ﻿using AnimeBrowser.Data.Entities.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics.CodeAnalysis;
 
 #nullable disable
 
 namespace AnimeBrowser.Data.Entities
 {
+    [ExcludeFromCodeCoverage]
     public partial class AnimeBrowserContext : DbContext
     {
         public AnimeBrowserContext()

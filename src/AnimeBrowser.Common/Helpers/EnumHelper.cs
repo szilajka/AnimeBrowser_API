@@ -1,9 +1,11 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace AnimeBrowser.Common.Helpers
 {
+    [ExcludeFromCodeCoverage]
     public static class EnumHelper
     {
         public static string GetDescription(this Enum value)

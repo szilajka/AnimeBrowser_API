@@ -1,10 +1,12 @@
 ﻿using AnimeBrowser.Common.Models.ErrorModels;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 
 namespace AnimeBrowser.Common.Exceptions
 {
+    [ExcludeFromCodeCoverage]
     public class ValidationException : Exception
     {
         public IList<ErrorModel> Errors { get; set; }

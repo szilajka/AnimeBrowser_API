@@ -1,4 +1,5 @@
 ﻿using AnimeBrowser.Data.Entities.Identity;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
@@ -18,6 +19,7 @@ namespace AnimeBrowser.Data.Entities
         public virtual User User { get; set; }
 
 
+        [ExcludeFromCodeCoverage]
         public override string ToString() => JsonSerializer.Serialize(this, new JsonSerializerOptions
         {
             WriteIndented = true,

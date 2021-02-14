@@ -3,6 +3,7 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 
 namespace AnimeBrowser.Data.Entities
 {
@@ -18,6 +19,7 @@ namespace AnimeBrowser.Data.Entities
         public virtual AnimeInfo AnimeInfo { get; set; }
 
 
+        [ExcludeFromCodeCoverage]
         public override string ToString() => JsonSerializer.Serialize(this, new JsonSerializerOptions
         {
             WriteIndented = true,
