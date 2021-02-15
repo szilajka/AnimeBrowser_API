@@ -26,5 +26,16 @@ namespace AnimeBrowser.Data.Repositories.Write
             logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. Created id: [{animeInfo.Id}].");
             return animeInfo;
         }
+
+        public async Task<AnimeInfo> UpdateAnimeInfo(AnimeInfo animeInfo)
+        {
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method started. AnimeInfo: [{animeInfo}].");
+
+            context.Update(animeInfo);
+            await context.SaveChangesAsync();
+
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. Created id: [{animeInfo.Id}].");
+            return animeInfo;
+        }
     }
 }

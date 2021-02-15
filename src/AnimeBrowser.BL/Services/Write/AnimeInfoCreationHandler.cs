@@ -61,7 +61,7 @@ namespace AnimeBrowser.BL.Services.Write
             }
             catch (Exception ex)
             {
-                logger.ForContext<AnimeInfoCreationHandler>().Error($"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{ex.Message}].");
+                logger.Error($"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{ex.Message}].");
                 throw;
             }
         }
