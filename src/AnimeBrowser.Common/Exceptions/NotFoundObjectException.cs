@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 
 namespace AnimeBrowser.Common.Exceptions
 {
+    [ExcludeFromCodeCoverage]
     public class NotFoundObjectException<T> : Exception where T : class
     {
         public NotFoundObjectException()

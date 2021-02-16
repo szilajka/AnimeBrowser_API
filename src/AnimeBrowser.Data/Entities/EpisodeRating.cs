@@ -2,7 +2,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Encodings.Web;
 using System.Text.Json;
-using System.Text.Unicode;
 #nullable disable
 
 namespace AnimeBrowser.Data.Entities

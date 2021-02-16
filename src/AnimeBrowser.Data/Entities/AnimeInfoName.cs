@@ -1,9 +1,8 @@
 ﻿#nullable disable
-using System.Text.Encodings.Web;
-using System.Text.Json;
-using System.Text.Unicode;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
+using System.Text.Encodings.Web;
+using System.Text.Json;
 
 namespace AnimeBrowser.Data.Entities
 {

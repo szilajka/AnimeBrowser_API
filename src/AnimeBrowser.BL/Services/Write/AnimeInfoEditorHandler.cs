@@ -10,9 +10,6 @@ using AnimeBrowser.Data.Interfaces.Read;
 using AnimeBrowser.Data.Interfaces.Write;
 using Serilog;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace AnimeBrowser.BL.Services.Write
@@ -29,11 +26,18 @@ namespace AnimeBrowser.BL.Services.Write
             this.animeInfoWriteRepo = animeInfoWriteRepo;
         }
 
-        public async Task<AnimeInfoCreationResponseModel> EditAnimeInfo(long id, AnimeInfoCreationRequestModel requestModel)
+        public async Task<AnimeInfoEditingResponseModel> EditAnimeInfo(long id, AnimeInfoEditingRequestModel requestModel)
         {
             try
             {
                 logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method started with requestModel: [{requestModel}].");
+
+                if (id != requestModel.Id)
+                {
+                    var argEx = new ArgumentException("The given id and the model's id are not matching!", nameof(id));
+                    logger.Warning(argEx, $"Id mismatch in property and parameter.");
+                    throw argEx;
+                }
 
                 var animeInfo = await animeInfoReadRepo.GetAnimeInfoById(id);
                 if (animeInfo == null)
@@ -43,7 +47,7 @@ namespace AnimeBrowser.BL.Services.Write
                     throw notExistingAnimeInfoEx;
                 }
 
-                var validator = new AnimeInfoCreationValidator();
+                var validator = new AnimeInfoEditingValidator();
                 var validationResult = await validator.ValidateAsync(requestModel);
                 if (!validationResult.IsValid)
                 {
@@ -58,7 +62,7 @@ namespace AnimeBrowser.BL.Services.Write
                 animeInfo.IsNsfw = rAnimeInfo.IsNsfw;
 
                 animeInfo = await animeInfoWriteRepo.UpdateAnimeInfo(animeInfo);
-                var responseModel = animeInfo.ToCreationResponseModel();
+                AnimeInfoEditingResponseModel responseModel = animeInfo.ToEditingResponseModel();
 
                 logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. result: [{responseModel}].");
 

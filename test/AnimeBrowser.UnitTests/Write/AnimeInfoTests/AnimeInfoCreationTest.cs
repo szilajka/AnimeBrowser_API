@@ -16,10 +16,10 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace AnimeBrowser.UnitTests.Write
+namespace AnimeBrowser.UnitTests.Write.AnimeInfoTests
 {
     [TestClass]
-    public class AnimeInfoCreationTest
+    public class AnimeInfoCreationTest : TestBase
     {
         private static IEnumerable<object[]> GetShouldWorkData()
         {
@@ -48,9 +48,9 @@ namespace AnimeBrowser.UnitTests.Write
         {
             var requestModel = new AnimeInfoCreationRequestModel { Title = title, Description = description, IsNsfw = isNsfw };
             var animeInfo = new AnimeInfo { Title = title?.Trim(), Description = description?.Trim(), IsNsfw = isNsfw };
-            var responseModel = new AnimeInfoCreationResponseModel { Id = 1, Title = title?.Trim(), Description = description?.Trim(), IsNsfw = isNsfw };
+            var responseModel = new AnimeInfoCreationResponseModel(id: 1, title: title?.Trim(), description: description?.Trim(), isNsfw: isNsfw);
 
-            var sp = StartupHelper.SetupDI((services) =>
+            var sp = SetupDI((services) =>
             {
                 var animeInfoRepo = new Mock<IAnimeInfoWrite>();
                 animeInfoRepo.Setup(ai => ai.CreateAnimeInfo(It.IsAny<AnimeInfo>())).Callback<AnimeInfo>(ai => animeInfo.Id = 1).ReturnsAsync(() => animeInfo);
@@ -73,7 +73,7 @@ namespace AnimeBrowser.UnitTests.Write
             var errors = CreateErrorList(errCode, nameof(AnimeInfoCreationRequestModel.Title));
             var requestModel = new AnimeInfoCreationRequestModel { Title = title, Description = description, IsNsfw = isNsfw };
 
-            var sp = StartupHelper.SetupDI((services) =>
+            var sp = SetupDI((services) =>
             {
                 var animeInfoRepo = new Mock<IAnimeInfoWrite>();
                 services.AddTransient(_ => animeInfoRepo.Object);
@@ -93,7 +93,7 @@ namespace AnimeBrowser.UnitTests.Write
             var description = new string('A', 30001);
             var requestModel = new AnimeInfoCreationRequestModel { Title = "asd", Description = description, IsNsfw = false };
 
-            var sp = StartupHelper.SetupDI((services) =>
+            var sp = SetupDI((services) =>
             {
                 var animeInfoRepo = new Mock<IAnimeInfoWrite>();
                 services.AddTransient(_ => animeInfoRepo.Object);
@@ -109,7 +109,7 @@ namespace AnimeBrowser.UnitTests.Write
         [TestMethod]
         public async Task CreateAnimeInfo_NullModel_ExceptionThrown()
         {
-            var sp = StartupHelper.SetupDI((services) =>
+            var sp = SetupDI((services) =>
             {
                 var animeInfoRepo = new Mock<IAnimeInfoWrite>();
                 services.AddTransient(_ => animeInfoRepo.Object);
@@ -126,7 +126,7 @@ namespace AnimeBrowser.UnitTests.Write
         {
             var requestModel = new AnimeInfoCreationRequestModel { Title = "asd", Description = "", IsNsfw = false };
 
-            var sp = StartupHelper.SetupDI((services) =>
+            var sp = SetupDI((services) =>
             {
                 var animeInfoRepo = new Mock<IAnimeInfoWrite>();
                 animeInfoRepo.Setup(air => air.CreateAnimeInfo(It.IsAny<AnimeInfo>())).ThrowsAsync(new InvalidOperationException());

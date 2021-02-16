@@ -65,7 +65,7 @@ namespace AnimeBrowser.API.Controllers
 
         [HttpPatch("{id}")]
         [Authorize("AnimeInfoAdmin")]
-        public async Task<IActionResult> Edit(long id, [FromBody] AnimeInfoCreationRequestModel updateModel)
+        public async Task<IActionResult> Edit(long id, [FromBody] AnimeInfoEditingRequestModel updateModel)
         {
             try
             {
