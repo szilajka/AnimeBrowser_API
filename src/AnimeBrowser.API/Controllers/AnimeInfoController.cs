@@ -2,6 +2,7 @@
 using AnimeBrowser.Common.Exceptions;
 using AnimeBrowser.Common.Helpers;
 using AnimeBrowser.Common.Models.RequestModels;
+using AnimeBrowser.Data.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -17,12 +18,14 @@ namespace AnimeBrowser.API.Controllers
     {
         private readonly IAnimeInfoCreation animeInfoCreateHandler;
         private readonly IAnimeInfoEditor animeInfoEditorHandler;
+        private readonly IAnimeInfoDelete animeInfoDeleteHandler;
         private readonly ILogger logger = Log.ForContext<AnimeInfoController>();
 
-        public AnimeInfoController(IAnimeInfoCreation animeInfoCreateHandler, IAnimeInfoEditor animeInfoEditorHandler)
+        public AnimeInfoController(IAnimeInfoCreation animeInfoCreateHandler, IAnimeInfoEditor animeInfoEditorHandler, IAnimeInfoDelete animeInfoDeleteHandler)
         {
             this.animeInfoCreateHandler = animeInfoCreateHandler;
             this.animeInfoEditorHandler = animeInfoEditorHandler;
+            this.animeInfoDeleteHandler = animeInfoDeleteHandler;
         }
 
         //[HttpGet]
@@ -65,7 +68,7 @@ namespace AnimeBrowser.API.Controllers
 
         [HttpPatch("{id}")]
         [Authorize("AnimeInfoAdmin")]
-        public async Task<IActionResult> Edit(long id, [FromBody] AnimeInfoEditingRequestModel updateModel)
+        public async Task<IActionResult> Edit([FromRoute] long id, [FromBody] AnimeInfoEditingRequestModel updateModel)
         {
             try
             {
@@ -94,5 +97,34 @@ namespace AnimeBrowser.API.Controllers
             }
         }
 
+        [HttpDelete("{id}")]
+        [Authorize("AnimeInfoAdmin")]
+        public async Task<IActionResult> Delete([FromRoute] long id)
+        {
+            try
+            {
+                logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method started. animeInfo.Id: [{id}].");
+
+                await animeInfoDeleteHandler.DeleteAnimeInfo(id);
+
+                logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method finished.");
+                return Ok();
+            }
+            catch (ArgumentOutOfRangeException arEx)
+            {
+                logger.Warning(arEx, $"Error in [{MethodNameHelper.GetCurrentMethodName()}]. Message: [{arEx.Message}].");
+                return NotFound(id);
+            }
+            catch (NotFoundObjectException<AnimeInfo> nfoEx)
+            {
+                logger.Warning(nfoEx, $"Error in [{MethodNameHelper.GetCurrentMethodName()}]. Message: [{nfoEx.Message}].");
+                return NotFound(id);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"Error in [{MethodNameHelper.GetCurrentMethodName()}]. Message: [{ex.Message}].");
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
     }
 }

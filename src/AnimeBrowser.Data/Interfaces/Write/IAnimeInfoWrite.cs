@@ -7,5 +7,6 @@ namespace AnimeBrowser.Data.Interfaces.Write
     {
         Task<AnimeInfo> CreateAnimeInfo(AnimeInfo animeInfo);
         Task<AnimeInfo> UpdateAnimeInfo(AnimeInfo animeInfo);
+        Task DeleteAnimeInfo(AnimeInfo animeInfo);
     }
 }

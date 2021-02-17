@@ -37,5 +37,15 @@ namespace AnimeBrowser.Data.Repositories.Write
             logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. Created id: [{animeInfo.Id}].");
             return animeInfo;
         }
+
+        public async Task DeleteAnimeInfo(AnimeInfo animeInfo)
+        {
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method started. AnimeInfo: [{animeInfo}].");
+
+            context.Remove(animeInfo);
+            await context.SaveChangesAsync();
+
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished.");
+        }
     }
 }
