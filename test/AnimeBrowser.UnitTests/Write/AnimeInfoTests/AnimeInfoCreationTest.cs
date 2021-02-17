@@ -138,20 +138,5 @@ namespace AnimeBrowser.UnitTests.Write.AnimeInfoTests
             Func<Task> act = async () => await animeInfoHandler.CreateAnimeInfo(requestModel);
             await act.Should().ThrowAsync<InvalidOperationException>();
         }
-
-        private IList<ErrorModel> CreateErrorList(ErrorCodes errCode, string source)
-        {
-            var errorCode = errCode.GetIntValueAsString();
-            IList<ErrorModel> errors = new List<ErrorModel>();
-            ErrorModel errorModel = new ErrorModel
-            {
-                Code = errorCode,
-                Title = EnumHelper.GetDescriptionFromValue(errorCode, typeof(ErrorCodes)),
-                Source = source
-            };
-            errors.Add(errorModel);
-
-            return errors;
-        }
     }
 }

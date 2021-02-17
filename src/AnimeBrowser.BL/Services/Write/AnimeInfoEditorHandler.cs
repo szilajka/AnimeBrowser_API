@@ -32,19 +32,11 @@ namespace AnimeBrowser.BL.Services.Write
             {
                 logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method started with requestModel: [{requestModel}].");
 
-                if (id != requestModel.Id)
+                if (id != requestModel?.Id)
                 {
                     var argEx = new ArgumentException("The given id and the model's id are not matching!", nameof(id));
                     logger.Warning(argEx, $"Id mismatch in property and parameter.");
                     throw argEx;
-                }
-
-                var animeInfo = await animeInfoReadRepo.GetAnimeInfoById(id);
-                if (animeInfo == null)
-                {
-                    var notExistingAnimeInfoEx = new NotFoundObjectException<AnimeInfoCreationRequestModel>($"There is no AnimeInfo with given id: [{id}].");
-                    logger.Warning(notExistingAnimeInfoEx, notExistingAnimeInfoEx.Message);
-                    throw notExistingAnimeInfoEx;
                 }
 
                 var validator = new AnimeInfoEditingValidator();
@@ -53,6 +45,14 @@ namespace AnimeBrowser.BL.Services.Write
                 {
                     var errorList = validationResult.Errors.ConvertToErrorModel();
                     throw new ValidationException(errorList, "Validation error in AnimeInfoCreationRequestModel.");
+                }
+
+                var animeInfo = await animeInfoReadRepo.GetAnimeInfoById(id);
+                if (animeInfo == null)
+                {
+                    var notExistingAnimeInfoEx = new NotFoundObjectException<AnimeInfoEditingRequestModel>($"There is no AnimeInfo with given id: [{id}].");
+                    logger.Warning(notExistingAnimeInfoEx, notExistingAnimeInfoEx.Message);
+                    throw notExistingAnimeInfoEx;
                 }
 
                 var rAnimeInfo = requestModel.ToAnimeInfo();
@@ -73,7 +73,7 @@ namespace AnimeBrowser.BL.Services.Write
                 logger.Warning($"Validation error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{valEx.Message}].");
                 throw;
             }
-            catch (NotFoundObjectException<AnimeInfoCreationRequestModel> ex)
+            catch (NotFoundObjectException<AnimeInfoEditingRequestModel> ex)
             {
                 logger.Warning($"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{ex.Message}].");
                 throw;

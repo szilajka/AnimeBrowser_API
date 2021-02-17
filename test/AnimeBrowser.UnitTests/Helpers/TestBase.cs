@@ -1,6 +1,9 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using AnimeBrowser.Common.Helpers;
+using AnimeBrowser.Common.Models.ErrorModels;
+using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace AnimeBrowser.UnitTests.Helpers
@@ -35,6 +38,21 @@ namespace AnimeBrowser.UnitTests.Helpers
             }
 
             return services.BuildServiceProvider();
+        }
+
+        protected IList<ErrorModel> CreateErrorList(ErrorCodes errCode, string source)
+        {
+            var errorCode = errCode.GetIntValueAsString();
+            IList<ErrorModel> errors = new List<ErrorModel>();
+            ErrorModel errorModel = new ErrorModel
+            {
+                Code = errorCode,
+                Title = EnumHelper.GetDescriptionFromValue(errorCode, typeof(ErrorCodes)),
+                Source = source
+            };
+            errors.Add(errorModel);
+
+            return errors;
         }
     }
 }

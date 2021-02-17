@@ -1,5 +1,7 @@
 ﻿using AnimeBrowser.BL.Interfaces.Write;
 using AnimeBrowser.BL.Services.Write;
+using AnimeBrowser.Common.Exceptions;
+using AnimeBrowser.Common.Models.ErrorModels;
 using AnimeBrowser.Common.Models.RequestModels;
 using AnimeBrowser.Data.Converters;
 using AnimeBrowser.Data.Entities;
@@ -10,6 +12,7 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -56,6 +59,48 @@ namespace AnimeBrowser.UnitTests.Write.AnimeInfoTests
             yield return new object[] { 10, new AnimeInfoEditingRequestModel(id: 10, title: "KonoSuba", description: "A horrorific story about a girl, who lost his mom and goes to the Abyss to search for her. For her surprise, a robot boy accompanies her and they are looking for her mom together, while they discover terrific cretures of the abyss who tries to kill them and other people from expeditions. Well, those people are still not nice guys.", isNsfw: true) };
         }
 
+        private static IEnumerable<object[]> GetMismatchingIdData()
+        {
+            yield return new object[] { 2, new AnimeInfoEditingRequestModel(id: 1, title: "J", isNsfw: false) };
+            yield return new object[] { 1, new AnimeInfoEditingRequestModel(id: 2, title: new string('j', 100), isNsfw: false) };
+            yield return new object[] { 2, new AnimeInfoEditingRequestModel(id: 5, title: "Made In ABYSS", description: "A horrorific story about a girl, who lost his mom and goes to the Abyss to search for her. For her surprise, a robot boy accompanies her and they are looking for her mom together, while they discover terrific cretures of the abyss who tries to kill them and other people from expeditions. Well, those people are still not nice guys.", isNsfw: true) };
+            yield return new object[] { 2, new AnimeInfoEditingRequestModel(id: 4, title: new string('j', 254), isNsfw: false) };
+            yield return new object[] { null, new AnimeInfoEditingRequestModel(id: 1, title: "Sasa", isNsfw: false) };
+            yield return new object[] { null, null };
+        }
+
+        private static IEnumerable<object[]> GetNotExistingIdData()
+        {
+            yield return new object[] { 6, new AnimeInfoEditingRequestModel(id: 6, title: "J", isNsfw: false) };
+            yield return new object[] { 32, new AnimeInfoEditingRequestModel(id: 32, title: new string('j', 100), isNsfw: false) };
+            yield return new object[] { 56, new AnimeInfoEditingRequestModel(id: 56, title: "Made In ABYSS", description: "A horrorific story about a girl, who lost his mom and goes to the Abyss to search for her. For her surprise, a robot boy accompanies her and they are looking for her mom together, while they discover terrific cretures of the abyss who tries to kill them and other people from expeditions. Well, those people are still not nice guys.", isNsfw: true) };
+            yield return new object[] { 2951431525, new AnimeInfoEditingRequestModel(id: 2951431525, title: new string('j', 254), isNsfw: false) };
+            yield return new object[] { 7451, new AnimeInfoEditingRequestModel(id: 7451, title: "A Certain Magical Index", description: new string('K', 29999), isNsfw: false) };
+        }
+
+        public static IEnumerable<object[]> GetInvalidTitleData()
+        {
+            yield return new object[] { 1, new AnimeInfoEditingRequestModel(id: 1, title: "", isNsfw: false), ErrorCodes.EmptyProperty };
+            yield return new object[] { 1, new AnimeInfoEditingRequestModel(id: 1, title: new string('j', 256), isNsfw: false), ErrorCodes.TooLongProperty };
+            yield return new object[] { 2, new AnimeInfoEditingRequestModel(id: 2, title: null, description: "A horrorific story about a girl, who lost his mom and goes to the Abyss to search for her. For her surprise, a robot boy accompanies her and they are looking for her mom together, while they discover terrific cretures of the abyss who tries to kill them and other people from expeditions. Well, those people are still not nice guys.", isNsfw: true), ErrorCodes.EmptyProperty };
+            yield return new object[] { 2, new AnimeInfoEditingRequestModel(id: 2, title: new string('j', 475), isNsfw: false), ErrorCodes.TooLongProperty };
+            yield return new object[] { 7, new AnimeInfoEditingRequestModel(id: 7, title: new string('j', 305432), isNsfw: false), ErrorCodes.TooLongProperty };
+        }
+
+        public static IEnumerable<object[]> GetTooLongDescriptionData()
+        {
+            yield return new object[] { 1, new AnimeInfoEditingRequestModel(id: 1, title: "J", description: new string('j', 30001), isNsfw: false), ErrorCodes.TooLongProperty };
+            yield return new object[] { 1, new AnimeInfoEditingRequestModel(id: 1, title: new string('j', 100), description: new string('j', 97587866), isNsfw: false), ErrorCodes.TooLongProperty };
+            yield return new object[] { 1, new AnimeInfoEditingRequestModel(id: 1, title: new string('j', 100), description: new string('j', 84214), isNsfw: false), ErrorCodes.TooLongProperty };
+        }
+
+        private static IEnumerable<object[]> GetInvalidIdData()
+        {
+            yield return new object[] { -1, new AnimeInfoEditingRequestModel(id: -1, title: "J", isNsfw: false), ErrorCodes.EmptyProperty };
+            yield return new object[] { -10, new AnimeInfoEditingRequestModel(id: -10, title: new string('j', 100), isNsfw: false), ErrorCodes.EmptyProperty };
+            yield return new object[] { 0, new AnimeInfoEditingRequestModel(id: 0, title: "Made In ABYSS", description: "A horrorific story about a girl, who lost his mom and goes to the Abyss to search for her. For her surprise, a robot boy accompanies her and they are looking for her mom together, while they discover terrific cretures of the abyss who tries to kill them and other people from expeditions. Well, those people are still not nice guys.", isNsfw: true), ErrorCodes.EmptyProperty };
+        }
+
         [TestInitialize]
         public void InitTests()
         {
@@ -100,6 +145,122 @@ namespace AnimeBrowser.UnitTests.Write.AnimeInfoTests
             updatedAnimeInfo.Should().BeEquivalentTo(animeInfo, options => options.ExcludingMissingMembers());
         }
 
+        [DataTestMethod,
+            DynamicData(nameof(GetMismatchingIdData), DynamicDataSourceType.Method)]
+        public async Task AnimeInfoEditing_UpdateMismatchingId_ThrowException(long animeInfoId, AnimeInfoEditingRequestModel requestModel)
+        {
+            var sp = SetupDI(services =>
+            {
+                var animeInfoWriteRepo = new Mock<IAnimeInfoWrite>();
+                var animeInfoReadRepo = new Mock<IAnimeInfoRead>();
+                services.AddTransient(factory => animeInfoReadRepo.Object);
+                services.AddTransient(factory => animeInfoWriteRepo.Object);
+                services.AddTransient<IAnimeInfoEditor, AnimeInfoEditorHandler>();
+            });
+
+            var animeInfoEditor = sp.GetService<IAnimeInfoEditor>();
+            Func<Task> editAnimeFunc = async () => await animeInfoEditor.EditAnimeInfo(animeInfoId, requestModel);
+
+            await editAnimeFunc.Should().ThrowAsync<ArgumentException>();
+        }
+
+        [DataTestMethod,
+            DynamicData(nameof(GetNotExistingIdData), DynamicDataSourceType.Method)]
+        public async Task AnimeInfoEditing_NotExistingId_ThrowException(long animeInfoId, AnimeInfoEditingRequestModel requestModel)
+        {
+            var animeInfo = requestModel.ToAnimeInfo();
+            animeInfo.Id = animeInfoId;
+            AnimeInfo currentAnimeInfo = new AnimeInfo();
+            var sp = SetupDI(services =>
+            {
+                var animeInfoWriteRepo = new Mock<IAnimeInfoWrite>();
+                var animeInfoReadRepo = new Mock<IAnimeInfoRead>();
+                animeInfoReadRepo.Setup(air => air.GetAnimeInfoById(It.IsAny<long>())).Callback<long>(id => { currentAnimeInfo = baseAnimeInfoData.SingleOrDefault(ai => ai.Id == id); }).ReturnsAsync(() => currentAnimeInfo);
+                services.AddTransient(factory => animeInfoReadRepo.Object);
+                services.AddTransient(factory => animeInfoWriteRepo.Object);
+                services.AddTransient<IAnimeInfoEditor, AnimeInfoEditorHandler>();
+            });
+
+            var animeInfoEditor = sp.GetService<IAnimeInfoEditor>();
+            Func<Task> editAnimeFunc = async () => await animeInfoEditor.EditAnimeInfo(animeInfoId, requestModel);
+
+            await editAnimeFunc.Should().ThrowAsync<NotFoundObjectException<AnimeInfoEditingRequestModel>>();
+        }
+
+        [DataTestMethod,
+         DynamicData(nameof(GetInvalidIdData), DynamicDataSourceType.Method)]
+        public async Task AnimeInfoEditing_InvalidId_ThrowException(long animeInfoId, AnimeInfoEditingRequestModel requestModel, ErrorCodes errCode)
+        {
+            var errors = CreateErrorList(errCode, nameof(AnimeInfoEditingRequestModel.Id));
+            var animeInfo = requestModel.ToAnimeInfo();
+            animeInfo.Id = animeInfoId;
+            AnimeInfo currentAnimeInfo = new AnimeInfo();
+            var sp = SetupDI(services =>
+            {
+                var animeInfoWriteRepo = new Mock<IAnimeInfoWrite>();
+                var animeInfoReadRepo = new Mock<IAnimeInfoRead>();
+                animeInfoReadRepo.Setup(air => air.GetAnimeInfoById(It.IsAny<long>())).Callback<long>(id => { currentAnimeInfo = baseAnimeInfoData.SingleOrDefault(ai => ai.Id == id); }).ReturnsAsync(() => currentAnimeInfo);
+                services.AddTransient(factory => animeInfoReadRepo.Object);
+                services.AddTransient(factory => animeInfoWriteRepo.Object);
+                services.AddTransient<IAnimeInfoEditor, AnimeInfoEditorHandler>();
+            });
+
+            var animeInfoEditor = sp.GetService<IAnimeInfoEditor>();
+            Func<Task> editAnimeFunc = async () => await animeInfoEditor.EditAnimeInfo(animeInfoId, requestModel);
+
+            var valEx = await editAnimeFunc.Should().ThrowAsync<ValidationException>();
+            valEx.And.Errors.Should().BeEquivalentTo(errors, options => options.Excluding(e => e.Description));
+        }
+
+        [DataTestMethod,
+            DynamicData(nameof(GetInvalidTitleData), DynamicDataSourceType.Method)]
+        public async Task AnimeInfoEditing_InvalidTitle_ThrowException(long animeInfoId, AnimeInfoEditingRequestModel requestModel, ErrorCodes errCode)
+        {
+            var errors = CreateErrorList(errCode, nameof(AnimeInfoEditingRequestModel.Title));
+            var animeInfo = requestModel.ToAnimeInfo();
+            animeInfo.Id = animeInfoId;
+            AnimeInfo currentAnimeInfo = new AnimeInfo();
+            var sp = SetupDI(services =>
+            {
+                var animeInfoWriteRepo = new Mock<IAnimeInfoWrite>();
+                var animeInfoReadRepo = new Mock<IAnimeInfoRead>();
+                animeInfoReadRepo.Setup(air => air.GetAnimeInfoById(It.IsAny<long>())).Callback<long>(id => { currentAnimeInfo = baseAnimeInfoData.SingleOrDefault(ai => ai.Id == id); }).ReturnsAsync(() => currentAnimeInfo);
+                services.AddTransient(factory => animeInfoReadRepo.Object);
+                services.AddTransient(factory => animeInfoWriteRepo.Object);
+                services.AddTransient<IAnimeInfoEditor, AnimeInfoEditorHandler>();
+            });
+
+            var animeInfoEditor = sp.GetService<IAnimeInfoEditor>();
+            Func<Task> editAnimeFunc = async () => await animeInfoEditor.EditAnimeInfo(animeInfoId, requestModel);
+
+            var valEx = await editAnimeFunc.Should().ThrowAsync<ValidationException>();
+            valEx.And.Errors.Should().BeEquivalentTo(errors, options => options.Excluding(e => e.Description));
+        }
+
+        [DataTestMethod,
+            DynamicData(nameof(GetTooLongDescriptionData), DynamicDataSourceType.Method)]
+        public async Task AnimeInfoEditing_TooLongDescription_ThrowException(long animeInfoId, AnimeInfoEditingRequestModel requestModel, ErrorCodes errCode)
+        {
+            var errors = CreateErrorList(errCode, nameof(AnimeInfoEditingRequestModel.Description));
+            var animeInfo = requestModel.ToAnimeInfo();
+            animeInfo.Id = animeInfoId;
+            AnimeInfo currentAnimeInfo = new AnimeInfo();
+            var sp = SetupDI(services =>
+            {
+                var animeInfoWriteRepo = new Mock<IAnimeInfoWrite>();
+                var animeInfoReadRepo = new Mock<IAnimeInfoRead>();
+                animeInfoReadRepo.Setup(air => air.GetAnimeInfoById(It.IsAny<long>())).Callback<long>(id => { currentAnimeInfo = baseAnimeInfoData.SingleOrDefault(ai => ai.Id == id); }).ReturnsAsync(() => currentAnimeInfo);
+                services.AddTransient(factory => animeInfoReadRepo.Object);
+                services.AddTransient(factory => animeInfoWriteRepo.Object);
+                services.AddTransient<IAnimeInfoEditor, AnimeInfoEditorHandler>();
+            });
+
+            var animeInfoEditor = sp.GetService<IAnimeInfoEditor>();
+            Func<Task> editAnimeFunc = async () => await animeInfoEditor.EditAnimeInfo(animeInfoId, requestModel);
+
+            var valEx = await editAnimeFunc.Should().ThrowAsync<ValidationException>();
+            valEx.And.Errors.Should().BeEquivalentTo(errors, options => options.Excluding(e => e.Description));
+        }
 
         [TestCleanup]
         public void CleanTests()

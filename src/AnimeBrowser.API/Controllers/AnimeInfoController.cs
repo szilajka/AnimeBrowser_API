@@ -82,7 +82,7 @@ namespace AnimeBrowser.API.Controllers
                 logger.Warning(valEx, $"Validation error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{valEx.Message}].");
                 return BadRequest(valEx.Errors);
             }
-            catch (NotFoundObjectException<AnimeInfoCreationRequestModel> ex)
+            catch (NotFoundObjectException<AnimeInfoEditingRequestModel> ex)
             {
                 logger.Warning(ex, $"Not found object error in {MethodNameHelper.GetCurrentMethodName()}. Returns 404 - Not Found. Message: [{ex.Message}].");
                 return NotFound(id);
