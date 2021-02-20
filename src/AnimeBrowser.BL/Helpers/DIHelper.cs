@@ -14,6 +14,8 @@ namespace AnimeBrowser.BL.Helpers
         {
             services.AddTransient<IAnimeInfoItemReader, AnimeInfoItemReader>();
             services.AddTransient<IAnimeInfoCreation, AnimeInfoCreationHandler>();
+            services.AddTransient<IAnimeInfoEditor, AnimeInfoEditorHandler>();
+            services.AddTransient<IAnimeInfoDelete, AnimeInfoDeleteHandler>();
         }
     }
 }
