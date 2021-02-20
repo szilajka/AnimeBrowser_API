@@ -8,4 +8,4 @@
 - ValidAudiences
     - This is an array.
     - It contains the valid `audiences` that must be accepted if they are in the JWT token's `aud` claim.
-    - The Identity Server sends a JWT token with api resources. In [appsettings.development.json](../src/AnimeBrowser.API/appsettings.development.json#L77) there are two valid audiences, those are created in Identity Server, those are the names of api resources that are belongs to the Anime Browser.
+    - The Identity Server sends a JWT token with api resources. In [appsettings.Development.json](../src/AnimeBrowser.API/appsettings.Development.json#L77) there are two valid audiences, those are created in Identity Server, those are the names of api resources that are belongs to the Anime Browser.
