@@ -3,13 +3,12 @@ using AnimeBrowser.BL.Interfaces.Write;
 using AnimeBrowser.Common.Exceptions;
 using AnimeBrowser.Common.Helpers;
 using AnimeBrowser.Common.Models.RequestModels;
+using AnimeBrowser.Data.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace AnimeBrowser.API.Controllers
@@ -21,11 +20,13 @@ namespace AnimeBrowser.API.Controllers
         private readonly ILogger logger = Log.ForContext<GenresController>();
         private readonly IGenreCreation genreCreationHandler;
         private readonly IGenreEditing genreEditingHandler;
+        private readonly IGenreDelete genreDeleteHandler;
 
-        public GenresController(IGenreCreation genreCreation, IGenreEditing genreEditing)
+        public GenresController(IGenreCreation genreCreation, IGenreEditing genreEditing, IGenreDelete genreDelete)
         {
             this.genreCreationHandler = genreCreation;
             this.genreEditingHandler = genreEditing;
+            this.genreDeleteHandler = genreDelete;
         }
 
         [HttpPost]
@@ -84,6 +85,37 @@ namespace AnimeBrowser.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
+
+        [HttpDelete("{id}")]
+        [Authorize("GenreAdmin")]
+        public async Task<IActionResult> Delete([FromRoute] long id)
+        {
+            try
+            {
+                logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method started. genreId: [{id}].");
+
+                await genreDeleteHandler.DeleteGenre(id);
+
+                logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method finished.");
+                return Ok();
+            }
+            catch (ArgumentOutOfRangeException arEx)
+            {
+                logger.Warning(arEx, $"Error in [{MethodNameHelper.GetCurrentMethodName()}]. Message: [{arEx.Message}].");
+                return NotFound(id);
+            }
+            catch (NotFoundObjectException<Genre> nfoEx)
+            {
+                logger.Warning(nfoEx, $"Error in [{MethodNameHelper.GetCurrentMethodName()}]. Message: [{nfoEx.Message}].");
+                return NotFound(id);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"Error in [{MethodNameHelper.GetCurrentMethodName()}]. Message: [{ex.Message}].");
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
 
     }
 }

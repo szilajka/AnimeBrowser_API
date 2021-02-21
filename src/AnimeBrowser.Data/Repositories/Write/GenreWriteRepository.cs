@@ -37,5 +37,15 @@ namespace AnimeBrowser.Data.Repositories.Write
             logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. Genre.Id: [{genre.Id}].");
             return genre;
         }
+
+        public async Task DeleteGenre(Genre genre)
+        {
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method started. Genre: [{genre}].");
+
+            abContext.Genres.Remove(genre);
+            await abContext.SaveChangesAsync();
+
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished.");
+        }
     }
 }

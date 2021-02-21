@@ -18,6 +18,7 @@ namespace AnimeBrowser.BL.Helpers
             services.AddTransient<IAnimeInfoDelete, AnimeInfoDeleteHandler>();
             services.AddTransient<IGenreCreation, GenreCreationHandler>();
             services.AddTransient<IGenreEditing, GenreEditingHandler>();
+            services.AddTransient<IGenreDelete, GenreDeleteHandler>();
         }
     }
 }
