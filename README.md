@@ -33,7 +33,7 @@ Build your project in Visual Studio or via dotnet CLI:
 `dotnet build`
 
 If the build succeeded, you can run the tests and view generated coverage reports.
-I already wrote a PowerShell script to run tests and generate the reports that will be in the `test\coveragereport` folder.
+I already wrote a PowerShell script to run tests and generate the reports that will be in the `test\AnimeBrowser.UnitTests\coveragereport` folder.
 You only need to run the [`run_tests_and_generate_report.ps1`](./run_tests_and_generate_report.ps1) file in powershell.
 
 `.\run_tests_and_generate_report.ps1`
