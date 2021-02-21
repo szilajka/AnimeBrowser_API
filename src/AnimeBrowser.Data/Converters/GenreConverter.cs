@@ -19,6 +19,18 @@ namespace AnimeBrowser.Data.Converters
             return genre;
         }
 
+        public static Genre ToGenre(this GenreEditingRequestModel requestModel)
+        {
+            var genre = new Genre
+            {
+                Id = requestModel.Id,
+                GenreName = requestModel.GenreName,
+                Description = requestModel.Description
+            };
+
+            return genre;
+        }
+
         #endregion RequestModel
 
         #region ResponseModel
@@ -26,6 +38,12 @@ namespace AnimeBrowser.Data.Converters
         public static GenreCreationResponseModel ToCreationResponseModel(this Genre genre)
         {
             var responseModel = new GenreCreationResponseModel(id: genre.Id, genreName: genre.GenreName, description: genre.Description);
+            return responseModel;
+        }
+
+        public static GenreEditingResponseModel ToEditingResponseModel(this Genre genre)
+        {
+            var responseModel = new GenreEditingResponseModel(id: genre.Id, genreName: genre.GenreName, description: genre.Description);
             return responseModel;
         }
 

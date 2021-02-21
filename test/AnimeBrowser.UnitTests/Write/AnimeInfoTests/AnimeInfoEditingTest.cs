@@ -135,10 +135,10 @@ namespace AnimeBrowser.UnitTests.Write.AnimeInfoTests
                 .ReturnsAsync(() => currentAnimeInfo);
                 services.AddTransient(factory => animeInfoReadRepo.Object);
                 services.AddTransient(factory => animeInfoWriteRepo.Object);
-                services.AddTransient<IAnimeInfoEditor, AnimeInfoEditorHandler>();
+                services.AddTransient<IAnimeInfoEditing, AnimeInfoEditingHandler>();
             });
 
-            var animeInfoEditor = sp.GetService<IAnimeInfoEditor>();
+            var animeInfoEditor = sp.GetService<IAnimeInfoEditing>();
             var updatedAnimeInfo = await animeInfoEditor.EditAnimeInfo(animeInfoId, requestModel);
 
             updatedAnimeInfo.Should().NotBeNull();
@@ -155,10 +155,10 @@ namespace AnimeBrowser.UnitTests.Write.AnimeInfoTests
                 var animeInfoReadRepo = new Mock<IAnimeInfoRead>();
                 services.AddTransient(factory => animeInfoReadRepo.Object);
                 services.AddTransient(factory => animeInfoWriteRepo.Object);
-                services.AddTransient<IAnimeInfoEditor, AnimeInfoEditorHandler>();
+                services.AddTransient<IAnimeInfoEditing, AnimeInfoEditingHandler>();
             });
 
-            var animeInfoEditor = sp.GetService<IAnimeInfoEditor>();
+            var animeInfoEditor = sp.GetService<IAnimeInfoEditing>();
             Func<Task> editAnimeFunc = async () => await animeInfoEditor.EditAnimeInfo(animeInfoId, requestModel);
 
             await editAnimeFunc.Should().ThrowAsync<ArgumentException>();
@@ -178,10 +178,10 @@ namespace AnimeBrowser.UnitTests.Write.AnimeInfoTests
                 animeInfoReadRepo.Setup(air => air.GetAnimeInfoById(It.IsAny<long>())).Callback<long>(id => { currentAnimeInfo = baseAnimeInfoData.SingleOrDefault(ai => ai.Id == id); }).ReturnsAsync(() => currentAnimeInfo);
                 services.AddTransient(factory => animeInfoReadRepo.Object);
                 services.AddTransient(factory => animeInfoWriteRepo.Object);
-                services.AddTransient<IAnimeInfoEditor, AnimeInfoEditorHandler>();
+                services.AddTransient<IAnimeInfoEditing, AnimeInfoEditingHandler>();
             });
 
-            var animeInfoEditor = sp.GetService<IAnimeInfoEditor>();
+            var animeInfoEditor = sp.GetService<IAnimeInfoEditing>();
             Func<Task> editAnimeFunc = async () => await animeInfoEditor.EditAnimeInfo(animeInfoId, requestModel);
 
             await editAnimeFunc.Should().ThrowAsync<NotFoundObjectException<AnimeInfoEditingRequestModel>>();
@@ -202,10 +202,10 @@ namespace AnimeBrowser.UnitTests.Write.AnimeInfoTests
                 animeInfoReadRepo.Setup(air => air.GetAnimeInfoById(It.IsAny<long>())).Callback<long>(id => { currentAnimeInfo = baseAnimeInfoData.SingleOrDefault(ai => ai.Id == id); }).ReturnsAsync(() => currentAnimeInfo);
                 services.AddTransient(factory => animeInfoReadRepo.Object);
                 services.AddTransient(factory => animeInfoWriteRepo.Object);
-                services.AddTransient<IAnimeInfoEditor, AnimeInfoEditorHandler>();
+                services.AddTransient<IAnimeInfoEditing, AnimeInfoEditingHandler>();
             });
 
-            var animeInfoEditor = sp.GetService<IAnimeInfoEditor>();
+            var animeInfoEditor = sp.GetService<IAnimeInfoEditing>();
             Func<Task> editAnimeFunc = async () => await animeInfoEditor.EditAnimeInfo(animeInfoId, requestModel);
 
             var valEx = await editAnimeFunc.Should().ThrowAsync<ValidationException>();
@@ -227,10 +227,10 @@ namespace AnimeBrowser.UnitTests.Write.AnimeInfoTests
                 animeInfoReadRepo.Setup(air => air.GetAnimeInfoById(It.IsAny<long>())).Callback<long>(id => { currentAnimeInfo = baseAnimeInfoData.SingleOrDefault(ai => ai.Id == id); }).ReturnsAsync(() => currentAnimeInfo);
                 services.AddTransient(factory => animeInfoReadRepo.Object);
                 services.AddTransient(factory => animeInfoWriteRepo.Object);
-                services.AddTransient<IAnimeInfoEditor, AnimeInfoEditorHandler>();
+                services.AddTransient<IAnimeInfoEditing, AnimeInfoEditingHandler>();
             });
 
-            var animeInfoEditor = sp.GetService<IAnimeInfoEditor>();
+            var animeInfoEditor = sp.GetService<IAnimeInfoEditing>();
             Func<Task> editAnimeFunc = async () => await animeInfoEditor.EditAnimeInfo(animeInfoId, requestModel);
 
             var valEx = await editAnimeFunc.Should().ThrowAsync<ValidationException>();
@@ -252,10 +252,10 @@ namespace AnimeBrowser.UnitTests.Write.AnimeInfoTests
                 animeInfoReadRepo.Setup(air => air.GetAnimeInfoById(It.IsAny<long>())).Callback<long>(id => { currentAnimeInfo = baseAnimeInfoData.SingleOrDefault(ai => ai.Id == id); }).ReturnsAsync(() => currentAnimeInfo);
                 services.AddTransient(factory => animeInfoReadRepo.Object);
                 services.AddTransient(factory => animeInfoWriteRepo.Object);
-                services.AddTransient<IAnimeInfoEditor, AnimeInfoEditorHandler>();
+                services.AddTransient<IAnimeInfoEditing, AnimeInfoEditingHandler>();
             });
 
-            var animeInfoEditor = sp.GetService<IAnimeInfoEditor>();
+            var animeInfoEditor = sp.GetService<IAnimeInfoEditing>();
             Func<Task> editAnimeFunc = async () => await animeInfoEditor.EditAnimeInfo(animeInfoId, requestModel);
 
             var valEx = await editAnimeFunc.Should().ThrowAsync<ValidationException>();

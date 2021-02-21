@@ -6,6 +6,7 @@ using AnimeBrowser.Common.Helpers;
 using AnimeBrowser.Common.Models.RequestModels;
 using AnimeBrowser.Common.Models.ResponseModels;
 using AnimeBrowser.Data.Converters;
+using AnimeBrowser.Data.Entities;
 using AnimeBrowser.Data.Interfaces.Read;
 using AnimeBrowser.Data.Interfaces.Write;
 using Serilog;
@@ -14,13 +15,13 @@ using System.Threading.Tasks;
 
 namespace AnimeBrowser.BL.Services.Write
 {
-    public class AnimeInfoEditorHandler : IAnimeInfoEditor
+    public class AnimeInfoEditingHandler : IAnimeInfoEditing
     {
-        private readonly ILogger logger = Log.ForContext<AnimeInfoEditorHandler>();
+        private readonly ILogger logger = Log.ForContext<AnimeInfoEditingHandler>();
         private readonly IAnimeInfoRead animeInfoReadRepo;
         private readonly IAnimeInfoWrite animeInfoWriteRepo;
 
-        public AnimeInfoEditorHandler(IAnimeInfoRead animeInfoReadRepo, IAnimeInfoWrite animeInfoWriteRepo)
+        public AnimeInfoEditingHandler(IAnimeInfoRead animeInfoReadRepo, IAnimeInfoWrite animeInfoWriteRepo)
         {
             this.animeInfoReadRepo = animeInfoReadRepo;
             this.animeInfoWriteRepo = animeInfoWriteRepo;
@@ -44,13 +45,13 @@ namespace AnimeBrowser.BL.Services.Write
                 if (!validationResult.IsValid)
                 {
                     var errorList = validationResult.Errors.ConvertToErrorModel();
-                    throw new ValidationException(errorList, "Validation error in AnimeInfoCreationRequestModel.");
+                    throw new ValidationException(errorList, $"Validation error in [{nameof(AnimeInfoEditingRequestModel)}].");
                 }
 
                 var animeInfo = await animeInfoReadRepo.GetAnimeInfoById(id);
                 if (animeInfo == null)
                 {
-                    var notExistingAnimeInfoEx = new NotFoundObjectException<AnimeInfoEditingRequestModel>($"There is no AnimeInfo with given id: [{id}].");
+                    var notExistingAnimeInfoEx = new NotFoundObjectException<AnimeInfoEditingRequestModel>($"There is no [{nameof(AnimeInfo)}] with given id: [{id}].");
                     logger.Warning(notExistingAnimeInfoEx, notExistingAnimeInfoEx.Message);
                     throw notExistingAnimeInfoEx;
                 }

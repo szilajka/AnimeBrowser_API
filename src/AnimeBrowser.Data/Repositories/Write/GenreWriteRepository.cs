@@ -26,5 +26,16 @@ namespace AnimeBrowser.Data.Repositories.Write
             logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. Genre.Id: [{genre.Id}].");
             return genre;
         }
+
+        public async Task<Genre> UpdateGenre(Genre genre)
+        {
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method started. Genre: [{genre}].");
+
+            abContext.Update(genre);
+            await abContext.SaveChangesAsync();
+
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. Genre.Id: [{genre.Id}].");
+            return genre;
+        }
     }
 }

@@ -41,7 +41,7 @@ namespace AnimeBrowser.BL.Services.Write
                 if (!validationResult.IsValid)
                 {
                     var errorList = validationResult.Errors.ConvertToErrorModel();
-                    throw new ValidationException(errorList, "Validation error in AnimeInfoCreationRequestModel.");
+                    throw new ValidationException(errorList, $"Validation error in [{nameof(AnimeInfoCreationRequestModel)}].");
                 }
 
                 var animeInfo = await animeInfoWriteRepo.CreateAnimeInfo(animeInfoRequestModel.ToAnimeInfo());

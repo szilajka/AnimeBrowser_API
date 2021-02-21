@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 
 namespace AnimeBrowser.BL.Interfaces.Write
 {
-    public interface IAnimeInfoEditor
+    public interface IGenreEditing
     {
-        Task<AnimeInfoEditingResponseModel> EditAnimeInfo(long id, AnimeInfoEditingRequestModel requestModel);
+        Task<GenreEditingResponseModel> EditGenre(long id, GenreEditingRequestModel requestModel);
     }
 }

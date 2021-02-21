@@ -6,5 +6,6 @@ namespace AnimeBrowser.Data.Interfaces.Write
     public interface IGenreWrite
     {
         Task<Genre> CreateGenre(Genre genre);
+        Task<Genre> UpdateGenre(Genre genre);
     }
 }

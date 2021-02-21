@@ -20,10 +20,12 @@ namespace AnimeBrowser.API.Controllers
     {
         private readonly ILogger logger = Log.ForContext<GenresController>();
         private readonly IGenreCreation genreCreationHandler;
+        private readonly IGenreEditing genreEditingHandler;
 
-        public GenresController(IGenreCreation genreCreation)
+        public GenresController(IGenreCreation genreCreation, IGenreEditing genreEditing)
         {
             this.genreCreationHandler = genreCreation;
+            this.genreEditingHandler = genreEditing;
         }
 
         [HttpPost]
@@ -39,6 +41,32 @@ namespace AnimeBrowser.API.Controllers
                 logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. result.Id: [{createdGenre?.Id}].");
 
                 return Created($"{ControllerHelper.GENRES_CONTROLLER_NAME}/{createdGenre.Id}", createdGenre);
+            }
+            catch (ValidationException valEx)
+            {
+                logger.Warning(valEx, $"Validation error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{valEx.Message}].");
+                return BadRequest(valEx.Errors);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"Error in [{MethodNameHelper.GetCurrentMethodName()}]. Message: [{ex.Message}].");
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        [HttpPatch("{id}")]
+        [Authorize("GenreAdmin")]
+        public async Task<IActionResult> Edit([FromRoute] long id, [FromBody] GenreEditingRequestModel requestModel)
+        {
+            try
+            {
+                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method started. id: [{id}], requestModel: [{requestModel}].");
+
+                var updatedGenre = await genreEditingHandler.EditGenre(id, requestModel);
+
+                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. result.Id: [{updatedGenre?.Id}].");
+
+                return Ok(updatedGenre);
             }
             catch (ValidationException valEx)
             {

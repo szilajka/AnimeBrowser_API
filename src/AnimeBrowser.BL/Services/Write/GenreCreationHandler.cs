@@ -6,12 +6,10 @@ using AnimeBrowser.Common.Helpers;
 using AnimeBrowser.Common.Models.RequestModels;
 using AnimeBrowser.Common.Models.ResponseModels;
 using AnimeBrowser.Data.Converters;
+using AnimeBrowser.Data.Entities;
 using AnimeBrowser.Data.Interfaces.Write;
 using Serilog;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace AnimeBrowser.BL.Services.Write
@@ -33,7 +31,7 @@ namespace AnimeBrowser.BL.Services.Write
                 logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method started. requestModel: [{requestModel}].");
                 if (requestModel == null)
                 {
-                    throw new EmptyObjectException<GenreCreationRequestModel>("The given genre object is empty!");
+                    throw new EmptyObjectException<GenreCreationRequestModel>($"The given [{nameof(Genre)}] object is empty!");
                 }
 
                 requestModel.GenreName = requestModel.GenreName?.Trim();

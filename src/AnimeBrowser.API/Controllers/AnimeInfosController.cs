@@ -18,11 +18,11 @@ namespace AnimeBrowser.API.Controllers
     public class AnimeInfosController : ControllerBase
     {
         private readonly IAnimeInfoCreation animeInfoCreateHandler;
-        private readonly IAnimeInfoEditor animeInfoEditorHandler;
+        private readonly IAnimeInfoEditing animeInfoEditorHandler;
         private readonly IAnimeInfoDelete animeInfoDeleteHandler;
         private readonly ILogger logger = Log.ForContext<AnimeInfosController>();
 
-        public AnimeInfosController(IAnimeInfoCreation animeInfoCreateHandler, IAnimeInfoEditor animeInfoEditorHandler, IAnimeInfoDelete animeInfoDeleteHandler)
+        public AnimeInfosController(IAnimeInfoCreation animeInfoCreateHandler, IAnimeInfoEditing animeInfoEditorHandler, IAnimeInfoDelete animeInfoDeleteHandler)
         {
             this.animeInfoCreateHandler = animeInfoCreateHandler;
             this.animeInfoEditorHandler = animeInfoEditorHandler;
