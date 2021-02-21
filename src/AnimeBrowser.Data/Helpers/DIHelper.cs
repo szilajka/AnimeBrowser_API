@@ -14,6 +14,7 @@ namespace AnimeBrowser.Data.Helpers
         {
             services.AddTransient<IAnimeInfoRead, AnimeInfoReadRepository>();
             services.AddTransient<IAnimeInfoWrite, AnimeInfoWriteRepository>();
+            services.AddTransient<IGenreWrite, GenreWriteRepository>();
         }
     }
 }

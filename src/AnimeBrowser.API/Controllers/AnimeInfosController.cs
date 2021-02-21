@@ -1,4 +1,5 @@
-﻿using AnimeBrowser.BL.Interfaces.Write;
+﻿using AnimeBrowser.API.Helpers;
+using AnimeBrowser.BL.Interfaces.Write;
 using AnimeBrowser.Common.Exceptions;
 using AnimeBrowser.Common.Helpers;
 using AnimeBrowser.Common.Models.RequestModels;
@@ -12,16 +13,16 @@ using System.Threading.Tasks;
 
 namespace AnimeBrowser.API.Controllers
 {
-    [Route("api/v1/[controller]")]
+    [Route(ControllerHelper.CONTROLLER_ROUTE)]
     [ApiController]
-    public class AnimeInfoController : ControllerBase
+    public class AnimeInfosController : ControllerBase
     {
         private readonly IAnimeInfoCreation animeInfoCreateHandler;
         private readonly IAnimeInfoEditor animeInfoEditorHandler;
         private readonly IAnimeInfoDelete animeInfoDeleteHandler;
-        private readonly ILogger logger = Log.ForContext<AnimeInfoController>();
+        private readonly ILogger logger = Log.ForContext<AnimeInfosController>();
 
-        public AnimeInfoController(IAnimeInfoCreation animeInfoCreateHandler, IAnimeInfoEditor animeInfoEditorHandler, IAnimeInfoDelete animeInfoDeleteHandler)
+        public AnimeInfosController(IAnimeInfoCreation animeInfoCreateHandler, IAnimeInfoEditor animeInfoEditorHandler, IAnimeInfoDelete animeInfoDeleteHandler)
         {
             this.animeInfoCreateHandler = animeInfoCreateHandler;
             this.animeInfoEditorHandler = animeInfoEditorHandler;
@@ -52,7 +53,7 @@ namespace AnimeBrowser.API.Controllers
                 var createdAnimeInfo = await animeInfoCreateHandler.CreateAnimeInfo(animeInfo);
 
                 logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method finished with result: [{createdAnimeInfo }].");
-                return Created($"api/v1/animeInfo/{createdAnimeInfo.Id}", createdAnimeInfo);
+                return Created($"{ControllerHelper.ANIME_INFOS_CONTROLLER_NAME}/{createdAnimeInfo.Id}", createdAnimeInfo);
             }
             catch (ValidationException valEx)
             {
