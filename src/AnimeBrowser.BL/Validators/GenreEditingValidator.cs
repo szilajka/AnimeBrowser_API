@@ -9,6 +9,8 @@ namespace AnimeBrowser.BL.Validators
     {
         public GenreEditingValidator()
         {
+            RuleFor(x => x).NotNull()
+                .WithErrorCode(ErrorCodes.EmptyObject.GetIntValueAsString());
             RuleFor(x => x.Id).GreaterThan(0)
                 .WithErrorCode(ErrorCodes.EmptyProperty.GetIntValueAsString());
             RuleFor(x => x.GenreName).NotEmpty()
