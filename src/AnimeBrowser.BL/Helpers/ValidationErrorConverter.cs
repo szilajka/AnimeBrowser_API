@@ -12,13 +12,12 @@ namespace AnimeBrowser.BL.Helpers
             var errorList = new List<ErrorModel>();
             foreach (var failure in failures)
             {
-                ErrorModel errModel = new ErrorModel
-                {
-                    Code = failure.ErrorCode,
-                    Description = failure.ErrorMessage,
-                    Source = failure.PropertyName,
-                    Title = EnumHelper.GetDescriptionFromValue(failure.ErrorCode, typeof(ErrorCodes))
-                };
+                ErrorModel errModel = new ErrorModel(
+                    code: failure.ErrorCode,
+                    description: failure.ErrorMessage,
+                    source: failure.PropertyName,
+                    title: EnumHelper.GetDescriptionFromValue(failure.ErrorCode, typeof(ErrorCodes))
+                );
                 errorList.Add(errModel);
             }
             return errorList;

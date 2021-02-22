@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AnimeBrowser.Common.Models.ErrorModels;
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 
@@ -7,20 +8,26 @@ namespace AnimeBrowser.Common.Exceptions
     [ExcludeFromCodeCoverage]
     public class NotFoundObjectException<T> : Exception where T : class
     {
-        public NotFoundObjectException()
+        public ErrorModel Error { get; set; }
+
+        public NotFoundObjectException(ErrorModel error)
         {
+            this.Error = error;
         }
 
-        public NotFoundObjectException(string message) : base(message)
+        public NotFoundObjectException(ErrorModel error, string message) : base(message)
         {
+            this.Error = error;
         }
 
-        public NotFoundObjectException(string message, Exception innerException) : base(message, innerException)
+        public NotFoundObjectException(ErrorModel error, string message, Exception innerException) : base(message, innerException)
         {
+            this.Error = error;
         }
 
-        protected NotFoundObjectException(SerializationInfo info, StreamingContext context) : base(info, context)
+        protected NotFoundObjectException(ErrorModel error, SerializationInfo info, StreamingContext context) : base(info, context)
         {
+            this.Error = error;
         }
     }
 }

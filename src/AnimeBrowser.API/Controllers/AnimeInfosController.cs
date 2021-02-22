@@ -55,6 +55,11 @@ namespace AnimeBrowser.API.Controllers
                 logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method finished with result: [{createdAnimeInfo }].");
                 return Created($"{ControllerHelper.ANIME_INFOS_CONTROLLER_NAME}/{createdAnimeInfo.Id}", createdAnimeInfo);
             }
+            catch (EmptyObjectException<AnimeInfoCreationRequestModel> emptyEx)
+            {
+                logger.Warning(emptyEx, $"Empty request model [{nameof(animeInfo)}] in {MethodNameHelper.GetCurrentMethodName()}. Message: [{emptyEx.Message}].");
+                return BadRequest(emptyEx.Error);
+            }
             catch (ValidationException valEx)
             {
                 logger.Warning(valEx, $"Validation error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{valEx.Message}].");
@@ -86,6 +91,11 @@ namespace AnimeBrowser.API.Controllers
                 logger.Warning(valEx, $"Validation error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{valEx.Message}].");
                 return BadRequest(valEx.Errors);
             }
+            catch (MismatchingIdException misEx)
+            {
+                logger.Warning(misEx, $"Mismatching Id error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{misEx.Message}].");
+                return BadRequest(misEx.Error);
+            }
             catch (NotFoundObjectException<AnimeInfoEditingRequestModel> ex)
             {
                 logger.Warning(ex, $"Not found object error in {MethodNameHelper.GetCurrentMethodName()}. Returns 404 - Not Found. Message: [{ex.Message}].");
@@ -111,15 +121,15 @@ namespace AnimeBrowser.API.Controllers
                 logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method finished.");
                 return Ok();
             }
-            catch (ArgumentOutOfRangeException arEx)
+            catch (NotExistingIdException notExistingEx)
             {
-                logger.Warning(arEx, $"Error in [{MethodNameHelper.GetCurrentMethodName()}]. Message: [{arEx.Message}].");
-                return NotFound(id);
+                logger.Warning(notExistingEx, $"Error in [{MethodNameHelper.GetCurrentMethodName()}]. Message: [{notExistingEx.Message}].");
+                return NotFound(notExistingEx.Error);
             }
             catch (NotFoundObjectException<AnimeInfo> nfoEx)
             {
                 logger.Warning(nfoEx, $"Error in [{MethodNameHelper.GetCurrentMethodName()}]. Message: [{nfoEx.Message}].");
-                return NotFound(id);
+                return NotFound(nfoEx.Error);
             }
             catch (Exception ex)
             {

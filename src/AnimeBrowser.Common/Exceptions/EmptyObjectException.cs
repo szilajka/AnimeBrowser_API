@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AnimeBrowser.Common.Models.ErrorModels;
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 
@@ -7,20 +8,26 @@ namespace AnimeBrowser.Common.Exceptions
     [ExcludeFromCodeCoverage]
     public class EmptyObjectException<T> : Exception where T : class
     {
-        public EmptyObjectException()
+        public ErrorModel Error { get; set; }
+
+        public EmptyObjectException(ErrorModel error)
         {
+            this.Error = error;
         }
 
-        public EmptyObjectException(string message) : base(message)
+        public EmptyObjectException(ErrorModel error, string message) : base(message)
         {
+            this.Error = error;
         }
 
-        public EmptyObjectException(string message, Exception innerException) : base(message, innerException)
+        public EmptyObjectException(ErrorModel error, string message, Exception innerException) : base(message, innerException)
         {
+            this.Error = error;
         }
 
-        protected EmptyObjectException(SerializationInfo info, StreamingContext context) : base(info, context)
+        protected EmptyObjectException(ErrorModel error, SerializationInfo info, StreamingContext context) : base(info, context)
         {
+            this.Error = error;
         }
     }
 }

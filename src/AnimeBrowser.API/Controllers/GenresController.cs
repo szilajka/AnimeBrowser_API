@@ -43,6 +43,11 @@ namespace AnimeBrowser.API.Controllers
 
                 return Created($"{ControllerHelper.GENRES_CONTROLLER_NAME}/{createdGenre.Id}", createdGenre);
             }
+            catch (EmptyObjectException<GenreCreationRequestModel> emptyEx)
+            {
+                logger.Warning(emptyEx, $"Empty request model in {MethodNameHelper.GetCurrentMethodName()}. Message: [{emptyEx.Message}].");
+                return BadRequest(emptyEx.Error);
+            }
             catch (ValidationException valEx)
             {
                 logger.Warning(valEx, $"Validation error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{valEx.Message}].");
@@ -68,6 +73,11 @@ namespace AnimeBrowser.API.Controllers
                 logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. result.Id: [{updatedGenre?.Id}].");
 
                 return Ok(updatedGenre);
+            }
+            catch (MismatchingIdException misEx)
+            {
+                logger.Warning(misEx, $"Mismatching Id error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{misEx.Message}].");
+                return BadRequest(misEx.Error);
             }
             catch (ValidationException valEx)
             {
@@ -99,10 +109,10 @@ namespace AnimeBrowser.API.Controllers
                 logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method finished.");
                 return Ok();
             }
-            catch (ArgumentOutOfRangeException arEx)
+            catch (NotExistingIdException notExistingEx)
             {
-                logger.Warning(arEx, $"Error in [{MethodNameHelper.GetCurrentMethodName()}]. Message: [{arEx.Message}].");
-                return NotFound(id);
+                logger.Warning(notExistingEx, $"Error in [{MethodNameHelper.GetCurrentMethodName()}]. Message: [{notExistingEx.Message}].");
+                return NotFound(notExistingEx.Error);
             }
             catch (NotFoundObjectException<Genre> nfoEx)
             {

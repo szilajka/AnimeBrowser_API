@@ -1,6 +1,7 @@
 ﻿using AnimeBrowser.BL.Interfaces.Write;
 using AnimeBrowser.Common.Exceptions;
 using AnimeBrowser.Common.Helpers;
+using AnimeBrowser.Common.Models.ErrorModels;
 using AnimeBrowser.Data.Entities;
 using AnimeBrowser.Data.Interfaces.Read;
 using AnimeBrowser.Data.Interfaces.Write;
@@ -30,13 +31,19 @@ namespace AnimeBrowser.BL.Services.Write
 
                 if (genreId <= 0)
                 {
-                    throw new ArgumentOutOfRangeException(nameof(genreId), $"The given {nameof(Genre)}'s id is less than/equal to 0!");
+                    var error = new ErrorModel(code: ErrorCodes.OutOfRangeProperty.GetIntValueAsString(), description: $"The given id [{genreId}] is not a valid id. A valid id must be greater than 0!",
+                        source: nameof(genreId), title: ErrorCodes.OutOfRangeProperty.GetDescription());
+                    throw new NotExistingIdException(error, $"The given {nameof(Genre)}'s id is less than/equal to 0!");
                 }
 
                 var genre = await genreReadRepo.GetGenreById(genreId);
                 if (genre == null)
                 {
-                    throw new NotFoundObjectException<Genre>($"Not found a {nameof(Genre)} entity with id: [{genreId}].");
+                    var error = new ErrorModel(code: ErrorCodes.EmptyObject.GetIntValueAsString(),
+                        description: $"No {nameof(Genre)} object was found with the given id [{genreId}]!",
+                        source: nameof(genreId), title: ErrorCodes.EmptyObject.GetDescription()
+                    );
+                    throw new NotFoundObjectException<Genre>(error, $"Not found a {nameof(Genre)} entity with id: [{genreId}].");
                 }
 
                 await genreWriteRepo.DeleteGenre(genre);

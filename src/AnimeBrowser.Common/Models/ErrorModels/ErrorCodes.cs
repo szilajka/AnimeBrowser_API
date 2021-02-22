@@ -9,6 +9,10 @@ namespace AnimeBrowser.Common.Models.ErrorModels
         [Description("Empty Property")]
         EmptyProperty = 2,
         [Description("Too Long Property Value")]
-        TooLongProperty = 11
+        TooLongProperty = 11,
+        [Description("Property Is Out Of Valid Range")]
+        OutOfRangeProperty = 21,
+        [Description("Mismatching Property Values")]
+        MismatchingProperty = 31
     }
 }

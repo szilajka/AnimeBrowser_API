@@ -44,12 +44,12 @@ namespace AnimeBrowser.UnitTests.Helpers
         {
             var errorCode = errCode.GetIntValueAsString();
             IList<ErrorModel> errors = new List<ErrorModel>();
-            ErrorModel errorModel = new ErrorModel
-            {
-                Code = errorCode,
-                Title = EnumHelper.GetDescriptionFromValue(errorCode, typeof(ErrorCodes)),
-                Source = source
-            };
+            ErrorModel errorModel = new ErrorModel(
+                code: errorCode,
+                description: string.Empty,
+                title: EnumHelper.GetDescriptionFromValue(errorCode, typeof(ErrorCodes)),
+                source: source
+            );
             errors.Add(errorModel);
 
             return errors;

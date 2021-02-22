@@ -1,5 +1,7 @@
-﻿using AnimeBrowser.BL.Interfaces.Read;
+﻿using AnimeBrowser.BL.Interfaces.DateTimeProviders;
+using AnimeBrowser.BL.Interfaces.Read;
 using AnimeBrowser.BL.Interfaces.Write;
+using AnimeBrowser.BL.Services.DateTimeProviders;
 using AnimeBrowser.BL.Services.Read;
 using AnimeBrowser.BL.Services.Write;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,6 +14,7 @@ namespace AnimeBrowser.BL.Helpers
     {
         public static void AddBlHandlers(this IServiceCollection services)
         {
+            services.AddSingleton<IDateTime, DateTimeProvider>();
             services.AddTransient<IAnimeInfoItemReader, AnimeInfoItemReader>();
             services.AddTransient<IAnimeInfoCreation, AnimeInfoCreationHandler>();
             services.AddTransient<IAnimeInfoEditing, AnimeInfoEditingHandler>();
@@ -19,6 +22,7 @@ namespace AnimeBrowser.BL.Helpers
             services.AddTransient<IGenreCreation, GenreCreationHandler>();
             services.AddTransient<IGenreEditing, GenreEditingHandler>();
             services.AddTransient<IGenreDelete, GenreDeleteHandler>();
+            services.AddTransient<ISeasonCreation, SeasonCreationHandler>();
         }
     }
 }

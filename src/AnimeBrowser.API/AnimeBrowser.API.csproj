@@ -30,4 +30,8 @@
     <ProjectReference Include="..\AnimeBrowser.Data\AnimeBrowser.Data.csproj" />
   </ItemGroup>
 
+  <PropertyGroup>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
 </Project>

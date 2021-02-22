@@ -1,6 +1,7 @@
 ﻿using AnimeBrowser.BL.Interfaces.Write;
 using AnimeBrowser.Common.Exceptions;
 using AnimeBrowser.Common.Helpers;
+using AnimeBrowser.Common.Models.ErrorModels;
 using AnimeBrowser.Data.Entities;
 using AnimeBrowser.Data.Interfaces.Read;
 using AnimeBrowser.Data.Interfaces.Write;
@@ -30,13 +31,19 @@ namespace AnimeBrowser.BL.Services.Write
 
                 if (id <= 0)
                 {
-                    throw new ArgumentOutOfRangeException(nameof(id), "The given anime info's id is less than/equal to 0!");
+                    var error = new ErrorModel(code: ErrorCodes.OutOfRangeProperty.GetIntValueAsString(), description: $"The given id [{id}] is not a valid id. A valid id must be greater than 0!",
+                        source: nameof(id), title: ErrorCodes.OutOfRangeProperty.GetDescription());
+                    throw new NotExistingIdException(error, "The given anime info's id is less than/equal to 0!");
                 }
 
                 var animeInfo = await animeInfoReadRepo.GetAnimeInfoById(id);
                 if (animeInfo == null)
                 {
-                    throw new NotFoundObjectException<AnimeInfo>($"Not found an anime entity with id: [{id}].");
+                    var error = new ErrorModel(code: ErrorCodes.EmptyObject.GetIntValueAsString(),
+                         description: $"No {nameof(AnimeInfo)} object was found with the given id [{animeInfo?.Id}]!",
+                         source: nameof(id), title: ErrorCodes.EmptyObject.GetDescription()
+                     );
+                    throw new NotFoundObjectException<AnimeInfo>(error, $"Not found an anime entity with id: [{id}].");
                 }
 
                 await animeInfoWriteRepo.DeleteAnimeInfo(animeInfo);

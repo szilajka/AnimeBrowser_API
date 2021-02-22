@@ -3,6 +3,7 @@ using AnimeBrowser.BL.Interfaces.Write;
 using AnimeBrowser.BL.Validators;
 using AnimeBrowser.Common.Exceptions;
 using AnimeBrowser.Common.Helpers;
+using AnimeBrowser.Common.Models.ErrorModels;
 using AnimeBrowser.Common.Models.RequestModels;
 using AnimeBrowser.Common.Models.ResponseModels;
 using AnimeBrowser.Data.Converters;
@@ -31,11 +32,13 @@ namespace AnimeBrowser.BL.Services.Write
                 logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method started. requestModel: [{requestModel}].");
                 if (requestModel == null)
                 {
-                    throw new EmptyObjectException<GenreCreationRequestModel>($"The given [{nameof(Genre)}] object is empty!");
+                    var error = new ErrorModel(code: ErrorCodes.EmptyObject.GetIntValueAsString(), description: $"The {nameof(GenreCreationRequestModel)} (variabble: {nameof(requestModel)}) object is empty!",
+                        source: nameof(requestModel), title: ErrorCodes.EmptyObject.GetDescription());
+                    throw new EmptyObjectException<GenreCreationRequestModel>(error, $"The given [{nameof(Genre)}] object is empty!");
                 }
 
-                requestModel.GenreName = requestModel.GenreName?.Trim();
-                requestModel.Description = requestModel.Description?.Trim();
+                requestModel.GenreName = requestModel.GenreName.Trim();
+                requestModel.Description = requestModel.Description.Trim();
 
                 var genreValidator = new GenreCreationValidator();
                 var validationResult = await genreValidator.ValidateAsync(requestModel);

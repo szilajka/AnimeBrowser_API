@@ -16,6 +16,7 @@ namespace AnimeBrowser.Data.Helpers
             services.AddTransient<IAnimeInfoWrite, AnimeInfoWriteRepository>();
             services.AddTransient<IGenreRead, GenreReadRepository>();
             services.AddTransient<IGenreWrite, GenreWriteRepository>();
+            services.AddTransient<ISeasonWrite, SeasonWriteRepository>();
         }
     }
 }

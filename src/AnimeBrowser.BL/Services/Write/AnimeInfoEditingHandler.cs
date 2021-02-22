@@ -3,6 +3,7 @@ using AnimeBrowser.BL.Interfaces.Write;
 using AnimeBrowser.BL.Validators;
 using AnimeBrowser.Common.Exceptions;
 using AnimeBrowser.Common.Helpers;
+using AnimeBrowser.Common.Models.ErrorModels;
 using AnimeBrowser.Common.Models.RequestModels;
 using AnimeBrowser.Common.Models.ResponseModels;
 using AnimeBrowser.Data.Converters;
@@ -35,7 +36,10 @@ namespace AnimeBrowser.BL.Services.Write
 
                 if (id != requestModel?.Id)
                 {
-                    var argEx = new ArgumentException("The given id and the model's id are not matching!", nameof(id));
+                    var error = new ErrorModel(code: ErrorCodes.MismatchingProperty.GetIntValueAsString(),
+                        description: $"The parameter [{nameof(id)}] and [{nameof(requestModel)}.{nameof(AnimeInfoEditingRequestModel.Id)}] properties should have the same value, but they are different!",
+                        source: nameof(id), title: ErrorCodes.MismatchingProperty.GetDescription());
+                    var argEx = new MismatchingIdException(error, "The given id and the model's id are not matching!");
                     logger.Warning(argEx, $"Id mismatch in property and parameter.");
                     throw argEx;
                 }
@@ -51,7 +55,11 @@ namespace AnimeBrowser.BL.Services.Write
                 var animeInfo = await animeInfoReadRepo.GetAnimeInfoById(id);
                 if (animeInfo == null)
                 {
-                    var notExistingAnimeInfoEx = new NotFoundObjectException<AnimeInfoEditingRequestModel>($"There is no [{nameof(AnimeInfo)}] with given id: [{id}].");
+                    var error = new ErrorModel(code: ErrorCodes.EmptyObject.GetIntValueAsString(),
+                       description: $"No {nameof(AnimeInfo)} object was found with the given id [{animeInfo?.Id}]!",
+                       source: nameof(AnimeInfoEditingRequestModel.Id), title: ErrorCodes.EmptyObject.GetDescription()
+                   );
+                    var notExistingAnimeInfoEx = new NotFoundObjectException<AnimeInfoEditingRequestModel>(error, $"There is no [{nameof(AnimeInfo)}] with given id: [{id}].");
                     logger.Warning(notExistingAnimeInfoEx, notExistingAnimeInfoEx.Message);
                     throw notExistingAnimeInfoEx;
                 }

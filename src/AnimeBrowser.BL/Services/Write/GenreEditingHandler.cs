@@ -3,6 +3,7 @@ using AnimeBrowser.BL.Interfaces.Write;
 using AnimeBrowser.BL.Validators;
 using AnimeBrowser.Common.Exceptions;
 using AnimeBrowser.Common.Helpers;
+using AnimeBrowser.Common.Models.ErrorModels;
 using AnimeBrowser.Common.Models.RequestModels;
 using AnimeBrowser.Common.Models.ResponseModels;
 using AnimeBrowser.Data.Converters;
@@ -35,7 +36,10 @@ namespace AnimeBrowser.BL.Services.Write
 
                 if (id != requestModel?.Id)
                 {
-                    var argEx = new ArgumentException("The given id and the model's id are not matching!", nameof(id));
+                    var error = new ErrorModel(code: ErrorCodes.MismatchingProperty.GetIntValueAsString(),
+                       description: $"The parameter [{nameof(id)}] and [{nameof(requestModel)}.{nameof(GenreEditingRequestModel.Id)}] properties should have the same value, but they are different!",
+                       source: nameof(id), title: ErrorCodes.MismatchingProperty.GetDescription());
+                    var argEx = new MismatchingIdException(error, "The given id and the model's id are not matching!");
                     logger.Warning(argEx, $"Id mismatch in property and parameter.");
                     throw argEx;
                 }
@@ -51,7 +55,11 @@ namespace AnimeBrowser.BL.Services.Write
                 var genre = await genreReadRepo.GetGenreById(id);
                 if (genre == null)
                 {
-                    var notExistingGenreEx = new NotFoundObjectException<GenreEditingRequestModel>($"There is no {nameof(Genre)} with given id: [{id}].");
+                    var error = new ErrorModel(code: ErrorCodes.EmptyObject.GetIntValueAsString(),
+                        description: $"No {nameof(Genre)} object was found with the given id [{id}]!",
+                        source: nameof(GenreEditingRequestModel.Id), title: ErrorCodes.EmptyObject.GetDescription()
+                    );
+                    var notExistingGenreEx = new NotFoundObjectException<GenreEditingRequestModel>(error, $"There is no {nameof(Genre)} with given id: [{id}].");
                     logger.Warning(notExistingGenreEx, notExistingGenreEx.Message);
                     throw notExistingGenreEx;
                 }
