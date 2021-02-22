@@ -74,7 +74,7 @@ namespace AnimeBrowser.UnitTests.Write.GenreTests
             var genreDeleteHandler = sp.GetService<IGenreDelete>();
             Func<Task> deleteGenreFunc = async () => await genreDeleteHandler.DeleteGenre(genreId);
 
-            await deleteGenreFunc.Should().ThrowAsync<ArgumentOutOfRangeException>();
+            await deleteGenreFunc.Should().ThrowAsync<NotExistingIdException>();
         }
 
         [DataTestMethod,

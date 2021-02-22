@@ -212,7 +212,7 @@ namespace AnimeBrowser.UnitTests.Write.GenreTests
 
             var genreEditingHandler = sp.GetService<IGenreEditing>();
             Func<Task> editGenreFunc = async () => await genreEditingHandler.EditGenre(id, requestModel);
-            await editGenreFunc.Should().ThrowAsync<ArgumentException>();
+            await editGenreFunc.Should().ThrowAsync<MismatchingIdException>();
         }
 
         [DataTestMethod,
@@ -260,7 +260,6 @@ namespace AnimeBrowser.UnitTests.Write.GenreTests
         [TestMethod]
         public async Task GenreEditing_NullObject_ThrowException()
         {
-            var errors = CreateErrorList(ErrorCodes.EmptyObject, nameof(GenreEditingRequestModel));
             var sp = SetupDI(services =>
             {
                 var genreReadRepo = new Mock<IGenreRead>();
@@ -272,7 +271,7 @@ namespace AnimeBrowser.UnitTests.Write.GenreTests
 
             var genreEditingHandler = sp.GetService<IGenreEditing>();
             Func<Task> editGenreFunc = async () => await genreEditingHandler.EditGenre(1, null);
-            await editGenreFunc.Should().ThrowAsync<ArgumentException>();
+            await editGenreFunc.Should().ThrowAsync<MismatchingIdException>();
         }
 
 
