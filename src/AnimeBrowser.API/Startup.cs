@@ -27,7 +27,11 @@ namespace AnimeBrowser_API
         {
             services.AddDbContext<AnimeBrowserContext>(options => options.UseNpgsql(Configuration.GetConnectionString("AnimeBrowser")).EnableSensitiveDataLogging());
 
-            services.AddControllers();
+            services.AddControllers()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+                });
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "AnimeBrowser_API", Version = "v1" });
