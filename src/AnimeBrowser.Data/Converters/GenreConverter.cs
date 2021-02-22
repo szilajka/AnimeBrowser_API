@@ -12,8 +12,8 @@ namespace AnimeBrowser.Data.Converters
         {
             var genre = new Genre
             {
-                GenreName = requestModel.GenreName,
-                Description = requestModel.Description
+                GenreName = requestModel.GenreName?.Trim(),
+                Description = requestModel.Description?.Trim()
             };
 
             return genre;
@@ -24,8 +24,8 @@ namespace AnimeBrowser.Data.Converters
             var genre = new Genre
             {
                 Id = requestModel.Id,
-                GenreName = requestModel.GenreName,
-                Description = requestModel.Description
+                GenreName = requestModel.GenreName?.Trim(),
+                Description = requestModel.Description?.Trim()
             };
 
             return genre;

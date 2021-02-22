@@ -16,7 +16,6 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -29,14 +28,6 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
     [TestClass]
     public class SeasonCreationTests : TestBase
     {
-        [ClassInitialize]
-        public static void InitLogging(TestContext context)
-        {
-            Log.Logger = new LoggerConfiguration()
-                    .ReadFrom.Configuration(Configuration)
-                    .CreateLogger();
-        }
-
         public IList<AnimeInfo> allAnimeInfos;
 
         [TestInitialize]
@@ -491,7 +482,33 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
             }
         }
 
-
+        private static IEnumerable<object[]> GetNotExistingAnimeInfoIdData()
+        {
+            var seasonNumbers = new int[] { 1, 2, 100, 9999999, 1010 };
+            var titles = new string[] { "T", new string('T', 100), new string('T', 254), new string('T', 255), "Title of something" };
+            var descriptions = new string[] { null, "", "A", new string('D', 29999), new string('D', 30000) };
+            var startDates = new DateTime?[] { null, new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc), new DateTime(2020, 12, 22, 0, 0, 0, DateTimeKind.Utc), DateTime.Now.AddYears(10), DateTime.Now.AddDays(876) };
+            var endDates = new DateTime?[] { null, new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc), new DateTime(2020, 12, 23, 0, 0, 0, DateTimeKind.Utc), DateTime.Now.AddYears(10), DateTime.Now.AddDays(877) };
+            var airStatuses = new AirStatusEnum[] { AirStatusEnum.UNKNOWN, AirStatusEnum.NotAired, AirStatusEnum.Airing, AirStatusEnum.Aired, AirStatusEnum.NotAired };
+            var numOfEpisodes = new int?[] { null, 1, 123, 400, 675 };
+            var coverCarousels = new byte[]?[] { null, Encoding.UTF8.GetBytes("C"), Encoding.UTF8.GetBytes("ASD"), Encoding.UTF8.GetBytes("421ASD"), Encoding.UTF8.GetBytes("asdFDSF3412") };
+            var covers = new byte[]?[] { null, Encoding.UTF8.GetBytes("C"), Encoding.UTF8.GetBytes("ASD"), Encoding.UTF8.GetBytes("421ASD"), Encoding.UTF8.GetBytes("asdFDSF3412") };
+            var animeInfoIds = new long[] { 3, 5, 37, 90, 122 };
+            for (var i = 0; i < seasonNumbers.Length; i++)
+            {
+                yield return new object[] { new SeasonCreationRequestModel(
+                    seasonNumber: seasonNumbers[i],
+                    title: titles[i],
+                    description: descriptions[i],
+                    startDate: startDates[i],
+                    endDate: endDates[i],
+                    airStatus: airStatuses[i],
+                    numberOfEpisodes: numOfEpisodes[i],
+                    coverCarousel: coverCarousels[i],
+                    cover: covers[i],
+                    animeInfoId: animeInfoIds[i]) };
+            }
+        }
 
 
         [DataTestMethod,
@@ -805,6 +822,68 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
 
         #endregion If I don't separate these tests into multiple tests, then VS kills itself when viewing test results.....
 
+
+        [DataTestMethod,
+            DynamicData(nameof(GetNotExistingAnimeInfoIdData), DynamicDataSourceType.Method)]
+        public async Task CreateSeason_NotExistingAnimeInfoId_ThrowException(SeasonCreationRequestModel requestModel)
+        {
+            AnimeInfo foundAnimeInfo = null;
+            var sp = SetupDI(services =>
+            {
+                var seasonWriteRepo = new Mock<ISeasonWrite>();
+                var animeInfoReadRepo = new Mock<IAnimeInfoRead>();
+                animeInfoReadRepo.Setup(air => air.GetAnimeInfoById(It.IsAny<long>())).Callback<long>(aiId => foundAnimeInfo = allAnimeInfos.SingleOrDefault(ai => ai.Id == aiId)).ReturnsAsync(() => foundAnimeInfo);
+                services.AddTransient<IDateTime, DateTimeProvider>();
+                services.AddTransient(factory => animeInfoReadRepo.Object);
+                services.AddTransient(factory => seasonWriteRepo.Object);
+                services.AddTransient<ISeasonCreation, SeasonCreationHandler>();
+            });
+
+            var seasonCreationHandler = sp.GetService<ISeasonCreation>();
+            Func<Task> createSeasonFunc = async () => await seasonCreationHandler.CreateSeason(requestModel);
+
+            await createSeasonFunc.Should().ThrowAsync<NotFoundObjectException<AnimeInfo>>();
+        }
+
+        [TestMethod]
+        public async Task CreateSeason_NullObject_ThrowException()
+        {
+            var sp = SetupDI(services =>
+            {
+                var seasonWriteRepo = new Mock<ISeasonWrite>();
+                var animeInfoReadRepo = new Mock<IAnimeInfoRead>();
+                services.AddTransient<IDateTime, DateTimeProvider>();
+                services.AddTransient(factory => animeInfoReadRepo.Object);
+                services.AddTransient(factory => seasonWriteRepo.Object);
+                services.AddTransient<ISeasonCreation, SeasonCreationHandler>();
+            });
+
+            var seasonCreationHandler = sp.GetService<ISeasonCreation>();
+            Func<Task> createSeasonFunc = async () => await seasonCreationHandler.CreateSeason(null);
+
+            await createSeasonFunc.Should().ThrowAsync<EmptyObjectException<SeasonCreationRequestModel>>();
+        }
+
+        [DataTestMethod,
+            DynamicData(nameof(GetBasicDatesData), DynamicDataSourceType.Method)]
+        public async Task CreateSeason_ThrowException(SeasonCreationRequestModel requestModel)
+        {
+            var sp = SetupDI(services =>
+            {
+                var seasonWriteRepo = new Mock<ISeasonWrite>();
+                var animeInfoReadRepo = new Mock<IAnimeInfoRead>();
+                animeInfoReadRepo.Setup(air => air.GetAnimeInfoById(It.IsAny<long>())).ThrowsAsync(new InvalidOperationException());
+                services.AddTransient<IDateTime, DateTimeProvider>();
+                services.AddTransient(factory => animeInfoReadRepo.Object);
+                services.AddTransient(factory => seasonWriteRepo.Object);
+                services.AddTransient<ISeasonCreation, SeasonCreationHandler>();
+            });
+
+            var seasonCreationHandler = sp.GetService<ISeasonCreation>();
+            Func<Task> createSeasonFunc = async () => await seasonCreationHandler.CreateSeason(requestModel);
+
+            await createSeasonFunc.Should().ThrowAsync<InvalidOperationException>();
+        }
 
         [TestCleanup]
         public void CleanDb()

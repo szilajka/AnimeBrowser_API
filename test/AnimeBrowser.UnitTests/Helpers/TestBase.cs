@@ -2,6 +2,7 @@
 using AnimeBrowser.Common.Models.ErrorModels;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -20,6 +21,9 @@ namespace AnimeBrowser.UnitTests.Helpers
         public static IServiceProvider SetupDI(Action<IServiceCollection> configure)
         {
             IServiceCollection services = new ServiceCollection();
+            Log.Logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(Configuration)
+                .CreateLogger();
 
             if (configure != null)
             {
@@ -32,6 +36,9 @@ namespace AnimeBrowser.UnitTests.Helpers
         public static async Task<IServiceProvider> SetupDI(Func<IServiceCollection, Task> configure)
         {
             IServiceCollection services = new ServiceCollection();
+            Log.Logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(Configuration)
+                .CreateLogger();
 
             if (configure != null)
             {

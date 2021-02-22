@@ -37,15 +37,6 @@ namespace AnimeBrowser.BL.Services.Write
                     throw new EmptyObjectException<GenreCreationRequestModel>(error, $"The given [{nameof(Genre)}] object is empty!");
                 }
 
-                if (!string.IsNullOrWhiteSpace(requestModel.GenreName))
-                {
-                    requestModel.GenreName = requestModel.GenreName.Trim();
-                }
-                if (!string.IsNullOrWhiteSpace(requestModel.Description))
-                {
-                    requestModel.Description = requestModel.Description.Trim();
-                }
-
                 var genreValidator = new GenreCreationValidator();
                 var validationResult = await genreValidator.ValidateAsync(requestModel);
                 if (!validationResult.IsValid)

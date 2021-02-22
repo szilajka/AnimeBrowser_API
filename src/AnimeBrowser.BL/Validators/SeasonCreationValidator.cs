@@ -16,12 +16,12 @@ namespace AnimeBrowser.BL.Validators
                 .GreaterThan(0)
                 .WithErrorCode(ErrorCodes.EmptyProperty.GetIntValueAsString());
 
-            RuleFor(x => x.Title).NotEmpty()
+            Transform(x => x.Title, x => string.IsNullOrEmpty(x) ? x : x.Trim()).NotEmpty()
                 .WithErrorCode(ErrorCodes.EmptyProperty.GetIntValueAsString())
                 .MaximumLength(255)
                 .WithErrorCode(ErrorCodes.TooLongProperty.GetIntValueAsString());
 
-            RuleFor(x => x.Description).MaximumLength(30000)
+            Transform(x => x.Description, x => string.IsNullOrEmpty(x) ? x : x.Trim()).MaximumLength(30000)
                 .WithErrorCode(ErrorCodes.TooLongProperty.GetIntValueAsString());
 
             When(x => x.NumberOfEpisodes.HasValue, () =>

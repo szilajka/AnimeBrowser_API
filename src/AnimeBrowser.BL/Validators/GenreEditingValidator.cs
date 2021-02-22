@@ -13,11 +13,11 @@ namespace AnimeBrowser.BL.Validators
                 .WithErrorCode(ErrorCodes.EmptyObject.GetIntValueAsString());
             RuleFor(x => x.Id).GreaterThan(0)
                 .WithErrorCode(ErrorCodes.EmptyProperty.GetIntValueAsString());
-            RuleFor(x => x.GenreName).NotEmpty()
+            Transform(x => x.GenreName, x => string.IsNullOrEmpty(x) ? x : x.Trim()).NotEmpty()
                 .WithErrorCode(ErrorCodes.EmptyProperty.GetIntValueAsString())
                 .MaximumLength(100)
                 .WithErrorCode(ErrorCodes.TooLongProperty.GetIntValueAsString());
-            RuleFor(x => x.Description).NotEmpty()
+            Transform(x => x.Description, x => string.IsNullOrEmpty(x) ? x : x.Trim()).NotEmpty()
                 .WithErrorCode(ErrorCodes.EmptyProperty.GetIntValueAsString())
                 .MaximumLength(10000)
                 .WithErrorCode(ErrorCodes.TooLongProperty.GetIntValueAsString());

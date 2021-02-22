@@ -10,9 +10,12 @@ namespace AnimeBrowser.BL.Validators
         public AnimeInfoCreationValidator()
         {
             RuleFor(x => x).NotNull().WithErrorCode(ErrorCodes.EmptyObject.GetIntValueAsString());
-            RuleFor(x => x.Title).NotEmpty().WithErrorCode(ErrorCodes.EmptyProperty.GetIntValueAsString())
-                .MaximumLength(255).WithErrorCode(ErrorCodes.TooLongProperty.GetIntValueAsString());
-            RuleFor(x => x.Description).MaximumLength(30000).WithErrorCode(ErrorCodes.TooLongProperty.GetIntValueAsString());
+            Transform(x => x.Title, x => string.IsNullOrEmpty(x) ? x : x.Trim()).NotEmpty()
+                .WithErrorCode(ErrorCodes.EmptyProperty.GetIntValueAsString())
+                .MaximumLength(255)
+                .WithErrorCode(ErrorCodes.TooLongProperty.GetIntValueAsString());
+            Transform(x => x.Description, x => string.IsNullOrEmpty(x) ? x : x.Trim()).MaximumLength(30000)
+                .WithErrorCode(ErrorCodes.TooLongProperty.GetIntValueAsString());
         }
     }
 }

@@ -161,7 +161,7 @@ namespace AnimeBrowser.UnitTests.Write.AnimeInfoTests
             var animeInfoEditor = sp.GetService<IAnimeInfoEditing>();
             Func<Task> editAnimeFunc = async () => await animeInfoEditor.EditAnimeInfo(animeInfoId, requestModel);
 
-            await editAnimeFunc.Should().ThrowAsync<ArgumentException>();
+            await editAnimeFunc.Should().ThrowAsync<MismatchingIdException>();
         }
 
         [DataTestMethod,

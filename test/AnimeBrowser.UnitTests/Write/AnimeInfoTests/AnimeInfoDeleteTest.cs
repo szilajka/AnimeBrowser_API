@@ -99,7 +99,7 @@ namespace AnimeBrowser.UnitTests.Write.AnimeInfoTests
 
             var animeInfoDeleteHandler = sp.GetService<IAnimeInfoDelete>();
             Func<Task> deleteAnimeInfoFunc = async () => await animeInfoDeleteHandler.DeleteAnimeInfo(animeInfoId);
-            await deleteAnimeInfoFunc.Should().ThrowAsync<ArgumentOutOfRangeException>();
+            await deleteAnimeInfoFunc.Should().ThrowAsync<NotExistingIdException>();
         }
 
         [DataTestMethod,

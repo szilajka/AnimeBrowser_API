@@ -38,19 +38,19 @@ namespace AnimeBrowser.Data.Converters
         #region ResponseModel
         public static AnimeInfoResponseModel ToBasicResponseModel(this AnimeInfo animeInfo)
         {
-            var responseModel = new AnimeInfoResponseModel(id: animeInfo.Id, title: animeInfo.Title?.Trim(), description: animeInfo.Description?.Trim(), isNsfw: animeInfo.IsNsfw);
+            var responseModel = new AnimeInfoResponseModel(id: animeInfo.Id, title: animeInfo.Title, description: animeInfo.Description, isNsfw: animeInfo.IsNsfw);
             return responseModel;
         }
 
         public static AnimeInfoEditingResponseModel ToEditingResponseModel(this AnimeInfo animeInfo)
         {
-            var responseModel = new AnimeInfoEditingResponseModel(id: animeInfo.Id, title: animeInfo.Title?.Trim(), description: animeInfo.Description?.Trim(), isNsfw: animeInfo.IsNsfw);
+            var responseModel = new AnimeInfoEditingResponseModel(id: animeInfo.Id, title: animeInfo.Title, description: animeInfo.Description, isNsfw: animeInfo.IsNsfw);
             return responseModel;
         }
 
         public static AnimeInfoCreationResponseModel ToCreationResponseModel(this AnimeInfo animeInfo)
         {
-            var responseModel = new AnimeInfoCreationResponseModel(id: animeInfo.Id, title: animeInfo.Title?.Trim(), description: animeInfo.Description?.Trim(), isNsfw: animeInfo.IsNsfw);
+            var responseModel = new AnimeInfoCreationResponseModel(id: animeInfo.Id, title: animeInfo.Title, description: animeInfo.Description, isNsfw: animeInfo.IsNsfw);
             return responseModel;
         }
 

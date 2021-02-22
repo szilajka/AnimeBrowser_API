@@ -12,30 +12,30 @@
     "Properties": {
       "Application": "AnimeBrowser_Prod"
     },
-    "WriteTo:File": {
-      "Name": "Logger",
-      "Args": {
-        "configureLogger": {
-          "WriteTo": [
-            {
-              "Name": "Async",
-              "Args": {
-                "configure": [
-                  {
-                    "Name": "File",
-                    "Args": {
-                      "path": "Logs\\anime_browser-test-output-.txt",
-                      "rollingInterval": "Day",
-                      "outputTemplate": "[{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} {Level:u3}] [{SourceContext}] ({Application}/{MachineName}/{ThreadId}) {Message}{NewLine}{Exception}"
-                    }
-                  }
-                ]
-              }
-            }
-          ]
-        }
-      }
-    },
+    //"WriteTo:File": {
+    //  "Name": "Logger",
+    //  "Args": {
+    //    "configureLogger": {
+    //      "WriteTo": [
+    //        {
+    //          "Name": "Async",
+    //          "Args": {
+    //            "configure": [
+    //              {
+    //                "Name": "File",
+    //                "Args": {
+    //                  "path": "Logs\\anime_browser-test-output-.txt",
+    //                  "rollingInterval": "Day",
+    //                  "outputTemplate": "[{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} {Level:u3}] [{SourceContext}] ({Application}/{MachineName}/{ThreadId}) {Message}{NewLine}{Exception}"
+    //                }
+    //              }
+    //            ]
+    //          }
+    //        }
+    //      ]
+    //    }
+    //  }
+    //},
     "WriteTo:Console": {
       "Name": "Logger",
       "Args": {
