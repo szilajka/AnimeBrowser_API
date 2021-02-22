@@ -43,7 +43,10 @@ namespace AnimeBrowser.BL.Services.Write
                     throw new EmptyObjectException<SeasonCreationRequestModel>(error, $"The given [{nameof(Season)}] object is empty!");
                 }
 
-                seasonRequestModel.Title = seasonRequestModel.Title.Trim();
+                if (!string.IsNullOrWhiteSpace(seasonRequestModel.Title))
+                {
+                    seasonRequestModel.Title = seasonRequestModel.Title.Trim();
+                }
                 if (!string.IsNullOrWhiteSpace(seasonRequestModel.Description))
                 {
                     seasonRequestModel.Description = seasonRequestModel.Description.Trim();

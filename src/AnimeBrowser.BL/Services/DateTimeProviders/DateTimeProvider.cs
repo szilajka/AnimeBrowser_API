@@ -8,9 +8,20 @@ namespace AnimeBrowser.BL.Services.DateTimeProviders
         public DateTime Now { get => DateTime.Now; }
         public DateTime UtcNow { get => DateTime.UtcNow; }
 
-        public DateTime FromYear(int year)
+        public DateTime FromYearUtc(int year)
         {
-            return new DateTime(1900, 1, 1).ToUniversalTime();
+            return new DateTime(year, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        }
+
+        public DateTime FromDateUtc(DateTime dateTime)
+        {
+            var dt = dateTime.ToUniversalTime();
+            return new DateTime(dt.Year, dt.Month, dt.Day, 0, 0, 0, DateTimeKind.Utc);
+        }
+
+        public DateTime FromDateUtc(int year, int month, int day)
+        {
+            return new DateTime(year, month, day, 0, 0, 0, DateTimeKind.Utc);
         }
     }
 }

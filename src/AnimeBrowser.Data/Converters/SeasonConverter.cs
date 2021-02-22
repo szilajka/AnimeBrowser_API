@@ -18,7 +18,7 @@ namespace AnimeBrowser.Data.Converters
             var season = new Season
             {
                 SeasonNumber = requestModel.SeasonNumber,
-                Title = requestModel.Title.Trim(),
+                Title = requestModel.Title?.Trim(),
                 Description = requestModel.Description?.Trim(),
                 StartDate = requestModel.StartDate,
                 EndDate = requestModel.EndDate,

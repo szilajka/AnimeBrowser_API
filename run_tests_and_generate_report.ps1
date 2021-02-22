@@ -1,4 +1,4 @@
-Param([Alias("c")][Switch]$clear = $false, [Alias("h")][Switch]$help = $false)
+Param([Alias("c")][Switch]$clear = $false, [Alias("h")][Switch]$help = $false, [Alias("ngr")][Switch]$notGenerateReport = $false)
 
 <#
 .SYNOPSIS
@@ -77,10 +77,10 @@ function ShowClearScreenHelpText() {
     Runs the tests in the AnimeBrowser.UnitTests project, create coverage report (now in xml format), then copy the generated html reports to test\AnimeBrowser.UnitTests\coveragereport folder.
 .EXAMPLE
     PS C:\AnimeBrowser_API> .\run_tests_and_generate_report.ps1
-    Runs the tests then generate reports.
+    Runs the tests, creates the test results in html format and generates test coverage report.
 .EXAMPLE
-    PS C:\AnimeBrowser_API> .\run_tests_and_generate_report.ps1 -c
-    Clears screen, then runs the tests then generate reports.
+    PS C:\AnimeBrowser_API> .\run_tests_and_generate_report.ps1 -c -ngr
+    Clears screen, then runs the tests then creates test results in html format (not generating test reports).
 .NOTES
     Author: Németi Szilárd
     Github: https://github.com/szilajka
@@ -91,29 +91,31 @@ function RunTestsThenGenerateReport() {
 
     Write-Host "Running tests" -ForegroundColor Blue
 
-    dotnet test --collect:"XPlat Code Coverage" -r $testResultsPath
+    dotnet test --collect:"XPlat Code Coverage" -r $testResultsPath --logger "html;logfilename=test_results.html"
 
     Write-Host "Tests finished"
-    Write-Host "Checking if TestResults folder exists" -ForegroundColor Blue
-
-    if ((Test-Path -Path $testResultsPath) -eq $true) {
-        Write-Host "TestResults folder exists" -ForegroundColor Blue
-
-        $testResultsFolder = (Resolve-Path $testResultsPath).Path
-        $lastReportFolder = Get-ChildItem -Path $testResultsFolder -Directory | Sort-Object LastWriteTime -Descending | Where-Object { $_.Name -match "[0-9a-zA-Z]{8}-[0-9a-zA-Z]{4}-[0-9a-zA-Z]{4}-[0-9a-zA-Z]{4}-[0-9a-zA-Z]{12}" }  | Select-Object -First 1
-        Write-Host "Checking if report folders were created" -ForegroundColor Blue
-        if (-not ($null -eq $lastReportFolder)) {
-            Write-Host "Report folder was created: [$lastReportFolder]" -ForegroundColor Blue
-            reportgenerator "-reports:$lastReportFolder\coverage.cobertura.xml" "-targetdir:$testProjectFolder\coveragereport" -reporttypes:Html
-            Write-Host "ReportGenerator finished successfully!" -ForegroundColor Green
-        }
-        else {
-            Write-Host "Report folders were NOT created!" -ForegroundColor Red
-        }
-    }
-    else {
-        Write-Host "TestResults folder does NOT exist!" -ForegroundColor Red
-    }
+	if($notGenerateReport -eq $false){
+		Write-Host "Checking if TestResults folder exists" -ForegroundColor Blue
+	
+		if ((Test-Path -Path $testResultsPath) -eq $true) {
+			Write-Host "TestResults folder exists" -ForegroundColor Blue
+	
+			$testResultsFolder = (Resolve-Path $testResultsPath).Path
+			$lastReportFolder = Get-ChildItem -Path $testResultsFolder -Directory | Sort-Object LastWriteTime -Descending | Where-Object { $_.Name -match "[0-9a-zA-Z]{8}-[0-9a-zA-Z]{4}-[0-9a-zA-Z]{4}-[0-9a-zA-Z]{4}-[0-9a-zA-Z]{12}" }  | Select-Object -First 1
+			Write-Host "Checking if report folders were created" -ForegroundColor Blue
+			if (-not ($null -eq $lastReportFolder)) {
+				Write-Host "Report folder was created: [$lastReportFolder]" -ForegroundColor Blue
+				reportgenerator "-reports:$lastReportFolder\coverage.cobertura.xml" "-targetdir:$testProjectFolder\coveragereport" -reporttypes:Html
+				Write-Host "ReportGenerator finished successfully!" -ForegroundColor Green
+			}
+			else {
+				Write-Host "Report folders were NOT created!" -ForegroundColor Red
+			}
+		}
+		else {
+			Write-Host "TestResults folder does NOT exist!" -ForegroundColor Red
+		}
+	}
 }
 
 
