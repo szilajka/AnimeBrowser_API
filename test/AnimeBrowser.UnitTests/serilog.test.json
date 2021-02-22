@@ -1,0 +1,62 @@
+{
+  "Serilog": {
+    "Using": [ "Serilog.Sinks.File", "Serilog.Sinks.Async" ],
+    "MinimumLevel": {
+      "Default": "Debug",
+      "Override": {
+        "Microsoft": "Warning",
+        "Microsoft.EntityFrameworkCore.Database.Command": "Information"
+      }
+    },
+    "Enrich": [ "FromLogContext", "WithMachineName", "WithThreadId", "WithThreadName" ],
+    "Properties": {
+      "Application": "AnimeBrowser_Prod"
+    },
+    "WriteTo:File": {
+      "Name": "Logger",
+      "Args": {
+        "configureLogger": {
+          "WriteTo": [
+            {
+              "Name": "Async",
+              "Args": {
+                "configure": [
+                  {
+                    "Name": "File",
+                    "Args": {
+                      "path": "Logs\\anime_browser-test-output-.txt",
+                      "rollingInterval": "Day",
+                      "outputTemplate": "[{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} {Level:u3}] [{SourceContext}] ({Application}/{MachineName}/{ThreadId}) {Message}{NewLine}{Exception}"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    },
+    "WriteTo:Console": {
+      "Name": "Logger",
+      "Args": {
+        "configureLogger": {
+          "WriteTo": [
+            {
+              "Name": "Async",
+              "Args": {
+                "configure": [
+                  {
+                    "Name": "Console",
+                    "Args": {
+                      "outputTemplate": "[{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} {Level:u3}] [{SourceContext}] ({Application}/{MachineName}/{ThreadId}) {Message}{NewLine}{Exception}"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}

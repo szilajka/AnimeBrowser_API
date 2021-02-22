@@ -10,7 +10,7 @@ namespace AnimeBrowser.BL.Services.DateTimeProviders
 
         public DateTime FromYear(int year)
         {
-            return new DateTime(1900, 1, 1);
+            return new DateTime(1900, 1, 1).ToUniversalTime();
         }
     }
 }

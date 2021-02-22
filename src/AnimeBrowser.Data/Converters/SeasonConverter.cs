@@ -19,7 +19,7 @@ namespace AnimeBrowser.Data.Converters
             {
                 SeasonNumber = requestModel.SeasonNumber,
                 Title = requestModel.Title.Trim(),
-                Description = requestModel.Description.Trim(),
+                Description = requestModel.Description?.Trim(),
                 StartDate = requestModel.StartDate,
                 EndDate = requestModel.EndDate,
                 AirStatus = (int)requestModel.AirStatus,

@@ -44,14 +44,19 @@ namespace AnimeBrowser.BL.Services.Write
                 }
 
                 seasonRequestModel.Title = seasonRequestModel.Title.Trim();
-                seasonRequestModel.Description = seasonRequestModel.Description.Trim();
+                if (!string.IsNullOrWhiteSpace(seasonRequestModel.Description))
+                {
+                    seasonRequestModel.Description = seasonRequestModel.Description.Trim();
+                }
 
                 var seasonValidator = new SeasonCreationValidator(dateTimeProvider);
                 var validationResult = await seasonValidator.ValidateAsync(seasonRequestModel);
                 if (!validationResult.IsValid)
                 {
                     var errorList = validationResult.Errors.ConvertToErrorModel();
-                    throw new ValidationException(errorList, $"Validation error in [{nameof(SeasonCreationRequestModel)}].");
+                    var valEx = new ValidationException(errorList, $"Validation error in [{nameof(SeasonCreationRequestModel)}].");
+                    logger.Warning(valEx, $"Message: [{valEx.Message}]{Environment.NewLine}Validation errors:[{string.Join(", ", valEx.Errors)}].");
+                    throw valEx;
                 }
                 var animeInfo = await animeInfoReadRepo.GetAnimeInfoById(seasonRequestModel.AnimeInfoId);
                 if (animeInfo == null)

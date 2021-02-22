@@ -1,21 +1,25 @@
 ﻿using AnimeBrowser.Common.Helpers;
 using AnimeBrowser.Common.Models.ErrorModels;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Serilog;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace AnimeBrowser.UnitTests.Helpers
 {
     public class TestBase
     {
+        public static IConfiguration Configuration { get; } = new ConfigurationBuilder()
+            .AddJsonFile(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "serilog.test.json"), optional: false, reloadOnChange: true)
+            .AddEnvironmentVariables()
+            .Build();
+
         public static IServiceProvider SetupDI(Action<IServiceCollection> configure)
         {
             IServiceCollection services = new ServiceCollection();
-            Log.Logger = new LoggerConfiguration()
-                .WriteTo.Console()
-                .CreateLogger();
 
             if (configure != null)
             {
@@ -28,9 +32,6 @@ namespace AnimeBrowser.UnitTests.Helpers
         public static async Task<IServiceProvider> SetupDI(Func<IServiceCollection, Task> configure)
         {
             IServiceCollection services = new ServiceCollection();
-            Log.Logger = new LoggerConfiguration()
-                .WriteTo.Console()
-                .CreateLogger();
 
             if (configure != null)
             {
