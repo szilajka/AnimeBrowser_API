@@ -25,6 +25,9 @@ namespace AnimeBrowser.BL.Helpers
             services.AddTransient<ISeasonCreation, SeasonCreationHandler>();
             services.AddTransient<ISeasonEditing, SeasonEditingHandler>();
             services.AddTransient<ISeasonDelete, SeasonDeleteHandler>();
+            services.AddTransient<IEpisodeCreation, EpisodeCreationHandler>();
+            //services.AddTransient<IEpisodeEditing, EpisodeEditingHandler>();
+            //services.AddTransient<IEpisodeDelete, EpisodeDeleteHandler>();
         }
     }
 }

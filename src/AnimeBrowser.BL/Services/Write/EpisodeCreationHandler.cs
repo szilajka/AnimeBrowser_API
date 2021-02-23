@@ -1,0 +1,101 @@
+﻿using AnimeBrowser.BL.Helpers;
+using AnimeBrowser.BL.Interfaces.DateTimeProviders;
+using AnimeBrowser.BL.Interfaces.Write;
+using AnimeBrowser.BL.Validators;
+using AnimeBrowser.Common.Exceptions;
+using AnimeBrowser.Common.Helpers;
+using AnimeBrowser.Common.Models.ErrorModels;
+using AnimeBrowser.Common.Models.RequestModels;
+using AnimeBrowser.Common.Models.ResponseModels;
+using AnimeBrowser.Data.Converters;
+using AnimeBrowser.Data.Entities;
+using AnimeBrowser.Data.Interfaces.Read;
+using AnimeBrowser.Data.Interfaces.Write;
+using Serilog;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace AnimeBrowser.BL.Services.Write
+{
+    public class EpisodeCreationHandler : IEpisodeCreation
+    {
+        private readonly ILogger logger = Log.ForContext<EpisodeCreationHandler>();
+        private readonly IDateTime dateTimeProvider;
+        private readonly IEpisodeRead episodeReadRepo;
+        private readonly IEpisodeWrite episodeWriteRepo;
+
+        public EpisodeCreationHandler(IDateTime dateTimeProvider, IEpisodeRead episodeReadRepo, IEpisodeWrite episodeWriteRepo)
+        {
+            this.dateTimeProvider = dateTimeProvider;
+            this.episodeReadRepo = episodeReadRepo;
+            this.episodeWriteRepo = episodeWriteRepo;
+        }
+
+        public async Task<EpisodeCreationResponseModel> CreateEpisode(EpisodeCreationRequestModel episodeRequestModel)
+        {
+            try
+            {
+                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method started. requestModel: [{episodeRequestModel}].");
+                if (episodeRequestModel == null)
+                {
+                    var error = new ErrorModel(code: ErrorCodes.EmptyObject.GetIntValueAsString(), description: $"The {nameof(EpisodeCreationRequestModel)} (variabble: {nameof(episodeRequestModel)}) object is empty!",
+                        source: nameof(episodeRequestModel), title: ErrorCodes.EmptyObject.GetDescription());
+                    throw new EmptyObjectException<EpisodeCreationRequestModel>(error, $"The given [{nameof(Episode)}] object is empty!");
+                }
+
+                var episodeValidator = new EpisodeCreationValidator(dateTimeProvider);
+                var validationResult = await episodeValidator.ValidateAsync(episodeRequestModel);
+                if (!validationResult.IsValid)
+                {
+                    var errorList = validationResult.Errors.ConvertToErrorModel();
+                    var valEx = new ValidationException(errorList, $"Validation error in [{nameof(EpisodeCreationRequestModel)}].");
+                    logger.Warning(valEx, $"Message: [{valEx.Message}]{Environment.NewLine}Validation errors:[{string.Join(", ", valEx.Errors)}].");
+                    throw valEx;
+                }
+
+                var isSeasonAndAnimeInfoExists = await episodeReadRepo.IsSeasonAndAnimeInfoExistsAndReferences(seasonId: episodeRequestModel.SeasonId, animeInfoId: episodeRequestModel.AnimeInfoId);
+                if (!isSeasonAndAnimeInfoExists)
+                {
+                    var error = new ErrorModel(code: ErrorCodes.MismatchingProperty.GetIntValueAsString(),
+                        description: $"There is no {nameof(AnimeInfo)} and/or {nameof(Season)} with given ids, " +
+                                        $"and/or the [{nameof(Season)}.{nameof(Season.AnimeInfoId)}] not matches the " +
+                                        $"[{nameof(EpisodeCreationRequestModel)}.{nameof(EpisodeCreationRequestModel.AnimeInfoId)}] property.",
+                        source: $"[{nameof(episodeRequestModel.SeasonId)}, {nameof(episodeRequestModel.AnimeInfoId)}]", title: ErrorCodes.MismatchingProperty.GetDescription());
+                    var mismatchEx = new MismatchingIdException(error, error.Description);
+                    logger.Warning(mismatchEx, mismatchEx.Message);
+                    throw mismatchEx;
+                }
+
+                var episode = await episodeWriteRepo.CreateEpisode(episodeRequestModel.ToEpisode());
+                var responseModel = episode.ToCreationResponseModel();
+
+                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. {nameof(Episode)}.{nameof(Episode.Id)}: [{responseModel.Id}].");
+
+                return responseModel;
+            }
+            catch (MismatchingIdException mismatchEx)
+            {
+                logger.Warning(mismatchEx, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{mismatchEx.Message}].");
+                throw;
+            }
+            catch (EmptyObjectException<EpisodeCreationRequestModel> emptyObjEx)
+            {
+                logger.Warning(emptyObjEx, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{emptyObjEx.Message}].");
+                throw;
+            }
+            catch (ValidationException valEx)
+            {
+                logger.Warning(valEx, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{valEx.Message}].");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{ex.Message}].");
+                throw;
+            }
+        }
+    }
+}
