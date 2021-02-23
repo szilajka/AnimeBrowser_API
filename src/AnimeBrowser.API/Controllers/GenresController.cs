@@ -39,7 +39,7 @@ namespace AnimeBrowser.API.Controllers
 
                 var createdGenre = await genreCreationHandler.CreateGenre(requestModel);
 
-                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. result.Id: [{createdGenre?.Id}].");
+                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. result.Id: [{createdGenre.Id}].");
 
                 return Created($"{ControllerHelper.GENRES_CONTROLLER_NAME}/{createdGenre.Id}", createdGenre);
             }

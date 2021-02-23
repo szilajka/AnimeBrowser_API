@@ -4,11 +4,6 @@ using AnimeBrowser.Common.Models.Enums;
 using AnimeBrowser.Common.Models.ErrorModels;
 using AnimeBrowser.Common.Models.RequestModels;
 using FluentValidation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AnimeBrowser.BL.Validators
 {
@@ -16,6 +11,8 @@ namespace AnimeBrowser.BL.Validators
     {
         public SeasonEditingValidator(IDateTime dateTimeProvider)
         {
+            var minDate = dateTimeProvider.FromYearUtc(1900);
+
             RuleFor(x => x.Id).GreaterThan(0)
                 .WithErrorCode(ErrorCodes.EmptyProperty.GetIntValueAsString());
             RuleFor(x => x.SeasonNumber).NotNull()
@@ -64,13 +61,13 @@ namespace AnimeBrowser.BL.Validators
 
                 When(x => x.StartDate.HasValue, () =>
                 {
-                    Transform(x => x.StartDate, sd => sd.HasValue ? dateTimeProvider.FromDateUtc(sd.Value) : sd).InclusiveBetween(dateTimeProvider.FromYearUtc(1900), dateTimeProvider.UtcNow.AddYears(10))
+                    Transform(x => x.StartDate, sd => sd.HasValue ? dateTimeProvider.FromDateUtc(sd.Value) : sd).InclusiveBetween(minDate, dateTimeProvider.UtcNow.AddYears(10))
                        .WithErrorCode(ErrorCodes.OutOfRangeProperty.GetIntValueAsString());
                 });
 
                 When(x => x.EndDate.HasValue && x.StartDate.HasValue, () =>
                 {
-                    Transform(x => x.EndDate, ed => ed.HasValue ? dateTimeProvider.FromDateUtc(ed.Value) : ed).GreaterThanOrEqualTo(x => dateTimeProvider.FromDateUtc(x.StartDate.Value))
+                    Transform(x => x.EndDate, ed => ed.HasValue ? dateTimeProvider.FromDateUtc(ed.Value) : ed).GreaterThanOrEqualTo(x => x.StartDate.HasValue ? dateTimeProvider.FromDateUtc(x.StartDate.Value) : minDate)
                     .WithErrorCode(ErrorCodes.OutOfRangeProperty.GetIntValueAsString())
                     .LessThanOrEqualTo(dateTimeProvider.UtcNow.AddYears(10))
                     .WithErrorCode(ErrorCodes.OutOfRangeProperty.GetIntValueAsString());
@@ -88,14 +85,14 @@ namespace AnimeBrowser.BL.Validators
                 When(x => x.StartDate.HasValue, () =>
                 {
                     Transform(x => x.StartDate, sd => sd.HasValue ? dateTimeProvider.FromDateUtc(sd.Value) : sd)
-                        .InclusiveBetween(dateTimeProvider.FromYearUtc(1900), dateTimeProvider.UtcNow.AddYears(10))
+                        .InclusiveBetween(minDate, dateTimeProvider.UtcNow.AddYears(10))
                         .WithErrorCode(ErrorCodes.OutOfRangeProperty.GetIntValueAsString());
                 });
 
                 When(x => x.EndDate.HasValue && x.StartDate.HasValue, () =>
                 {
                     Transform(x => x.EndDate, ed => ed.HasValue ? dateTimeProvider.FromDateUtc(ed.Value) : ed)
-                        .GreaterThanOrEqualTo(x => dateTimeProvider.FromDateUtc(x.StartDate.Value))
+                        .GreaterThanOrEqualTo(x => x.StartDate.HasValue ? dateTimeProvider.FromDateUtc(x.StartDate.Value) : minDate)
                         .WithErrorCode(ErrorCodes.OutOfRangeProperty.GetIntValueAsString())
                         .LessThanOrEqualTo(dateTimeProvider.UtcNow.AddYears(10))
                         .WithErrorCode(ErrorCodes.OutOfRangeProperty.GetIntValueAsString());
@@ -104,7 +101,7 @@ namespace AnimeBrowser.BL.Validators
 
             When(x => x.StartDate.HasValue && x.AirStatus != AirStatusEnum.Airing && x.AirStatus != AirStatusEnum.Aired, () =>
             {
-                Transform(x => x.StartDate, sd => sd.HasValue ? dateTimeProvider.FromDateUtc(sd.Value) : sd).InclusiveBetween(dateTimeProvider.FromYearUtc(1900), dateTimeProvider.UtcNow.AddYears(10))
+                Transform(x => x.StartDate, sd => sd.HasValue ? dateTimeProvider.FromDateUtc(sd.Value) : sd).InclusiveBetween(minDate, dateTimeProvider.UtcNow.AddYears(10))
                     .WithErrorCode(ErrorCodes.OutOfRangeProperty.GetIntValueAsString());
             });
             When(x => x.EndDate.HasValue && x.AirStatus != AirStatusEnum.Airing && x.AirStatus != AirStatusEnum.Aired, () =>
@@ -114,7 +111,7 @@ namespace AnimeBrowser.BL.Validators
             });
             When(x => x.EndDate.HasValue && x.StartDate.HasValue && x.AirStatus != AirStatusEnum.Airing && x.AirStatus != AirStatusEnum.Aired, () =>
             {
-                Transform(x => x.EndDate, ed => ed.HasValue ? dateTimeProvider.FromDateUtc(ed.Value) : ed).GreaterThanOrEqualTo(x => dateTimeProvider.FromDateUtc(x.StartDate.Value))
+                Transform(x => x.EndDate, ed => ed.HasValue ? dateTimeProvider.FromDateUtc(ed.Value) : ed).GreaterThanOrEqualTo(x => x.StartDate.HasValue ? dateTimeProvider.FromDateUtc(x.StartDate.Value) : minDate)
                     .WithErrorCode(ErrorCodes.OutOfRangeProperty.GetIntValueAsString())
                     .LessThanOrEqualTo(dateTimeProvider.UtcNow.AddYears(10))
                     .WithErrorCode(ErrorCodes.OutOfRangeProperty.GetIntValueAsString());

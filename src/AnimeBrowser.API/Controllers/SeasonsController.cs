@@ -37,7 +37,7 @@ namespace AnimeBrowser.API.Controllers
 
                 var createdSeason = await seasonCreationHandler.CreateSeason(requestModel);
 
-                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. result.Id: [{createdSeason?.Id}].");
+                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. result.Id: [{createdSeason.Id}].");
 
                 return Created($"{ControllerHelper.SEASONS_CONTROLLER_NAME}/{createdSeason.Id}", createdSeason);
             }
