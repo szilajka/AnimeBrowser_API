@@ -1,8 +1,10 @@
 ﻿using AnimeBrowser.BL.Interfaces.DateTimeProviders;
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace AnimeBrowser.BL.Services.DateTimeProviders
 {
+    [ExcludeFromCodeCoverage]
     public class DateTimeProvider : IDateTime
     {
         public DateTime Now { get => DateTime.Now; }

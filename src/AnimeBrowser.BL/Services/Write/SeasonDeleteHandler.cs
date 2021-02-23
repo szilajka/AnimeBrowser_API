@@ -55,7 +55,7 @@ namespace AnimeBrowser.BL.Services.Write
                 logger.Warning(noIdEx, $"Error in [{MethodNameHelper.GetCurrentMethodName()}]. Message: [{noIdEx.Message}].");
                 throw;
             }
-            catch (NotFoundObjectException<Genre> nfoEx)
+            catch (NotFoundObjectException<Season> nfoEx)
             {
                 logger.Warning(nfoEx, $"Error in [{MethodNameHelper.GetCurrentMethodName()}]. Message: [{nfoEx.Message}].");
                 throw;

@@ -1,9 +1,11 @@
 ﻿using AnimeBrowser.Common.Models.ErrorModels;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 
 namespace AnimeBrowser.Common.Exceptions
 {
+    [ExcludeFromCodeCoverage]
     public class MismatchingIdException : Exception
     {
         public ErrorModel Error { get; set; }
