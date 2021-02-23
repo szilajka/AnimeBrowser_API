@@ -23,12 +23,14 @@ namespace AnimeBrowser.BL.Services.Write
         private readonly IDateTime dateTimeProvider;
         private readonly ISeasonRead seasonReadRepo;
         private readonly ISeasonWrite seasonWriteRepo;
+        private readonly IAnimeInfoRead animeInfoReadRepo;
 
-        public SeasonEditingHandler(IDateTime dateTimeProvider, ISeasonRead seasonReadRepo, ISeasonWrite seasonWriteRepo)
+        public SeasonEditingHandler(IDateTime dateTimeProvider, ISeasonRead seasonReadRepo, ISeasonWrite seasonWriteRepo, IAnimeInfoRead animeInfoReadRepo)
         {
             this.dateTimeProvider = dateTimeProvider;
             this.seasonReadRepo = seasonReadRepo;
             this.seasonWriteRepo = seasonWriteRepo;
+            this.animeInfoReadRepo = animeInfoReadRepo;
         }
 
         public async Task<SeasonEditingResponseModel> EditSeason(long id, SeasonEditingRequestModel seasonRequestModel)
@@ -66,7 +68,17 @@ namespace AnimeBrowser.BL.Services.Write
                     logger.Warning(notExistingSeasonEx, notExistingSeasonEx.Message);
                     throw notExistingSeasonEx;
                 }
-
+                var animeInfo = await animeInfoReadRepo.GetAnimeInfoById(seasonRequestModel.AnimeInfoId);
+                if (animeInfo == null)
+                {
+                    var error = new ErrorModel(code: ErrorCodes.EmptyProperty.GetIntValueAsString(),
+                        description: $"The {nameof(AnimeInfo)} object is empty that is linked with the current {nameof(Season)} [{nameof(SeasonEditingRequestModel.AnimeInfoId)}: {seasonRequestModel?.AnimeInfoId}]!",
+                        source: nameof(SeasonEditingRequestModel.AnimeInfoId), title: ErrorCodes.EmptyProperty.GetDescription()
+                    );
+                    var notExistingAnimeInfoEx = new NotFoundObjectException<AnimeInfo>(error, $"There is no {nameof(AnimeInfo)} object that was given in {nameof(SeasonEditingRequestModel.AnimeInfoId)} property.");
+                    logger.Warning(notExistingAnimeInfoEx, notExistingAnimeInfoEx.Message);
+                    throw notExistingAnimeInfoEx;
+                }
                 var rSeason = seasonRequestModel.ToSeason();
                 season.UpdateSeasonWithOtherSeason(rSeason);
 

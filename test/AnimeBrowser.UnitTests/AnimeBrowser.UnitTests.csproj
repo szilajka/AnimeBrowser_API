@@ -45,4 +45,8 @@
     <ProjectReference Include="..\..\src\AnimeBrowser.BL\AnimeBrowser.BL.csproj" />
   </ItemGroup>
 
+  <PropertyGroup>
+    <Nullable>warnings</Nullable>
+  </PropertyGroup>
+
 </Project>
