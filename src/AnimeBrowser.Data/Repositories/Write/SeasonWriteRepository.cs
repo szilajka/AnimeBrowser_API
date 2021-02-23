@@ -30,5 +30,16 @@ namespace AnimeBrowser.Data.Repositories.Write
             logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. {nameof(Season)}.Id: [{season.Id}].");
             return season;
         }
+
+        public async Task<Season> UpdateSeason(Season season)
+        {
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method started. {nameof(Season)}: [{season}].");
+
+            abContext.Update(season);
+            await abContext.SaveChangesAsync();
+
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. {nameof(Season)}.Id: [{season.Id}].");
+            return season;
+        }
     }
 }

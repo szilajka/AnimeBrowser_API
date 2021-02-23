@@ -10,8 +10,8 @@ namespace AnimeBrowser.Common.Helpers
     {
         public static string GetDescription(this Enum value)
         {
-            return value.GetType()
-            .GetField(value.ToString())
+            return value.GetType()?
+            .GetField(value.ToString())?
             .GetCustomAttributes(typeof(DescriptionAttribute), false)
             .SingleOrDefault() is not DescriptionAttribute attribute ? value.ToString() : attribute.Description;
         }
@@ -21,7 +21,7 @@ namespace AnimeBrowser.Common.Helpers
             return value.ToString("d");
         }
 
-        public static string GetDescriptionFromValue(string value, Type enumType)
+        public static string? GetDescriptionFromValue(string value, Type enumType)
         {
             if (int.TryParse(value, out int enumVal))
             {
@@ -29,7 +29,7 @@ namespace AnimeBrowser.Common.Helpers
                 {
                     if ((int)val == enumVal)
                     {
-                        return val.GetType().GetField(val.ToString())
+                        return val.GetType().GetField(val.ToString() ?? "")?
                             .GetCustomAttributes(typeof(DescriptionAttribute), false)
                             .SingleOrDefault() is not DescriptionAttribute attribute ? val.ToString() : attribute.Description;
                     }

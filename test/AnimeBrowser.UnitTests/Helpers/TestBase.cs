@@ -48,14 +48,14 @@ namespace AnimeBrowser.UnitTests.Helpers
             return services.BuildServiceProvider();
         }
 
-        protected IList<ErrorModel> CreateErrorList(ErrorCodes errCode, string source)
+        protected static IList<ErrorModel> CreateErrorList(ErrorCodes errCode, string source)
         {
             var errorCode = errCode.GetIntValueAsString();
             IList<ErrorModel> errors = new List<ErrorModel>();
             ErrorModel errorModel = new ErrorModel(
                 code: errorCode,
                 description: string.Empty,
-                title: EnumHelper.GetDescriptionFromValue(errorCode, typeof(ErrorCodes)),
+                title: EnumHelper.GetDescriptionFromValue(errorCode, typeof(ErrorCodes)) ?? "",
                 source: source
             );
             errors.Add(errorModel);

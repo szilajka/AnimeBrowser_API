@@ -5,6 +5,6 @@ namespace AnimeBrowser.Data.Interfaces.Read
 {
     public interface IAnimeInfoRead
     {
-        Task<AnimeInfo> GetAnimeInfoById(long id);
+        Task<AnimeInfo?> GetAnimeInfoById(long id);
     }
 }

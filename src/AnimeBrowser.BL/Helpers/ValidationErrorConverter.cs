@@ -16,7 +16,7 @@ namespace AnimeBrowser.BL.Helpers
                     code: failure.ErrorCode,
                     description: failure.ErrorMessage,
                     source: failure.PropertyName,
-                    title: EnumHelper.GetDescriptionFromValue(failure.ErrorCode, typeof(ErrorCodes))
+                    title: EnumHelper.GetDescriptionFromValue(failure.ErrorCode, typeof(ErrorCodes)) ?? ""
                 );
                 errorList.Add(errModel);
             }

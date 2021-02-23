@@ -3,8 +3,8 @@ using System.Threading.Tasks;
 
 namespace AnimeBrowser.Data.Interfaces.Read
 {
-    public interface IGenreRead
+    public interface ISeasonRead
     {
-        Task<Genre?> GetGenreById(long genreId);
+        Task<Season?> GetSeasonById(long id);
     }
 }

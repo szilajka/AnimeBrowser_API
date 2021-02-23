@@ -16,7 +16,7 @@ namespace AnimeBrowser.Data.Repositories.Read
             this.abContext = abContext;
         }
 
-        public async Task<AnimeInfo> GetAnimeInfoById(long id)
+        public async Task<AnimeInfo?> GetAnimeInfoById(long id)
         {
             logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method started. id: [{id}].");
 

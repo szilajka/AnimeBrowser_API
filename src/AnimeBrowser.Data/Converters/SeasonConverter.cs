@@ -1,11 +1,6 @@
 ﻿using AnimeBrowser.Common.Models.RequestModels;
 using AnimeBrowser.Common.Models.ResponseModels;
 using AnimeBrowser.Data.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AnimeBrowser.Data.Converters
 {
@@ -32,17 +27,25 @@ namespace AnimeBrowser.Data.Converters
             return season;
         }
 
-        //public static Season ToSeason(this SeasonEditingRequestModel requestModel)
-        //{
-        //    var season = new Season
-        //    {
-        //        Id = requestModel.Id,
-        //        SeasonName = requestModel.SeasonName,
-        //        Description = requestModel.Description
-        //    };
+        public static Season ToSeason(this SeasonEditingRequestModel requestModel)
+        {
+            var season = new Season
+            {
+                Id = requestModel.Id,
+                SeasonNumber = requestModel.SeasonNumber,
+                Title = requestModel.Title?.Trim(),
+                Description = requestModel.Description?.Trim(),
+                StartDate = requestModel.StartDate,
+                EndDate = requestModel.EndDate,
+                AirStatus = (int)requestModel.AirStatus,
+                NumberOfEpisodes = requestModel.NumberOfEpisodes,
+                CoverCarousel = requestModel.CoverCarousel,
+                Cover = requestModel.Cover,
+                AnimeInfoId = requestModel.AnimeInfoId
+            };
 
-        //    return season;
-        //}
+            return season;
+        }
 
         #endregion RequestModel
 
@@ -56,12 +59,28 @@ namespace AnimeBrowser.Data.Converters
             return responseModel;
         }
 
-        //public static SeasonEditingResponseModel ToEditingResponseModel(this Season season)
-        //{
-        //    var responseModel = new SeasonEditingResponseModel(id: season.Id, seasonName: season.SeasonName, description: season.Description);
-        //    return responseModel;
-        //}
+        public static SeasonEditingResponseModel ToEditingResponseModel(this Season season)
+        {
+            var responseModel = new SeasonEditingResponseModel(id: season.Id, seasonNumber: season.SeasonNumber, title: season.Title, description: season.Description,
+                startDate: season.StartDate, endDate: season.EndDate, airStatus: season.AirStatus, numberOfEpisodes: season.NumberOfEpisodes,
+                coverCarousel: season.CoverCarousel, cover: season.Cover, animeInfoId: season.AnimeInfoId);
+            return responseModel;
+        }
 
         #endregion ResponseModel
+
+        public static void UpdateSeasonWithOtherSeason(this Season oldValuesSeason, Season newerSeason)
+        {
+            oldValuesSeason.SeasonNumber = newerSeason.SeasonNumber;
+            oldValuesSeason.Title = newerSeason.Title;
+            oldValuesSeason.Description = newerSeason.Description;
+            oldValuesSeason.StartDate = newerSeason.StartDate;
+            oldValuesSeason.EndDate = newerSeason.EndDate;
+            oldValuesSeason.AirStatus = newerSeason.AirStatus;
+            oldValuesSeason.NumberOfEpisodes = newerSeason.NumberOfEpisodes;
+            oldValuesSeason.CoverCarousel = newerSeason.CoverCarousel;
+            oldValuesSeason.Cover = newerSeason.Cover;
+            oldValuesSeason.AnimeInfoId = newerSeason.AnimeInfoId;
+        }
     }
 }

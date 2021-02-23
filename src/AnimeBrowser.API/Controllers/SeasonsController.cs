@@ -9,8 +9,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace AnimeBrowser.API.Controllers
@@ -21,10 +19,12 @@ namespace AnimeBrowser.API.Controllers
     {
         private readonly ILogger logger = Log.ForContext<SeasonsController>();
         private readonly ISeasonCreation seasonCreationHandler;
+        private readonly ISeasonEditing seasonEditingHandler;
 
-        public SeasonsController(ISeasonCreation seasonCreationHandler)
+        public SeasonsController(ISeasonCreation seasonCreationHandler, ISeasonEditing seasonEditingHandler)
         {
             this.seasonCreationHandler = seasonCreationHandler;
+            this.seasonEditingHandler = seasonEditingHandler;
         }
 
         [HttpPost]
@@ -55,6 +55,42 @@ namespace AnimeBrowser.API.Controllers
             {
                 logger.Warning(valEx, $"Validation error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{valEx.Message}].");
                 return BadRequest(valEx.Errors);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"Error in [{MethodNameHelper.GetCurrentMethodName()}]. Message: [{ex.Message}].");
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        [HttpPatch("{id}")]
+        [Authorize("SeasonAdmin")]
+        public async Task<IActionResult> Edit([FromRoute] long id, [FromBody] SeasonEditingRequestModel requestModel)
+        {
+            try
+            {
+                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method started. requestModel: [{requestModel}].");
+
+                var updatedSeason = await seasonEditingHandler.EditSeason(id, requestModel);
+
+                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. result.Id: [{updatedSeason?.Id}].");
+
+                return Ok(updatedSeason);
+            }
+            catch (MismatchingIdException misEx)
+            {
+                logger.Warning(misEx, $"Mismatching Id error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{misEx.Message}].");
+                return BadRequest(misEx.Error);
+            }
+            catch (ValidationException valEx)
+            {
+                logger.Warning(valEx, $"Validation error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{valEx.Message}].");
+                return BadRequest(valEx.Errors);
+            }
+            catch (NotFoundObjectException<SeasonEditingRequestModel> ex)
+            {
+                logger.Warning(ex, $"Not found object error in {MethodNameHelper.GetCurrentMethodName()}. Returns 404 - Not Found. Message: [{ex.Message}].");
+                return NotFound(id);
             }
             catch (Exception ex)
             {

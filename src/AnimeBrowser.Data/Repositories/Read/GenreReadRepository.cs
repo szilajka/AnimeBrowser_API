@@ -20,7 +20,7 @@ namespace AnimeBrowser.Data.Repositories.Read
             this.abContext = context;
         }
 
-        public async Task<Genre> GetGenreById(long genreId)
+        public async Task<Genre?> GetGenreById(long genreId)
         {
             logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method started. genreId: [{genreId}].");
 
