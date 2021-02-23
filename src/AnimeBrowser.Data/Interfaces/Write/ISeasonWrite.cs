@@ -7,5 +7,6 @@ namespace AnimeBrowser.Data.Interfaces.Write
     {
         Task<Season> CreateSeason(Season season);
         Task<Season> UpdateSeason(Season season);
+        Task DeleteSeason(Season season);
     }
 }

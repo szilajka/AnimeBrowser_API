@@ -31,6 +31,16 @@ namespace AnimeBrowser.Data.Repositories.Write
             return season;
         }
 
+        public async Task DeleteSeason(Season season)
+        {
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method started. {nameof(Season)}: [{season}].");
+
+            abContext.Remove(season);
+            await abContext.SaveChangesAsync();
+
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished.");
+        }
+
         public async Task<Season> UpdateSeason(Season season)
         {
             logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method started. {nameof(Season)}: [{season}].");

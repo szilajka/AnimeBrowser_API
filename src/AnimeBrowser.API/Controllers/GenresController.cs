@@ -87,7 +87,7 @@ namespace AnimeBrowser.API.Controllers
             catch (NotFoundObjectException<GenreEditingRequestModel> ex)
             {
                 logger.Warning(ex, $"Not found object error in {MethodNameHelper.GetCurrentMethodName()}. Returns 404 - Not Found. Message: [{ex.Message}].");
-                return NotFound(id);
+                return NotFound(ex.Error);
             }
             catch (Exception ex)
             {
@@ -117,7 +117,7 @@ namespace AnimeBrowser.API.Controllers
             catch (NotFoundObjectException<Genre> nfoEx)
             {
                 logger.Warning(nfoEx, $"Error in [{MethodNameHelper.GetCurrentMethodName()}]. Message: [{nfoEx.Message}].");
-                return NotFound(id);
+                return NotFound(nfoEx.Error);
             }
             catch (Exception ex)
             {

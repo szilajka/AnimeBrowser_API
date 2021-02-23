@@ -20,11 +20,13 @@ namespace AnimeBrowser.API.Controllers
         private readonly ILogger logger = Log.ForContext<SeasonsController>();
         private readonly ISeasonCreation seasonCreationHandler;
         private readonly ISeasonEditing seasonEditingHandler;
+        private readonly ISeasonDelete seasonDeleteHandler;
 
-        public SeasonsController(ISeasonCreation seasonCreationHandler, ISeasonEditing seasonEditingHandler)
+        public SeasonsController(ISeasonCreation seasonCreationHandler, ISeasonEditing seasonEditingHandler, ISeasonDelete seasonDeleteHandler)
         {
             this.seasonCreationHandler = seasonCreationHandler;
             this.seasonEditingHandler = seasonEditingHandler;
+            this.seasonDeleteHandler = seasonDeleteHandler;
         }
 
         [HttpPost]
@@ -96,6 +98,36 @@ namespace AnimeBrowser.API.Controllers
             {
                 logger.Warning(notFoundEx, $"Not found {nameof(AnimeInfo)} in database in {MethodNameHelper.GetCurrentMethodName()}. Message: [{notFoundEx.Message}].");
                 return BadRequest(notFoundEx.Error);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"Error in [{MethodNameHelper.GetCurrentMethodName()}]. Message: [{ex.Message}].");
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        [HttpDelete("{id}")]
+        [Authorize("SeasonAdmin")]
+        public async Task<IActionResult> Delete([FromRoute] long id)
+        {
+            try
+            {
+                logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method started. {nameof(id)}: [{id}].");
+
+                await seasonDeleteHandler.DeleteSeason(id);
+
+                logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method finished.");
+                return Ok();
+            }
+            catch (NotExistingIdException notExistingEx)
+            {
+                logger.Warning(notExistingEx, $"Error in [{MethodNameHelper.GetCurrentMethodName()}]. Message: [{notExistingEx.Message}].");
+                return NotFound(notExistingEx.Error);
+            }
+            catch (NotFoundObjectException<Season> nfoEx)
+            {
+                logger.Warning(nfoEx, $"Error in [{MethodNameHelper.GetCurrentMethodName()}]. Message: [{nfoEx.Message}].");
+                return NotFound(nfoEx.Error);
             }
             catch (Exception ex)
             {
