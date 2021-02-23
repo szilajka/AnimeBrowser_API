@@ -13,6 +13,8 @@ namespace AnimeBrowser.Common.Models.ErrorModels
         [Description("Property Is Out Of Valid Range")]
         OutOfRangeProperty = 21,
         [Description("Mismatching Property Values")]
-        MismatchingProperty = 31
+        MismatchingProperty = 31,
+        [Description("Not Unique Property Value")]
+        NotUniqueProperty = 41
     }
 }
