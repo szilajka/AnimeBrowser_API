@@ -4,11 +4,6 @@ using AnimeBrowser.Common.Models.Enums;
 using AnimeBrowser.Common.Models.ErrorModels;
 using AnimeBrowser.Common.Models.RequestModels;
 using FluentValidation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AnimeBrowser.BL.Validators
 {
@@ -23,7 +18,8 @@ namespace AnimeBrowser.BL.Validators
             var today = dateTimeProvider.FromDateUtc(dateTimeProvider.UtcNow);
             RuleFor(x => x.EpisodeNumber).GreaterThan(0)
                 .WithErrorCode(ErrorCodes.EmptyProperty.GetIntValueAsString());
-            RuleFor(x => x.AirStatus).IsInEnum();
+            RuleFor(x => x.AirStatus).IsInEnum()
+                .WithErrorCode(ErrorCodes.OutOfRangeProperty.GetIntValueAsString());
             When(x => !string.IsNullOrEmpty(x.Title), () =>
             {
                 Transform(x => x.Title, x => x.Trim()).MaximumLength(255)
