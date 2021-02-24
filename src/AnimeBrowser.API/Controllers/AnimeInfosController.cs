@@ -48,11 +48,11 @@ namespace AnimeBrowser.API.Controllers
         {
             try
             {
-                logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method started. animeInfo: [{animeInfo}].");
+                logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method started. {nameof(animeInfo)}: [{animeInfo}].");
 
                 var createdAnimeInfo = await animeInfoCreateHandler.CreateAnimeInfo(animeInfo);
 
-                logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method finished with result: [{createdAnimeInfo }].");
+                logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method finished with result: [{createdAnimeInfo}].");
                 return Created($"{ControllerHelper.ANIME_INFOS_CONTROLLER_NAME}/{createdAnimeInfo.Id}", createdAnimeInfo);
             }
             catch (EmptyObjectException<AnimeInfoCreationRequestModel> emptyEx)
@@ -78,7 +78,7 @@ namespace AnimeBrowser.API.Controllers
         {
             try
             {
-                logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method started. updateModel: [{updateModel}].");
+                logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method started. {nameof(id)}: [{id}], {nameof(updateModel)}: [{updateModel}].");
 
                 var updatedAnimeInfo = await animeInfoEditorHandler.EditAnimeInfo(id, updateModel);
 
@@ -86,17 +86,17 @@ namespace AnimeBrowser.API.Controllers
 
                 return Ok(updatedAnimeInfo);
             }
-            catch (ValidationException valEx)
-            {
-                logger.Warning(valEx, $"Validation error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{valEx.Message}].");
-                return BadRequest(valEx.Errors);
-            }
             catch (MismatchingIdException misEx)
             {
                 logger.Warning(misEx, $"Mismatching Id error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{misEx.Message}].");
                 return BadRequest(misEx.Error);
             }
-            catch (NotFoundObjectException<AnimeInfoEditingRequestModel> ex)
+            catch (ValidationException valEx)
+            {
+                logger.Warning(valEx, $"Validation error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{valEx.Message}].");
+                return BadRequest(valEx.Errors);
+            }
+            catch (NotFoundObjectException<AnimeInfo> ex)
             {
                 logger.Warning(ex, $"Not found object error in {MethodNameHelper.GetCurrentMethodName()}. Returns 404 - Not Found. Message: [{ex.Message}].");
                 return NotFound(ex.Error);
@@ -114,7 +114,7 @@ namespace AnimeBrowser.API.Controllers
         {
             try
             {
-                logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method started. animeInfo.Id: [{id}].");
+                logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method started. {nameof(id)}: [{id}].");
 
                 await animeInfoDeleteHandler.DeleteAnimeInfo(id);
 

@@ -62,7 +62,7 @@ namespace AnimeBrowser.BL.Services.Write
             }
             catch (Exception ex)
             {
-                logger.Error($"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{ex.Message}].");
+                logger.Error(ex, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{ex.Message}].");
                 throw;
             }
         }

@@ -35,10 +35,10 @@ namespace AnimeBrowser.BL.Services.Write
         {
             try
             {
-                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method started. requestModel: [{seasonRequestModel}].");
+                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method started. {nameof(seasonRequestModel)}: [{seasonRequestModel}].");
                 if (seasonRequestModel == null)
                 {
-                    var error = new ErrorModel(code: ErrorCodes.EmptyObject.GetIntValueAsString(), description: $"The {nameof(SeasonCreationRequestModel)} (variabble: {nameof(seasonRequestModel)}) object is empty!",
+                    var error = new ErrorModel(code: ErrorCodes.EmptyObject.GetIntValueAsString(), description: $"The {nameof(SeasonCreationRequestModel)} object is empty!",
                         source: nameof(seasonRequestModel), title: ErrorCodes.EmptyObject.GetDescription());
                     throw new EmptyObjectException<SeasonCreationRequestModel>(error, $"The given [{nameof(Season)}] object is empty!");
                 }
@@ -48,42 +48,45 @@ namespace AnimeBrowser.BL.Services.Write
                 if (!validationResult.IsValid)
                 {
                     var errorList = validationResult.Errors.ConvertToErrorModel();
-                    var valEx = new ValidationException(errorList, $"Validation error in [{nameof(SeasonCreationRequestModel)}].");
-                    logger.Warning(valEx, $"Message: [{valEx.Message}]{Environment.NewLine}Validation errors:[{string.Join(", ", valEx.Errors)}].");
+                    var valEx = new ValidationException(errorList, $"Validation error in [{nameof(SeasonCreationRequestModel)}].{Environment.NewLine}Validation errors:[{string.Join(", ", errorList)}].");
                     throw valEx;
                 }
                 var animeInfo = await animeInfoReadRepo.GetAnimeInfoById(seasonRequestModel.AnimeInfoId);
                 if (animeInfo == null)
                 {
                     var error = new ErrorModel(code: ErrorCodes.EmptyProperty.GetIntValueAsString(),
-                        description: $"The {nameof(AnimeInfo)} object is empty that is linked with the current {nameof(Season)} [{nameof(SeasonCreationRequestModel.AnimeInfoId)}: {seasonRequestModel?.AnimeInfoId}]!",
+                        description: $"No {nameof(AnimeInfo)} object was found with the {nameof(Season)}'s {nameof(SeasonCreationRequestModel.AnimeInfoId)} [{seasonRequestModel?.AnimeInfoId}]!",
                         source: nameof(SeasonCreationRequestModel.AnimeInfoId), title: ErrorCodes.EmptyProperty.GetDescription()
                     );
                     var notExistingAnimeInfoEx = new NotFoundObjectException<AnimeInfo>(error, $"There is no {nameof(AnimeInfo)} object that was given in {nameof(SeasonCreationRequestModel.AnimeInfoId)} property.");
-                    logger.Warning(notExistingAnimeInfoEx, notExistingAnimeInfoEx.Message);
                     throw notExistingAnimeInfoEx;
                 }
                 var createdSeason = await seasonWriteRepo.CreateSeason(seasonRequestModel.ToSeason());
 
                 var responseModel = createdSeason.ToCreationResponseModel();
 
-                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. responseModel: [{responseModel}].");
+                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. {nameof(SeasonCreationResponseModel)}.{nameof(SeasonCreationResponseModel.Id)}: [{responseModel.Id}].");
 
                 return responseModel;
             }
-            catch (ValidationException valEx)
-            {
-                logger.Warning($"Validation error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{valEx.Message}].");
-                throw;
-            }
             catch (EmptyObjectException<SeasonCreationRequestModel> ex)
             {
-                logger.Warning($"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{ex.Message}].");
+                logger.Warning(ex, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{ex.Message}].");
+                throw;
+            }
+            catch (ValidationException valEx)
+            {
+                logger.Warning(valEx, $"Validation error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{valEx.Message}].");
+                throw;
+            }
+            catch (NotFoundObjectException<AnimeInfo> ex)
+            {
+                logger.Warning(ex, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{ex.Message}].");
                 throw;
             }
             catch (Exception ex)
             {
-                logger.Error($"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{ex.Message}].");
+                logger.Error(ex, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{ex.Message}].");
                 throw;
             }
         }

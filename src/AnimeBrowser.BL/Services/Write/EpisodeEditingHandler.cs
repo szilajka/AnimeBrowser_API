@@ -35,16 +35,15 @@ namespace AnimeBrowser.BL.Services.Write
         {
             try
             {
-                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method started with requestModel: [{episodeRequestModel}].");
+                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method started with {nameof(episodeRequestModel)}: [{episodeRequestModel}].");
 
                 if (id != episodeRequestModel?.Id)
                 {
                     var error = new ErrorModel(code: ErrorCodes.MismatchingProperty.GetIntValueAsString(),
                        description: $"The parameter [{nameof(id)}] and [{nameof(episodeRequestModel)}.{nameof(EpisodeEditingRequestModel.Id)}] properties should have the same value, but they are different!",
                        source: nameof(id), title: ErrorCodes.MismatchingProperty.GetDescription());
-                    var argEx = new MismatchingIdException(error, "The given id and the model's id are not matching!");
-                    logger.Warning(argEx, $"Id mismatch in property and parameter.");
-                    throw argEx;
+                    var mismatchEx = new MismatchingIdException(error, "The given id and the model's id are not matching!");
+                    throw mismatchEx;
                 }
 
                 var validator = new EpisodeEditingValidator(dateTimeProvider);
@@ -52,7 +51,7 @@ namespace AnimeBrowser.BL.Services.Write
                 if (!validationResult.IsValid)
                 {
                     var errorList = validationResult.Errors.ConvertToErrorModel();
-                    throw new ValidationException(errorList, $"Validation error in [{nameof(EpisodeEditingRequestModel)}].");
+                    throw new ValidationException(errorList, $"Validation error in [{nameof(EpisodeEditingRequestModel)}].{Environment.NewLine}Validation errors:[{string.Join(", ", errorList)}].");
                 }
 
                 var episode = await episodeReadRepo.GetEpisodeById(id);
@@ -62,8 +61,7 @@ namespace AnimeBrowser.BL.Services.Write
                         description: $"No {nameof(Episode)} object was found with the given id [{id}]!",
                         source: nameof(EpisodeEditingRequestModel.Id), title: ErrorCodes.EmptyObject.GetDescription()
                     );
-                    var notExistingEpisodeEx = new NotFoundObjectException<EpisodeEditingRequestModel>(error, $"There is no {nameof(Episode)} with given id: [{id}].");
-                    logger.Warning(notExistingEpisodeEx, notExistingEpisodeEx.Message);
+                    var notExistingEpisodeEx = new NotFoundObjectException<Episode>(error, $"There is no {nameof(Episode)} with given id: [{id}].");
                     throw notExistingEpisodeEx;
                 }
 
@@ -76,7 +74,6 @@ namespace AnimeBrowser.BL.Services.Write
                                         $"[{nameof(EpisodeEditingRequestModel)}.{nameof(EpisodeEditingRequestModel.AnimeInfoId)}] property.",
                         source: $"[{nameof(episodeRequestModel.SeasonId)}, {nameof(episodeRequestModel.AnimeInfoId)}]", title: ErrorCodes.MismatchingProperty.GetDescription());
                     var mismatchEx = new MismatchingIdException(error, error.Description);
-                    logger.Warning(mismatchEx, mismatchEx.Message);
                     throw mismatchEx;
                 }
                 var isEpisodeWithSameNumberExists = episodeReadRepo.IsEpisodeWithEpisodeNumberExists(seasonId: episodeRequestModel.SeasonId, episodeNumber: episodeRequestModel.EpisodeNumber);
@@ -85,7 +82,7 @@ namespace AnimeBrowser.BL.Services.Write
                     var error = new ErrorModel(code: ErrorCodes.NotUniqueProperty.GetIntValueAsString(), description: $"Another {nameof(Episode)} can be found in the same {nameof(Season)} [{episodeRequestModel.SeasonId}] " +
                         $"with the same {nameof(EpisodeEditingRequestModel.EpisodeNumber)} [{episodeRequestModel.EpisodeNumber}].",
                         source: nameof(EpisodeEditingRequestModel.EpisodeNumber), title: ErrorCodes.NotUniqueProperty.GetDescription());
-                    var alreadyExistingEx = new AlreadyExistingObjectException<Episode>(error);
+                    var alreadyExistingEx = new AlreadyExistingObjectException<Episode>(error, $"There is already an {nameof(Episode)} in the same {nameof(Season)} with the same {nameof(Episode.EpisodeNumber)} value.");
                     throw alreadyExistingEx;
                 }
 
@@ -99,24 +96,29 @@ namespace AnimeBrowser.BL.Services.Write
 
                 return responseModel;
             }
-            catch (ValidationException valEx)
+            catch (MismatchingIdException mismatchEx)
             {
-                logger.Warning($"Validation error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{valEx.Message}].");
+                logger.Warning(mismatchEx, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{mismatchEx.Message}].");
                 throw;
             }
-            catch (NotFoundObjectException<EpisodeEditingRequestModel> ex)
+            catch (ValidationException valEx)
             {
-                logger.Warning($"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{ex.Message}].");
+                logger.Warning(valEx, $"Validation error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{valEx.Message}].");
+                throw;
+            }
+            catch (NotFoundObjectException<Episode> ex)
+            {
+                logger.Warning(ex, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{ex.Message}].");
                 throw;
             }
             catch (AlreadyExistingObjectException<Episode> alreadyEx)
             {
-                logger.Warning($"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{alreadyEx.Message}].");
+                logger.Warning(alreadyEx, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{alreadyEx.Message}].");
                 throw;
             }
             catch (Exception ex)
             {
-                logger.Error($"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{ex.Message}].");
+                logger.Error(ex, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{ex.Message}].");
                 throw;
             }
         }

@@ -37,16 +37,15 @@ namespace AnimeBrowser.BL.Services.Write
         {
             try
             {
-                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method started with requestModel: [{seasonRequestModel}].");
+                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method started with {nameof(seasonRequestModel)}: [{seasonRequestModel}].");
 
                 if (id != seasonRequestModel?.Id)
                 {
                     var error = new ErrorModel(code: ErrorCodes.MismatchingProperty.GetIntValueAsString(),
                        description: $"The parameter [{nameof(id)}] and [{nameof(seasonRequestModel)}.{nameof(SeasonEditingRequestModel.Id)}] properties should have the same value, but they are different!",
                        source: nameof(id), title: ErrorCodes.MismatchingProperty.GetDescription());
-                    var argEx = new MismatchingIdException(error, "The given id and the model's id are not matching!");
-                    logger.Warning(argEx, $"Id mismatch in property and parameter.");
-                    throw argEx;
+                    var mismatchEx = new MismatchingIdException(error, "The given id and the model's id are not matching!");
+                    throw mismatchEx;
                 }
 
                 var validator = new SeasonEditingValidator(dateTimeProvider);
@@ -54,7 +53,7 @@ namespace AnimeBrowser.BL.Services.Write
                 if (!validationResult.IsValid)
                 {
                     var errorList = validationResult.Errors.ConvertToErrorModel();
-                    throw new ValidationException(errorList, $"Validation error in [{nameof(SeasonEditingRequestModel)}].");
+                    throw new ValidationException(errorList, $"Validation error in [{nameof(SeasonEditingRequestModel)}].{Environment.NewLine}Validation errors:[{string.Join(", ", errorList)}].");
                 }
 
                 var season = await seasonReadRepo.GetSeasonById(id);
@@ -64,8 +63,7 @@ namespace AnimeBrowser.BL.Services.Write
                         description: $"No {nameof(Season)} object was found with the given id [{id}]!",
                         source: nameof(SeasonEditingRequestModel.Id), title: ErrorCodes.EmptyObject.GetDescription()
                     );
-                    var notExistingSeasonEx = new NotFoundObjectException<SeasonEditingRequestModel>(error, $"There is no {nameof(Season)} with given id: [{id}].");
-                    logger.Warning(notExistingSeasonEx, notExistingSeasonEx.Message);
+                    var notExistingSeasonEx = new NotFoundObjectException<Season>(error, $"There is no {nameof(Season)} with given id: [{id}].");
                     throw notExistingSeasonEx;
                 }
                 var animeInfo = await animeInfoReadRepo.GetAnimeInfoById(seasonRequestModel.AnimeInfoId);
@@ -76,7 +74,6 @@ namespace AnimeBrowser.BL.Services.Write
                         source: nameof(SeasonEditingRequestModel.AnimeInfoId), title: ErrorCodes.EmptyProperty.GetDescription()
                     );
                     var notExistingAnimeInfoEx = new NotFoundObjectException<AnimeInfo>(error, $"There is no {nameof(AnimeInfo)} object that was given in {nameof(SeasonEditingRequestModel.AnimeInfoId)} property.");
-                    logger.Warning(notExistingAnimeInfoEx, notExistingAnimeInfoEx.Message);
                     throw notExistingAnimeInfoEx;
                 }
                 var rSeason = seasonRequestModel.ToSeason();
@@ -85,18 +82,28 @@ namespace AnimeBrowser.BL.Services.Write
                 season = await seasonWriteRepo.UpdateSeason(season);
                 SeasonEditingResponseModel responseModel = season.ToEditingResponseModel();
 
-                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. result: [{responseModel}].");
+                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. {nameof(SeasonEditingResponseModel)}.{nameof(SeasonEditingResponseModel.Id)}: [{responseModel.Id}].");
 
                 return responseModel;
             }
-            catch (ValidationException valEx)
+            catch (MismatchingIdException mismatchEx)
             {
-                logger.Warning($"Validation error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{valEx.Message}].");
+                logger.Warning(mismatchEx, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{mismatchEx.Message}].");
                 throw;
             }
-            catch (NotFoundObjectException<SeasonEditingRequestModel> ex)
+            catch (ValidationException valEx)
             {
-                logger.Warning($"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{ex.Message}].");
+                logger.Warning(valEx, $"Validation error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{valEx.Message}].");
+                throw;
+            }
+            catch (NotFoundObjectException<Season> ex)
+            {
+                logger.Warning(ex, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{ex.Message}].");
+                throw;
+            }
+            catch (NotFoundObjectException<AnimeInfo> ex)
+            {
+                logger.Warning(ex, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{ex.Message}].");
                 throw;
             }
             catch (Exception ex)

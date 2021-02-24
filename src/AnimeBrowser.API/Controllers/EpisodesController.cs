@@ -42,11 +42,6 @@ namespace AnimeBrowser.API.Controllers
                 logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method finished with result: [{createdEpisode }].");
                 return Created($"{ControllerHelper.EPISODES_CONTROLLER_NAME}/{createdEpisode.Id}", createdEpisode);
             }
-            catch (MismatchingIdException mismatchEx)
-            {
-                logger.Warning(mismatchEx, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{mismatchEx.Message}].");
-                return BadRequest(mismatchEx.Error);
-            }
             catch (EmptyObjectException<EpisodeCreationRequestModel> emptyEx)
             {
                 logger.Warning(emptyEx, $"Empty request model [{nameof(episodeRequestModel)}] in {MethodNameHelper.GetCurrentMethodName()}. Message: [{emptyEx.Message}].");
@@ -56,6 +51,11 @@ namespace AnimeBrowser.API.Controllers
             {
                 logger.Warning(valEx, $"Validation error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{valEx.Message}].");
                 return BadRequest(valEx.Errors);
+            }
+            catch (MismatchingIdException mismatchEx)
+            {
+                logger.Warning(mismatchEx, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{mismatchEx.Message}].");
+                return BadRequest(mismatchEx.Error);
             }
             catch (AlreadyExistingObjectException<Episode> alreadyExistingEx)
             {
@@ -75,11 +75,11 @@ namespace AnimeBrowser.API.Controllers
         {
             try
             {
-                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method started. requestModel: [{episodeRequestModel}].");
+                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method started. {nameof(id)}: [{id}], {nameof(episodeRequestModel)}: [{episodeRequestModel}].");
 
                 var updatedEpisode = await episodeEditingHandler.EditEpisode(id, episodeRequestModel);
 
-                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. result.Id: [{updatedEpisode?.Id}].");
+                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. {nameof(updatedEpisode)}.{nameof(updatedEpisode.Id)}: [{updatedEpisode?.Id}].");
 
                 return Ok(updatedEpisode);
             }
@@ -93,7 +93,7 @@ namespace AnimeBrowser.API.Controllers
                 logger.Warning(valEx, $"Validation error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{valEx.Message}].");
                 return BadRequest(valEx.Errors);
             }
-            catch (NotFoundObjectException<EpisodeEditingRequestModel> ex)
+            catch (NotFoundObjectException<Episode> ex)
             {
                 logger.Warning(ex, $"Not found object error in {MethodNameHelper.GetCurrentMethodName()}. Returns 404 - Not Found. Message: [{ex.Message}].");
                 return NotFound(id);

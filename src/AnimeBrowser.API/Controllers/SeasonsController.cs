@@ -31,15 +31,15 @@ namespace AnimeBrowser.API.Controllers
 
         [HttpPost]
         [Authorize("SeasonAdmin")]
-        public async Task<IActionResult> Create([FromBody] SeasonCreationRequestModel requestModel)
+        public async Task<IActionResult> Create([FromBody] SeasonCreationRequestModel seasonRequestModel)
         {
             try
             {
-                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method started. requestModel: [{requestModel}].");
+                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method started. {nameof(seasonRequestModel)}: [{seasonRequestModel}].");
 
-                var createdSeason = await seasonCreationHandler.CreateSeason(requestModel);
+                var createdSeason = await seasonCreationHandler.CreateSeason(seasonRequestModel);
 
-                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. result.Id: [{createdSeason.Id}].");
+                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. {nameof(createdSeason)}.{nameof(createdSeason.Id)}: [{createdSeason.Id}].");
 
                 return Created($"{ControllerHelper.SEASONS_CONTROLLER_NAME}/{createdSeason.Id}", createdSeason);
             }
@@ -48,15 +48,15 @@ namespace AnimeBrowser.API.Controllers
                 logger.Warning(emptyEx, $"Empty request model in {MethodNameHelper.GetCurrentMethodName()}. Message: [{emptyEx.Message}].");
                 return BadRequest(emptyEx.Error);
             }
-            catch (NotFoundObjectException<AnimeInfo> notFoundEx)
-            {
-                logger.Warning(notFoundEx, $"Not found {nameof(AnimeInfo)} in database in {MethodNameHelper.GetCurrentMethodName()}. Message: [{notFoundEx.Message}].");
-                return BadRequest(notFoundEx.Error);
-            }
             catch (ValidationException valEx)
             {
                 logger.Warning(valEx, $"Validation error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{valEx.Message}].");
                 return BadRequest(valEx.Errors);
+            }
+            catch (NotFoundObjectException<AnimeInfo> notFoundEx)
+            {
+                logger.Warning(notFoundEx, $"Not found {nameof(AnimeInfo)} in database in {MethodNameHelper.GetCurrentMethodName()}. Message: [{notFoundEx.Message}].");
+                return BadRequest(notFoundEx.Error);
             }
             catch (Exception ex)
             {
@@ -67,15 +67,15 @@ namespace AnimeBrowser.API.Controllers
 
         [HttpPatch("{id}")]
         [Authorize("SeasonAdmin")]
-        public async Task<IActionResult> Edit([FromRoute] long id, [FromBody] SeasonEditingRequestModel requestModel)
+        public async Task<IActionResult> Edit([FromRoute] long id, [FromBody] SeasonEditingRequestModel seasonRequestModel)
         {
             try
             {
-                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method started. requestModel: [{requestModel}].");
+                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method started. {nameof(seasonRequestModel)}: [{seasonRequestModel}].");
 
-                var updatedSeason = await seasonEditingHandler.EditSeason(id, requestModel);
+                var updatedSeason = await seasonEditingHandler.EditSeason(id, seasonRequestModel);
 
-                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. result.Id: [{updatedSeason?.Id}].");
+                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method finished.  {nameof(updatedSeason)}.{nameof(updatedSeason.Id)}: [{updatedSeason?.Id}].");
 
                 return Ok(updatedSeason);
             }
@@ -89,7 +89,7 @@ namespace AnimeBrowser.API.Controllers
                 logger.Warning(valEx, $"Validation error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{valEx.Message}].");
                 return BadRequest(valEx.Errors);
             }
-            catch (NotFoundObjectException<SeasonEditingRequestModel> ex)
+            catch (NotFoundObjectException<Season> ex)
             {
                 logger.Warning(ex, $"Not found object error in {MethodNameHelper.GetCurrentMethodName()}. Returns 404 - Not Found. Message: [{ex.Message}].");
                 return NotFound(id);

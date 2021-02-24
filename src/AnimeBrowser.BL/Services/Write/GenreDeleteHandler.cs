@@ -27,7 +27,7 @@ namespace AnimeBrowser.BL.Services.Write
         {
             try
             {
-                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method started. genreId: [{genreId}].");
+                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method started. {nameof(genreId)}: [{genreId}].");
 
                 if (genreId <= 0)
                 {
@@ -48,7 +48,12 @@ namespace AnimeBrowser.BL.Services.Write
 
                 await genreWriteRepo.DeleteGenre(genre);
 
-                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. Successfully deleted {nameof(Genre)} [{genreId}].");
+                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method finished.");
+            }
+            catch (NotExistingIdException noIdEx)
+            {
+                logger.Warning(noIdEx, $"Error in [{MethodNameHelper.GetCurrentMethodName()}]. Message: [{noIdEx.Message}].");
+                throw;
             }
             catch (NotFoundObjectException<Genre> nfoEx)
             {
@@ -57,7 +62,7 @@ namespace AnimeBrowser.BL.Services.Write
             }
             catch (Exception ex)
             {
-                logger.Error($"Error in [{MethodNameHelper.GetCurrentMethodName()}]. Message: [{ex.Message}].");
+                logger.Error(ex, $"Error in [{MethodNameHelper.GetCurrentMethodName()}]. Message: [{ex.Message}].");
                 throw;
             }
         }

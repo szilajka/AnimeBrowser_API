@@ -27,13 +27,13 @@ namespace AnimeBrowser.BL.Services.Write
         {
             try
             {
-                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method started. anime info's id: [{id}].");
+                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method started. {nameof(id)}: [{id}].");
 
                 if (id <= 0)
                 {
                     var error = new ErrorModel(code: ErrorCodes.OutOfRangeProperty.GetIntValueAsString(), description: $"The given id [{id}] is not a valid id. A valid id must be greater than 0!",
                         source: nameof(id), title: ErrorCodes.OutOfRangeProperty.GetDescription());
-                    throw new NotExistingIdException(error, "The given anime info's id is less than/equal to 0!");
+                    throw new NotExistingIdException(error, $"The given {nameof(AnimeInfo)}'s id is less than/equal to 0!");
                 }
 
                 var animeInfo = await animeInfoReadRepo.GetAnimeInfoById(id);
@@ -43,12 +43,17 @@ namespace AnimeBrowser.BL.Services.Write
                          description: $"No {nameof(AnimeInfo)} object was found with the given id [{animeInfo?.Id}]!",
                          source: nameof(id), title: ErrorCodes.EmptyObject.GetDescription()
                      );
-                    throw new NotFoundObjectException<AnimeInfo>(error, $"Not found an anime entity with id: [{id}].");
+                    throw new NotFoundObjectException<AnimeInfo>(error, $"Not found an {nameof(AnimeInfo)} entity with id: [{id}].");
                 }
 
                 await animeInfoWriteRepo.DeleteAnimeInfo(animeInfo);
 
-                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. Successfully deleted anime info [{id}].");
+                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method finished.");
+            }
+            catch (NotExistingIdException noIdEx)
+            {
+                logger.Warning(noIdEx, $"Error in [{MethodNameHelper.GetCurrentMethodName()}]. Message: [{noIdEx.Message}].");
+                throw;
             }
             catch (NotFoundObjectException<AnimeInfo> nfoEx)
             {
@@ -57,7 +62,7 @@ namespace AnimeBrowser.BL.Services.Write
             }
             catch (Exception ex)
             {
-                logger.Error($"Error in [{MethodNameHelper.GetCurrentMethodName()}]. Message: [{ex.Message}].");
+                logger.Error(ex, $"Error in [{MethodNameHelper.GetCurrentMethodName()}]. Message: [{ex.Message}].");
                 throw;
             }
         }

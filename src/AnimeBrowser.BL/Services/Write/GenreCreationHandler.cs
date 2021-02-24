@@ -25,46 +25,46 @@ namespace AnimeBrowser.BL.Services.Write
             this.genreWriteRepo = genreWrite;
         }
 
-        public async Task<GenreCreationResponseModel> CreateGenre(GenreCreationRequestModel requestModel)
+        public async Task<GenreCreationResponseModel> CreateGenre(GenreCreationRequestModel genreRequestModel)
         {
             try
             {
-                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method started. requestModel: [{requestModel}].");
-                if (requestModel == null)
+                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method started. {nameof(genreRequestModel)}: [{genreRequestModel}].");
+                if (genreRequestModel == null)
                 {
-                    var error = new ErrorModel(code: ErrorCodes.EmptyObject.GetIntValueAsString(), description: $"The {nameof(GenreCreationRequestModel)} (variabble: {nameof(requestModel)}) object is empty!",
-                        source: nameof(requestModel), title: ErrorCodes.EmptyObject.GetDescription());
-                    throw new EmptyObjectException<GenreCreationRequestModel>(error, $"The given [{nameof(Genre)}] object is empty!");
+                    var error = new ErrorModel(code: ErrorCodes.EmptyObject.GetIntValueAsString(), description: $"The {nameof(GenreCreationRequestModel)} object is empty!",
+                        source: nameof(genreRequestModel), title: ErrorCodes.EmptyObject.GetDescription());
+                    throw new EmptyObjectException<GenreCreationRequestModel>(error, $"The given [{nameof(GenreCreationRequestModel)}] object is empty!");
                 }
 
                 var genreValidator = new GenreCreationValidator();
-                var validationResult = await genreValidator.ValidateAsync(requestModel);
+                var validationResult = await genreValidator.ValidateAsync(genreRequestModel);
                 if (!validationResult.IsValid)
                 {
                     var errorList = validationResult.Errors.ConvertToErrorModel();
-                    throw new ValidationException(errorList, $"Validation error in [{nameof(GenreCreationRequestModel)}].");
+                    throw new ValidationException(errorList, $"Validation error in [{nameof(GenreCreationRequestModel)}].{Environment.NewLine}Validation errors:[{string.Join(", ", errorList)}].");
                 }
-                var createdGenre = await genreWriteRepo.CreateGenre(requestModel.ToGenre());
+                var createdGenre = await genreWriteRepo.CreateGenre(genreRequestModel.ToGenre());
 
                 var responseModel = createdGenre.ToCreationResponseModel();
 
-                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. responseModel: [{responseModel}].");
+                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. {nameof(GenreCreationResponseModel)}.{nameof(GenreCreationResponseModel.Id)}: [{responseModel.Id}].");
 
                 return responseModel;
             }
-            catch (ValidationException valEx)
-            {
-                logger.Warning($"Validation error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{valEx.Message}].");
-                throw;
-            }
             catch (EmptyObjectException<GenreCreationRequestModel> ex)
             {
-                logger.Warning($"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{ex.Message}].");
+                logger.Warning(ex, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{ex.Message}].");
+                throw;
+            }
+            catch (ValidationException valEx)
+            {
+                logger.Warning(valEx, $"Validation error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{valEx.Message}].");
                 throw;
             }
             catch (Exception ex)
             {
-                logger.Error($"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{ex.Message}].");
+                logger.Error(ex, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{ex.Message}].");
                 throw;
             }
         }

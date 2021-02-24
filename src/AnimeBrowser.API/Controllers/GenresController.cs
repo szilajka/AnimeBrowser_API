@@ -31,15 +31,15 @@ namespace AnimeBrowser.API.Controllers
 
         [HttpPost]
         [Authorize("GenreAdmin")]
-        public async Task<IActionResult> Create([FromBody] GenreCreationRequestModel requestModel)
+        public async Task<IActionResult> Create([FromBody] GenreCreationRequestModel genreRequestModel)
         {
             try
             {
-                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method started. requestModel: [{requestModel}].");
+                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method started. {nameof(genreRequestModel)}: [{genreRequestModel}].");
 
-                var createdGenre = await genreCreationHandler.CreateGenre(requestModel);
+                var createdGenre = await genreCreationHandler.CreateGenre(genreRequestModel);
 
-                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. result.Id: [{createdGenre.Id}].");
+                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. {nameof(createdGenre)}.{nameof(createdGenre.Id)}: [{createdGenre.Id}].");
 
                 return Created($"{ControllerHelper.GENRES_CONTROLLER_NAME}/{createdGenre.Id}", createdGenre);
             }
@@ -62,15 +62,15 @@ namespace AnimeBrowser.API.Controllers
 
         [HttpPatch("{id}")]
         [Authorize("GenreAdmin")]
-        public async Task<IActionResult> Edit([FromRoute] long id, [FromBody] GenreEditingRequestModel requestModel)
+        public async Task<IActionResult> Edit([FromRoute] long id, [FromBody] GenreEditingRequestModel genreRequestModel)
         {
             try
             {
-                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method started. id: [{id}], requestModel: [{requestModel}].");
+                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method started. {nameof(id)}: [{id}], {nameof(genreRequestModel)}: [{genreRequestModel}].");
 
-                var updatedGenre = await genreEditingHandler.EditGenre(id, requestModel);
+                var updatedGenre = await genreEditingHandler.EditGenre(id, genreRequestModel);
 
-                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. result.Id: [{updatedGenre?.Id}].");
+                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. {nameof(updatedGenre)}.{nameof(updatedGenre.Id)}: [{updatedGenre?.Id}].");
 
                 return Ok(updatedGenre);
             }
@@ -84,7 +84,7 @@ namespace AnimeBrowser.API.Controllers
                 logger.Warning(valEx, $"Validation error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{valEx.Message}].");
                 return BadRequest(valEx.Errors);
             }
-            catch (NotFoundObjectException<GenreEditingRequestModel> ex)
+            catch (NotFoundObjectException<Genre> ex)
             {
                 logger.Warning(ex, $"Not found object error in {MethodNameHelper.GetCurrentMethodName()}. Returns 404 - Not Found. Message: [{ex.Message}].");
                 return NotFound(ex.Error);
@@ -102,7 +102,7 @@ namespace AnimeBrowser.API.Controllers
         {
             try
             {
-                logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method started. genreId: [{id}].");
+                logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method started. {nameof(id)}: [{id}].");
 
                 await genreDeleteHandler.DeleteGenre(id);
 

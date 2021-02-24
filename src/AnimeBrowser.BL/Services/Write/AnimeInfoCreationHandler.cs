@@ -33,7 +33,7 @@ namespace AnimeBrowser.BL.Services.Write
                 {
                     var errorModel = new ErrorModel(code: ErrorCodes.EmptyObject.GetIntValueAsString(), description: $"The {nameof(AnimeInfoCreationRequestModel)} object is empty!",
                         source: nameof(animeInfoRequestModel), title: ErrorCodes.EmptyObject.GetDescription());
-                    throw new EmptyObjectException<AnimeInfoCreationRequestModel>(errorModel, "The given anime info object is empty!");
+                    throw new EmptyObjectException<AnimeInfoCreationRequestModel>(errorModel, $"The given {nameof(AnimeInfoCreationRequestModel)} object is empty!");
                 }
 
                 var validator = new AnimeInfoCreationValidator();
@@ -41,27 +41,27 @@ namespace AnimeBrowser.BL.Services.Write
                 if (!validationResult.IsValid)
                 {
                     var errorList = validationResult.Errors.ConvertToErrorModel();
-                    throw new ValidationException(errorList, $"Validation error in [{nameof(AnimeInfoCreationRequestModel)}].");
+                    throw new ValidationException(errorList, $"Validation error in [{nameof(AnimeInfoCreationRequestModel)}].{Environment.NewLine}Validation errors:[{string.Join(", ", errorList)}].");
                 }
 
                 var animeInfo = await animeInfoWriteRepo.CreateAnimeInfo(animeInfoRequestModel.ToAnimeInfo());
                 var responseModel = animeInfo.ToCreationResponseModel();
-                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. Created model id: [{responseModel.Id}]");
+                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. {nameof(AnimeInfoCreationResponseModel)}.{nameof(AnimeInfoCreationResponseModel.Id)}: [{responseModel.Id}]");
                 return responseModel;
-            }
-            catch (ValidationException valEx)
-            {
-                logger.Warning($"Validation error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{valEx.Message}].");
-                throw;
             }
             catch (EmptyObjectException<AnimeInfoCreationRequestModel> ex)
             {
-                logger.Warning($"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{ex.Message}].");
+                logger.Warning(ex, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{ex.Message}].");
+                throw;
+            }
+            catch (ValidationException valEx)
+            {
+                logger.Warning(valEx, $"Validation error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{valEx.Message}].");
                 throw;
             }
             catch (Exception ex)
             {
-                logger.Error($"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{ex.Message}].");
+                logger.Error(ex, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{ex.Message}].");
                 throw;
             }
         }
