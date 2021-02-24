@@ -18,7 +18,7 @@ using System.Threading.Tasks;
 namespace AnimeBrowser.UnitTests.Write.AnimeInfoTests
 {
     [TestClass]
-    public class AnimeInfoCreationTest : TestBase
+    public class AnimeInfoCreationTests : TestBase
     {
         private static IList<AnimeInfoCreationRequestModel> allRequestModels;
 
@@ -99,7 +99,7 @@ namespace AnimeBrowser.UnitTests.Write.AnimeInfoTests
             });
 
             var animeInfoHandler = sp.GetService<IAnimeInfoCreation>();
-            var result = await animeInfoHandler.CreateAnimeInfo(animeInfoRequestModel);
+            var result = await animeInfoHandler!.CreateAnimeInfo(animeInfoRequestModel);
 
             result.Should().NotBeNull();
             result.Should().BeEquivalentTo(responseModel);

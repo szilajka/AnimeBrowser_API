@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 namespace AnimeBrowser.UnitTests.Write.AnimeInfoTests
 {
     [TestClass]
-    public class AnimeInfoDeleteTest : TestBase
+    public class AnimeInfoDeleteTests : TestBase
     {
 
         private IList<AnimeInfo> baseAnimeInfoData;
@@ -33,32 +33,8 @@ namespace AnimeBrowser.UnitTests.Write.AnimeInfoTests
             baseAnimeInfoData.Add(new AnimeInfo { Id = 10, Title = "KonoSuba", Description = "The main character guy dies and he's teleported into a medieval village with a goddes named Aqua. Their main quest is to defeat the Demon King and sometimes they get into trouble while other folks join to their party.", IsNsfw = false });
         }
 
-        private static IEnumerable<object[]> GetDeleteData()
-        {
-            yield return new object[] { 1 };
-            yield return new object[] { 2 };
-            yield return new object[] { 3 };
-            yield return new object[] { 7 };
-        }
-
-        private static IEnumerable<object[]> GetDelete_InvalidId_Data()
-        {
-            yield return new object[] { -1 };
-            yield return new object[] { -10 };
-            yield return new object[] { 0 };
-            yield return new object[] { null };
-        }
-
-        private static IEnumerable<object[]> GetDelete_NotExistingId_Data()
-        {
-            yield return new object[] { 251 };
-            yield return new object[] { 1034235234 };
-            yield return new object[] { 4 };
-            yield return new object[] { 11 };
-        }
-
         [DataTestMethod,
-            DynamicData(nameof(GetDeleteData), DynamicDataSourceType.Method)]
+            DataRow(1), DataRow(2), DataRow(3), DataRow(7)]
         public async Task AnimeInfoDelete_ShouldWork(long animeInfoId)
         {
             AnimeInfo foundAnimeInfo = null;
@@ -75,17 +51,16 @@ namespace AnimeBrowser.UnitTests.Write.AnimeInfoTests
             });
 
             var animeInfoDeleteHandler = sp.GetService<IAnimeInfoDelete>();
-            await animeInfoDeleteHandler.DeleteAnimeInfo(animeInfoId);
+            await animeInfoDeleteHandler!.DeleteAnimeInfo(animeInfoId);
 
-            var afterAnimeInfoCount = baseAnimeInfoData.Count;
-            afterAnimeInfoCount.Should().Be(beforeAnimeInfoCount - 1);
+            baseAnimeInfoData.Count.Should().Be(beforeAnimeInfoCount - 1);
             foundAnimeInfo.Should().NotBeNull();
             baseAnimeInfoData.Should().NotContain(foundAnimeInfo);
         }
 
 
         [DataTestMethod,
-            DynamicData(nameof(GetDelete_InvalidId_Data), DynamicDataSourceType.Method)]
+            DataRow(-1), DataRow(-10), DataRow(0), DataRow(null)]
         public async Task AnimeInfoDelete_InvalidId_ThrowException(long animeInfoId)
         {
             var sp = SetupDI(services =>
@@ -103,7 +78,7 @@ namespace AnimeBrowser.UnitTests.Write.AnimeInfoTests
         }
 
         [DataTestMethod,
-            DynamicData(nameof(GetDelete_NotExistingId_Data), DynamicDataSourceType.Method)]
+            DataRow(251), DataRow(1034235234), DataRow(4), DataRow(11)]
         public async Task AnimeInfoDelete_NotExistingId_ThrowException(long animeInfoId)
         {
             AnimeInfo foundAnimeInfo = null;
@@ -122,10 +97,29 @@ namespace AnimeBrowser.UnitTests.Write.AnimeInfoTests
             await deleteAnimeInfoFunc.Should().ThrowAsync<NotFoundObjectException<AnimeInfo>>();
         }
 
+        [TestMethod]
+        public async Task AnimeInfoDelete_ThrowException()
+        {
+            var sp = SetupDI(services =>
+            {
+                var animeInfoWriteRepo = new Mock<IAnimeInfoWrite>();
+                var animeInfoReadRepo = new Mock<IAnimeInfoRead>();
+                animeInfoReadRepo.Setup(air => air.GetAnimeInfoById(It.IsAny<long>())).ThrowsAsync(new InvalidOperationException());
+                services.AddTransient(factory => animeInfoReadRepo.Object);
+                services.AddTransient(factory => animeInfoWriteRepo.Object);
+                services.AddTransient<IAnimeInfoDelete, AnimeInfoDeleteHandler>();
+            });
+
+            var animeInfoDeleteHandler = sp.GetService<IAnimeInfoDelete>();
+            Func<Task> deleteAnimeInfoFunc = async () => await animeInfoDeleteHandler.DeleteAnimeInfo(1);
+            await deleteAnimeInfoFunc.Should().ThrowAsync<InvalidOperationException>();
+        }
+
 
         [TestCleanup]
         public void CleanTests()
         {
+            baseAnimeInfoData.Clear();
             baseAnimeInfoData = null;
         }
     }
