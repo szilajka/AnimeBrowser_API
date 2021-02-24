@@ -26,5 +26,16 @@ namespace AnimeBrowser.Data.Repositories.Write
             logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. {nameof(Episode)}.{nameof(Episode.Id)}: [{episode.Id}].");
             return episode;
         }
+
+        public async Task<Episode> UpdateEpisode(Episode episode)
+        {
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method started. {nameof(Episode)}: [{episode}].");
+
+            abContext.Update(episode);
+            await abContext.SaveChangesAsync();
+
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. {nameof(Episode)}.{nameof(Episode.Id)}: [{episode.Id}].");
+            return episode;
+        }
     }
 }
