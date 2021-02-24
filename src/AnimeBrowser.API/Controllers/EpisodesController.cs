@@ -20,11 +20,13 @@ namespace AnimeBrowser.API.Controllers
         private readonly ILogger logger = Log.ForContext<EpisodesController>();
         private readonly IEpisodeCreation episodeCreationHandler;
         private readonly IEpisodeEditing episodeEditingHandler;
+        private readonly IEpisodeDelete episodeDeleteHandler;
 
-        public EpisodesController(IEpisodeCreation episodeCreationHandler, IEpisodeEditing episodeEditingHandler)
+        public EpisodesController(IEpisodeCreation episodeCreationHandler, IEpisodeEditing episodeEditingHandler, IEpisodeDelete episodeDeleteHandler)
         {
             this.episodeCreationHandler = episodeCreationHandler;
             this.episodeEditingHandler = episodeEditingHandler;
+            this.episodeDeleteHandler = episodeDeleteHandler;
         }
 
         [HttpPost]
@@ -96,10 +98,40 @@ namespace AnimeBrowser.API.Controllers
                 logger.Warning(ex, $"Not found object error in {MethodNameHelper.GetCurrentMethodName()}. Returns 404 - Not Found. Message: [{ex.Message}].");
                 return NotFound(id);
             }
-            catch (NotFoundObjectException<AnimeInfo> notFoundEx)
+            catch (AlreadyExistingObjectException<Episode> alreadyEx)
             {
-                logger.Warning(notFoundEx, $"Not found {nameof(AnimeInfo)} in database in {MethodNameHelper.GetCurrentMethodName()}. Message: [{notFoundEx.Message}].");
-                return BadRequest(notFoundEx.Error);
+                logger.Warning(alreadyEx, $"Already existing {nameof(Episode)} with episode number in database in {MethodNameHelper.GetCurrentMethodName()}. Message: [{alreadyEx.Message}].");
+                return BadRequest(alreadyEx.Error);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"Error in [{MethodNameHelper.GetCurrentMethodName()}]. Message: [{ex.Message}].");
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        [HttpDelete("{id}")]
+        [Authorize("EpisodeAdmin")]
+        public async Task<IActionResult> Delete([FromRoute] long id)
+        {
+            try
+            {
+                logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method started. {nameof(id)}: [{id}].");
+
+                await episodeDeleteHandler.DeleteEpisode(id);
+
+                logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method finished.");
+                return Ok();
+            }
+            catch (NotExistingIdException notExistingEx)
+            {
+                logger.Warning(notExistingEx, $"Error in [{MethodNameHelper.GetCurrentMethodName()}]. Message: [{notExistingEx.Message}].");
+                return NotFound(notExistingEx.Error);
+            }
+            catch (NotFoundObjectException<Episode> nfoEx)
+            {
+                logger.Warning(nfoEx, $"Error in [{MethodNameHelper.GetCurrentMethodName()}]. Message: [{nfoEx.Message}].");
+                return NotFound(nfoEx.Error);
             }
             catch (Exception ex)
             {

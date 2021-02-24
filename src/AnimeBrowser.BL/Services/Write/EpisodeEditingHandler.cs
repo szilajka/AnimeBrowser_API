@@ -109,6 +109,11 @@ namespace AnimeBrowser.BL.Services.Write
                 logger.Warning($"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{ex.Message}].");
                 throw;
             }
+            catch (AlreadyExistingObjectException<Episode> alreadyEx)
+            {
+                logger.Warning($"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{alreadyEx.Message}].");
+                throw;
+            }
             catch (Exception ex)
             {
                 logger.Error($"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{ex.Message}].");

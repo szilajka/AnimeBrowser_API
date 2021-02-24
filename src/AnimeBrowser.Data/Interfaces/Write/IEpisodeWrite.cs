@@ -7,5 +7,6 @@ namespace AnimeBrowser.Data.Interfaces.Write
     {
         Task<Episode> CreateEpisode(Episode episode);
         Task<Episode> UpdateEpisode(Episode episode);
+        Task DeleteEpisode(Episode episode);
     }
 }
