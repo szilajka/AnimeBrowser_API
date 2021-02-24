@@ -26,12 +26,14 @@ namespace AnimeBrowser.BL.Services.Write
         private readonly IDateTime dateTimeProvider;
         private readonly IEpisodeRead episodeReadRepo;
         private readonly IEpisodeWrite episodeWriteRepo;
+        private readonly ISeasonRead seasonReadRepo;
 
-        public EpisodeCreationHandler(IDateTime dateTimeProvider, IEpisodeRead episodeReadRepo, IEpisodeWrite episodeWriteRepo)
+        public EpisodeCreationHandler(IDateTime dateTimeProvider, IEpisodeRead episodeReadRepo, IEpisodeWrite episodeWriteRepo, ISeasonRead seasonReadRepo)
         {
             this.dateTimeProvider = dateTimeProvider;
             this.episodeReadRepo = episodeReadRepo;
             this.episodeWriteRepo = episodeWriteRepo;
+            this.seasonReadRepo = seasonReadRepo;
         }
 
         public async Task<EpisodeCreationResponseModel> CreateEpisode(EpisodeCreationRequestModel episodeRequestModel)
@@ -46,7 +48,8 @@ namespace AnimeBrowser.BL.Services.Write
                     throw new EmptyObjectException<EpisodeCreationRequestModel>(error, $"The given [{nameof(EpisodeCreationRequestModel)}] object is empty!");
                 }
 
-                var episodeValidator = new EpisodeCreationValidator(dateTimeProvider);
+                var season = await seasonReadRepo.GetSeasonById(episodeRequestModel.SeasonId);
+                var episodeValidator = new EpisodeCreationValidator(dateTimeProvider, season?.StartDate, season?.EndDate);
                 var validationResult = await episodeValidator.ValidateAsync(episodeRequestModel);
                 if (!validationResult.IsValid)
                 {
@@ -72,7 +75,7 @@ namespace AnimeBrowser.BL.Services.Write
                     var error = new ErrorModel(code: ErrorCodes.NotUniqueProperty.GetIntValueAsString(), description: $"Another {nameof(Episode)} can be found in the same {nameof(Season)} [{episodeRequestModel.SeasonId}] " +
                         $"with the same {nameof(EpisodeCreationRequestModel.EpisodeNumber)} [{episodeRequestModel.EpisodeNumber}].",
                         source: nameof(EpisodeCreationRequestModel.EpisodeNumber), title: ErrorCodes.NotUniqueProperty.GetDescription());
-                    var alreadyExistingEx = new AlreadyExistingObjectException<Episode>(error);
+                    var alreadyExistingEx = new AlreadyExistingObjectException<Episode>(error, $"There is already an {nameof(Episode)} in the same {nameof(Season)} with the same {nameof(Episode.EpisodeNumber)} value.");
                     throw alreadyExistingEx;
                 }
 

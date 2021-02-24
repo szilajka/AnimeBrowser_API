@@ -2,6 +2,7 @@
 using AnimeBrowser.Data.Entities;
 using AnimeBrowser.Data.Interfaces.Read;
 using Serilog;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace AnimeBrowser.Data.Repositories.Read
@@ -24,6 +25,16 @@ namespace AnimeBrowser.Data.Repositories.Read
 
             logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. {nameof(Season)}?.{nameof(Season.Id)}: [{season?.Id}].");
             return season;
+        }
+
+        public bool IsExistsSeasonWithSeasonNumber(long animeInfoId, int seasonNumber)
+        {
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method started. {nameof(animeInfoId)}: [{animeInfoId}], {nameof(seasonNumber)}: [{nameof(seasonNumber)}].");
+
+            var result = abContext.Seasons.ToList().Any(s => s.AnimeInfoId == animeInfoId && s.SeasonNumber == seasonNumber);
+
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. result: [{result}].");
+            return result;
         }
     }
 }

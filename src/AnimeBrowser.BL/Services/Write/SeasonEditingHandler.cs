@@ -56,6 +56,16 @@ namespace AnimeBrowser.BL.Services.Write
                     throw new ValidationException(errorList, $"Validation error in [{nameof(SeasonEditingRequestModel)}].{Environment.NewLine}Validation errors:[{string.Join(", ", errorList)}].");
                 }
 
+                var isExistingSeasonWithSameSeasonNumber = seasonReadRepo.IsExistsSeasonWithSeasonNumber(animeInfoId: seasonRequestModel.AnimeInfoId, seasonNumber: seasonRequestModel.SeasonNumber);
+                if (isExistingSeasonWithSameSeasonNumber)
+                {
+                    var error = new ErrorModel(code: ErrorCodes.NotUniqueProperty.GetIntValueAsString(), description: $"Another {nameof(Season)} can be found in the same {nameof(AnimeInfo)} [{seasonRequestModel.AnimeInfoId}] " +
+                        $"with the same {nameof(SeasonEditingRequestModel.SeasonNumber)} [{seasonRequestModel.SeasonNumber}].",
+                        source: nameof(SeasonEditingRequestModel.SeasonNumber), title: ErrorCodes.NotUniqueProperty.GetDescription());
+                    var alreadyExistingEx = new AlreadyExistingObjectException<Season>(error, $"There is already a {nameof(Season)} in the same {nameof(AnimeInfo)} with the same {nameof(Season.SeasonNumber)} value.");
+                    throw alreadyExistingEx;
+                }
+
                 var season = await seasonReadRepo.GetSeasonById(id);
                 if (season == null)
                 {
@@ -66,6 +76,7 @@ namespace AnimeBrowser.BL.Services.Write
                     var notExistingSeasonEx = new NotFoundObjectException<Season>(error, $"There is no {nameof(Season)} with given id: [{id}].");
                     throw notExistingSeasonEx;
                 }
+
                 var animeInfo = await animeInfoReadRepo.GetAnimeInfoById(seasonRequestModel.AnimeInfoId);
                 if (animeInfo == null)
                 {
@@ -94,6 +105,11 @@ namespace AnimeBrowser.BL.Services.Write
             catch (ValidationException valEx)
             {
                 logger.Warning(valEx, $"Validation error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{valEx.Message}].");
+                throw;
+            }
+            catch (AlreadyExistingObjectException<Season> alreadyExistingEx)
+            {
+                logger.Warning(alreadyExistingEx, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{alreadyExistingEx.Message}].");
                 throw;
             }
             catch (NotFoundObjectException<Season> ex)

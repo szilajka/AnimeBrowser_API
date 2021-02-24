@@ -53,6 +53,11 @@ namespace AnimeBrowser.API.Controllers
                 logger.Warning(valEx, $"Validation error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{valEx.Message}].");
                 return BadRequest(valEx.Errors);
             }
+            catch (AlreadyExistingObjectException<Season> alreadyExistingEx)
+            {
+                logger.Warning(alreadyExistingEx, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{alreadyExistingEx.Message}].");
+                return BadRequest(alreadyExistingEx.Error);
+            }
             catch (NotFoundObjectException<AnimeInfo> notFoundEx)
             {
                 logger.Warning(notFoundEx, $"Not found {nameof(AnimeInfo)} in database in {MethodNameHelper.GetCurrentMethodName()}. Message: [{notFoundEx.Message}].");
@@ -88,6 +93,11 @@ namespace AnimeBrowser.API.Controllers
             {
                 logger.Warning(valEx, $"Validation error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{valEx.Message}].");
                 return BadRequest(valEx.Errors);
+            }
+            catch (AlreadyExistingObjectException<Season> alreadyExistingEx)
+            {
+                logger.Warning(alreadyExistingEx, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{alreadyExistingEx.Message}].");
+                return BadRequest(alreadyExistingEx.Error);
             }
             catch (NotFoundObjectException<Season> ex)
             {

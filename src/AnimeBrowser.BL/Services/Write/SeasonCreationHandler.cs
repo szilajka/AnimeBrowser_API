@@ -22,13 +22,15 @@ namespace AnimeBrowser.BL.Services.Write
         private readonly ILogger logger = Log.ForContext<SeasonCreationHandler>();
         private readonly IDateTime dateTimeProvider;
         private readonly ISeasonWrite seasonWriteRepo;
+        private readonly ISeasonRead seasonReadRepo;
         private readonly IAnimeInfoRead animeInfoReadRepo;
 
-        public SeasonCreationHandler(IDateTime dateTimeProvider, ISeasonWrite seasonWrite, IAnimeInfoRead animeInfoRead)
+        public SeasonCreationHandler(IDateTime dateTimeProvider, ISeasonWrite seasonWrite, ISeasonRead seasonReadRepo, IAnimeInfoRead animeInfoReadRepo)
         {
             this.dateTimeProvider = dateTimeProvider;
             this.seasonWriteRepo = seasonWrite;
-            this.animeInfoReadRepo = animeInfoRead;
+            this.seasonReadRepo = seasonReadRepo;
+            this.animeInfoReadRepo = animeInfoReadRepo;
         }
 
         public async Task<SeasonCreationResponseModel> CreateSeason(SeasonCreationRequestModel seasonRequestModel)
@@ -51,6 +53,17 @@ namespace AnimeBrowser.BL.Services.Write
                     var valEx = new ValidationException(errorList, $"Validation error in [{nameof(SeasonCreationRequestModel)}].{Environment.NewLine}Validation errors:[{string.Join(", ", errorList)}].");
                     throw valEx;
                 }
+
+                var isExistingSeasonWithSameSeasonNumber = seasonReadRepo.IsExistsSeasonWithSeasonNumber(animeInfoId: seasonRequestModel.AnimeInfoId, seasonNumber: seasonRequestModel.SeasonNumber);
+                if (isExistingSeasonWithSameSeasonNumber)
+                {
+                    var error = new ErrorModel(code: ErrorCodes.NotUniqueProperty.GetIntValueAsString(), description: $"Another {nameof(Season)} can be found in the same {nameof(AnimeInfo)} [{seasonRequestModel.AnimeInfoId}] " +
+                        $"with the same {nameof(SeasonCreationRequestModel.SeasonNumber)} [{seasonRequestModel.SeasonNumber}].",
+                        source: nameof(SeasonCreationRequestModel.SeasonNumber), title: ErrorCodes.NotUniqueProperty.GetDescription());
+                    var alreadyExistingEx = new AlreadyExistingObjectException<Season>(error, $"There is already a {nameof(Season)} in the same {nameof(AnimeInfo)} with the same {nameof(Season.SeasonNumber)} value.");
+                    throw alreadyExistingEx;
+                }
+
                 var animeInfo = await animeInfoReadRepo.GetAnimeInfoById(seasonRequestModel.AnimeInfoId);
                 if (animeInfo == null)
                 {
@@ -77,6 +90,11 @@ namespace AnimeBrowser.BL.Services.Write
             catch (ValidationException valEx)
             {
                 logger.Warning(valEx, $"Validation error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{valEx.Message}].");
+                throw;
+            }
+            catch (AlreadyExistingObjectException<Season> alreadyExistingEx)
+            {
+                logger.Warning(alreadyExistingEx, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{alreadyExistingEx.Message}].");
                 throw;
             }
             catch (NotFoundObjectException<AnimeInfo> ex)

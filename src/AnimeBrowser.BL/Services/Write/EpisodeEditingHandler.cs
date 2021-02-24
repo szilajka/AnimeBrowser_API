@@ -23,12 +23,14 @@ namespace AnimeBrowser.BL.Services.Write
         private readonly IDateTime dateTimeProvider;
         private readonly IEpisodeRead episodeReadRepo;
         private readonly IEpisodeWrite episodeWriteRepo;
+        private readonly ISeasonRead seasonReadRepo;
 
-        public EpisodeEditingHandler(IDateTime dateTimeProvider, IEpisodeRead episodeReadRepo, IEpisodeWrite episodeWriteRepo)
+        public EpisodeEditingHandler(IDateTime dateTimeProvider, IEpisodeRead episodeReadRepo, IEpisodeWrite episodeWriteRepo, ISeasonRead seasonReadRepo)
         {
             this.dateTimeProvider = dateTimeProvider;
             this.episodeReadRepo = episodeReadRepo;
             this.episodeWriteRepo = episodeWriteRepo;
+            this.seasonReadRepo = seasonReadRepo;
         }
 
         public async Task<EpisodeEditingResponseModel> EditEpisode(long id, EpisodeEditingRequestModel episodeRequestModel)
@@ -46,7 +48,8 @@ namespace AnimeBrowser.BL.Services.Write
                     throw mismatchEx;
                 }
 
-                var validator = new EpisodeEditingValidator(dateTimeProvider);
+                var season = await seasonReadRepo.GetSeasonById(episodeRequestModel.SeasonId);
+                var validator = new EpisodeEditingValidator(dateTimeProvider, season?.StartDate, season?.EndDate);
                 var validationResult = await validator.ValidateAsync(episodeRequestModel);
                 if (!validationResult.IsValid)
                 {
