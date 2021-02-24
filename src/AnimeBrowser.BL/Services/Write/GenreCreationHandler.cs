@@ -7,7 +7,6 @@ using AnimeBrowser.Common.Models.ErrorModels;
 using AnimeBrowser.Common.Models.RequestModels;
 using AnimeBrowser.Common.Models.ResponseModels;
 using AnimeBrowser.Data.Converters;
-using AnimeBrowser.Data.Entities;
 using AnimeBrowser.Data.Interfaces.Write;
 using Serilog;
 using System;
