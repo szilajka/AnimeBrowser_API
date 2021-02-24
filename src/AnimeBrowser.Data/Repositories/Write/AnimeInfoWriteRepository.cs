@@ -18,29 +18,29 @@ namespace AnimeBrowser.Data.Repositories.Write
 
         public async Task<AnimeInfo> CreateAnimeInfo(AnimeInfo animeInfo)
         {
-            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method started. AnimeInfo: [{animeInfo}].");
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method started. {nameof(AnimeInfo)}: [{animeInfo}].");
 
             await context.AddAsync(animeInfo);
             await context.SaveChangesAsync();
 
-            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. Created id: [{animeInfo.Id}].");
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. {nameof(AnimeInfo.Id)}: [{animeInfo.Id}].");
             return animeInfo;
         }
 
         public async Task<AnimeInfo> UpdateAnimeInfo(AnimeInfo animeInfo)
         {
-            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method started. AnimeInfo: [{animeInfo}].");
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method started. {nameof(AnimeInfo)}: [{animeInfo}].");
 
             context.Update(animeInfo);
             await context.SaveChangesAsync();
 
-            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. Created id: [{animeInfo.Id}].");
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. {nameof(AnimeInfo)}.{nameof(AnimeInfo.Id)}: [{animeInfo.Id}].");
             return animeInfo;
         }
 
         public async Task DeleteAnimeInfo(AnimeInfo animeInfo)
         {
-            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method started. AnimeInfo: [{animeInfo}].");
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method started. {nameof(AnimeInfo)}: [{animeInfo}].");
 
             context.Remove(animeInfo);
             await context.SaveChangesAsync();

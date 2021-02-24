@@ -22,11 +22,11 @@ namespace AnimeBrowser.Data.Repositories.Read
 
         public async Task<Genre?> GetGenreById(long genreId)
         {
-            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method started. genreId: [{genreId}].");
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method started. {nameof(genreId)}: [{genreId}].");
 
             var genre = await abContext.Genres.FindAsync(genreId);
 
-            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. genre?.Id: [{genre?.Id}].");
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. {nameof(genre)}?.{nameof(genre.Id)}: [{genre?.Id}].");
             return genre;
         }
     }

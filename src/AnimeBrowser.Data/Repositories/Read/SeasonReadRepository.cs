@@ -33,7 +33,7 @@ namespace AnimeBrowser.Data.Repositories.Read
 
             var result = abContext.Seasons.ToList().Any(s => s.AnimeInfoId == animeInfoId && s.SeasonNumber == seasonNumber);
 
-            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. result: [{result}].");
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. {nameof(result)}: [{result}].");
             return result;
         }
     }

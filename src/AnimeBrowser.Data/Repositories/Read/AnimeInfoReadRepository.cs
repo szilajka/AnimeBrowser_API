@@ -18,11 +18,11 @@ namespace AnimeBrowser.Data.Repositories.Read
 
         public async Task<AnimeInfo?> GetAnimeInfoById(long id)
         {
-            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method started. id: [{id}].");
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method started. {nameof(id)}: [{id}].");
 
             var animeInfo = await abContext.AnimeInfos.FindAsync(id);
 
-            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. Found animeInfo?.Id: [{animeInfo?.Id}].");
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. Found {nameof(animeInfo)}.{nameof(animeInfo.Id)}: [{animeInfo?.Id}].");
             return animeInfo;
         }
     }

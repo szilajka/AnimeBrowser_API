@@ -45,7 +45,7 @@ namespace AnimeBrowser.Data.Repositories.Read
             if (animeInfo == null) return result;
 
             result = true;
-            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. result: [{result}].");
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. {nameof(result)}: [{result}].");
             return result;
         }
     }

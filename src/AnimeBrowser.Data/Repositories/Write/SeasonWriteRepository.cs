@@ -27,7 +27,18 @@ namespace AnimeBrowser.Data.Repositories.Write
             await abContext.AddAsync(season);
             await abContext.SaveChangesAsync();
 
-            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. {nameof(Season)}.Id: [{season.Id}].");
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. {nameof(Season)}.{nameof(Season.Id)}: [{season.Id}].");
+            return season;
+        }
+
+        public async Task<Season> UpdateSeason(Season season)
+        {
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method started. {nameof(Season)}: [{season}].");
+
+            abContext.Update(season);
+            await abContext.SaveChangesAsync();
+
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. {nameof(Season)}.{nameof(Season.Id)}: [{season.Id}].");
             return season;
         }
 
@@ -39,17 +50,6 @@ namespace AnimeBrowser.Data.Repositories.Write
             await abContext.SaveChangesAsync();
 
             logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished.");
-        }
-
-        public async Task<Season> UpdateSeason(Season season)
-        {
-            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method started. {nameof(Season)}: [{season}].");
-
-            abContext.Update(season);
-            await abContext.SaveChangesAsync();
-
-            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. {nameof(Season)}.Id: [{season.Id}].");
-            return season;
         }
     }
 }
