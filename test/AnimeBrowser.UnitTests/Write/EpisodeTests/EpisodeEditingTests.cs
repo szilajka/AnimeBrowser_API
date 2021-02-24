@@ -40,21 +40,21 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
             var today = new DateTime(now.Year, now.Month, now.Day, 0, 0, 0, DateTimeKind.Utc);
 
             var ids = new long[] { 1, 2, 3, 4, 5,
-                1, 2, 3, 4, 5 };
+                1, 2, 3, 4, 5, 6 };
             var epNumbers = new int[] { 1, 2, 1, 2, 3,
-                1, 2, 1, 2, 3 };
+                1, 2, 1, 2, 3, 13 };
             var titles = new string[] { "", "T", new string('T', 150), new string('T', 254), new string('T', 255),
-                "T", "TI", "TIT", "TITL", "TITLE" };
-            var description = new string[] { "", "D", new string('D', 1500), new string('T', 29999), new string('T', 30000),
-                "D", "DE", "DES", "DESC", "DESCR" };
+                "T", "TI", "TIT", "TITL", "TITLE", "TITLEE" };
+            var description = new string[] { "", "D", new string('D', 1500), new string('D', 29999), new string('D', 30000),
+                "D", "DE", "DES", "DESC", "DESCR", "DESCRI" };
             var airStatuses = new AirStatusEnum[] { AirStatusEnum.UNKNOWN, AirStatusEnum.UNKNOWN, AirStatusEnum.UNKNOWN, AirStatusEnum.NotAired, AirStatusEnum.NotAired,
-                AirStatusEnum.Airing, AirStatusEnum.Aired, AirStatusEnum.Aired, AirStatusEnum.Aired, AirStatusEnum.NotAired };
+                AirStatusEnum.Airing, AirStatusEnum.Aired, AirStatusEnum.Aired, AirStatusEnum.Aired, AirStatusEnum.NotAired, AirStatusEnum.NotAired };
             var airDates = new DateTime?[] { null, null, null, null, null,
-                today.AddHours(-2), today, new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc), today.AddYears(-10), today.AddYears(10) };
+                today.AddHours(-2), today, new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc), today.AddYears(-10), today.AddYears(10), today.AddYears(5) };
             var animeInfoIds = new long[] { 1, 1, 1, 1, 1,
-                1, 1, 1, 1, 1 };
+                1, 1, 1, 1, 1, 1 };
             var seasonIds = new long[] { 1, 1, 2, 2, 2,
-                2, 2, 2, 2, 2 };
+                2, 2, 2, 2, 2, 2 };
             for (var i = 0; i < epNumbers.Length; i++)
             {
                 var epReqMod = new EpisodeEditingRequestModel(id: ids[i], episodeNumber: epNumbers[i], airStatus: airStatuses[i], title: titles[i], description: description[i],
@@ -263,6 +263,17 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
             {
                 var erm = allRequestModels[i];
                 yield return new object[] { erm.Id, new EpisodeEditingRequestModel(id: erm.Id, episodeNumber: epNumbers[i], airStatus: erm.AirStatus, title: erm.Title, description: erm.Description, cover: erm.Cover,
+                            airDate: erm.AirDate, animeInfoId: erm.AnimeInfoId, seasonId: erm.SeasonId) };
+            }
+        }
+
+        private static IEnumerable<object[]> GetNotExistingIdData()
+        {
+            var ids = new int[] { 123, 200 };
+            for (var i = 0; i < ids.Length; i++)
+            {
+                var erm = allRequestModels[i];
+                yield return new object[] { ids[i], new EpisodeEditingRequestModel(id: ids[i], episodeNumber: erm.EpisodeNumber, airStatus: erm.AirStatus, title: erm.Title, description: erm.Description, cover: erm.Cover,
                             airDate: erm.AirDate, animeInfoId: erm.AnimeInfoId, seasonId: erm.SeasonId) };
             }
         }
@@ -572,6 +583,45 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
             var episodeEditingHandler = sp.GetService<IEpisodeEditing>();
             Func<Task> createEpisodeFunc = async () => await episodeEditingHandler.EditEpisode(id, requestModel);
             await createEpisodeFunc.Should().ThrowAsync<AlreadyExistingObjectException<Episode>>();
+        }
+
+        [DataTestMethod,
+            DynamicData(nameof(GetNotExistingIdData), DynamicDataSourceType.Method)]
+        public async Task EditingEpisode_NotExistingId_ThrowException(long id, EpisodeEditingRequestModel requestModel)
+        {
+            var isExistWithSameEpNum = false;
+            var isExistAnimeInfoAndSeason = false;
+            Episode foundEpisode = null;
+            var sp = SetupDI(services =>
+            {
+                var episodeReadRepo = new Mock<IEpisodeRead>();
+                var episodeWriteRepo = new Mock<IEpisodeWrite>();
+                episodeReadRepo.Setup(er => er.IsSeasonAndAnimeInfoExistsAndReferences(It.IsAny<long>(), It.IsAny<long>()))
+                    .Callback<long, long>((sId, aiId) =>
+                    {
+                        var season = allSeasons.SingleOrDefault(s => s.Id == sId);
+                        if (season == null || season.AnimeInfoId != aiId) isExistAnimeInfoAndSeason = false;
+                        else
+                        {
+                            var animeInfo = allAnimeInfos.SingleOrDefault(ai => ai.Id == aiId);
+                            if (animeInfo == null) isExistAnimeInfoAndSeason = false;
+                            else isExistAnimeInfoAndSeason = true;
+                        }
+                    })
+                    .ReturnsAsync(() => isExistAnimeInfoAndSeason);
+                episodeReadRepo.Setup(er => er.IsEpisodeWithEpisodeNumberExists(It.IsAny<long>(), It.IsAny<int>()))
+                    .Callback<long, int>((sId, epNum) => isExistWithSameEpNum = allEpisodes.Any(e => e.SeasonId == sId && e.EpisodeNumber == epNum))
+                    .Returns(() => isExistWithSameEpNum);
+                episodeReadRepo.Setup(er => er.GetEpisodeById(It.IsAny<long>())).Callback<long>(eId => foundEpisode = allEpisodes.SingleOrDefault(e => e.Id == eId)).ReturnsAsync(() => foundEpisode);
+                services.AddSingleton<IDateTime, DateTimeProvider>();
+                services.AddTransient(factory => episodeReadRepo.Object);
+                services.AddTransient(factory => episodeWriteRepo.Object);
+                services.AddTransient<IEpisodeEditing, EpisodeEditingHandler>();
+            });
+
+            var episodeEditingHandler = sp.GetService<IEpisodeEditing>();
+            Func<Task> createEpisodeFunc = async () => await episodeEditingHandler.EditEpisode(id, requestModel);
+            await createEpisodeFunc.Should().ThrowAsync<NotFoundObjectException<EpisodeEditingRequestModel>>();
         }
 
         [DataTestMethod,
