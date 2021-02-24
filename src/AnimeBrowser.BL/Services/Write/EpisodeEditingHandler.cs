@@ -80,7 +80,7 @@ namespace AnimeBrowser.BL.Services.Write
                     throw mismatchEx;
                 }
                 var isEpisodeWithSameNumberExists = episodeReadRepo.IsEpisodeWithEpisodeNumberExists(seasonId: episodeRequestModel.SeasonId, episodeNumber: episodeRequestModel.EpisodeNumber);
-                if (isEpisodeWithSameNumberExists)
+                if (isEpisodeWithSameNumberExists && episodeRequestModel.EpisodeNumber != episode.EpisodeNumber)
                 {
                     var error = new ErrorModel(code: ErrorCodes.NotUniqueProperty.GetIntValueAsString(), description: $"Another {nameof(Episode)} can be found in the same {nameof(Season)} [{episodeRequestModel.SeasonId}] " +
                         $"with the same {nameof(EpisodeEditingRequestModel.EpisodeNumber)} [{episodeRequestModel.EpisodeNumber}].",
@@ -104,7 +104,7 @@ namespace AnimeBrowser.BL.Services.Write
                 logger.Warning($"Validation error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{valEx.Message}].");
                 throw;
             }
-            catch (NotFoundObjectException<SeasonEditingRequestModel> ex)
+            catch (NotFoundObjectException<EpisodeEditingRequestModel> ex)
             {
                 logger.Warning($"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{ex.Message}].");
                 throw;
