@@ -29,31 +29,75 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
         private IList<Episode> allEpisodes;
         private IList<Season> allSeasons;
         private IList<AnimeInfo> allAnimeInfos;
+        private static IList<EpisodeCreationRequestModel> allRequestModels;
+
+        [ClassInitialize]
+        public static void InitRequests(TestContext context)
+        {
+            allRequestModels = new List<EpisodeCreationRequestModel>();
+
+            var now = DateTime.UtcNow;
+            var today = new DateTime(now.Year, now.Month, now.Day, 0, 0, 0, DateTimeKind.Utc);
+            var epNumbers = new int[] { 5, 6, 7, 10, 20,
+                5, 6, 7, 10, 20 };
+            var titles = new string[] { "", "T", "New beginning", "Afterlife", "All about she said, it was all just a dream, thinking 'bout meat <3",
+                $"{new string(' ', 150)}Afterlife{new string(' ', 150)}", $"{new string(' ', 300)}All that she said", $"All the time{new string(' ', 300)}", new string('T', 254), new string('T', 255)};
+            var descriptions = new string[] { "", "D", "Just a description", "Tetris was a good game, this episode sets a memory to it", "In this episode all characters dies due to some mysterious accident and they revive before it happens, again and again, and they have to suffer until they figure a way out",
+                $"{new string(' ', 100)}Description{new string(' ', 30000)}", $"Description{new string(' ', 34567)}", new string('D', 1500), new string('T', 29999), new string('T', 30000) };
+            var covers = new byte[][] { Encoding.UTF8.GetBytes("S1Ep5Cover"), Encoding.UTF8.GetBytes("S1Ep6Cover"), Encoding.UTF8.GetBytes("S1Ep7Cover"), Encoding.UTF8.GetBytes("S1Ep10Cover"), Encoding.UTF8.GetBytes("S1Ep20Cover"),
+                Encoding.UTF8.GetBytes("S1Ep5Cover"), Encoding.UTF8.GetBytes("S1Ep6Cover"), Encoding.UTF8.GetBytes("S1Ep7Cover"), Encoding.UTF8.GetBytes("S1Ep10Cover"), Encoding.UTF8.GetBytes("S1Ep20Cover") };
+            var airDates = new DateTime?[] { null, null, null, null, null,
+                today.AddHours(-2), new DateTime(2014, 6, 10, 0, 0, 0, DateTimeKind.Utc), new DateTime(2014, 4, 15, 0, 0, 0, DateTimeKind.Utc), today.AddYears(-10), today.AddYears(10) };
+            var airStatuses = new AirStatusEnum[] { AirStatusEnum.UNKNOWN, AirStatusEnum.UNKNOWN, AirStatusEnum.UNKNOWN, AirStatusEnum.NotAired, AirStatusEnum.NotAired,
+                AirStatusEnum.Airing, AirStatusEnum.Aired, AirStatusEnum.Aired, AirStatusEnum.Aired, AirStatusEnum.NotAired};
+            var animeInfoIds = new long[] { 1, 1, 1, 1, 1,
+                1, 1, 1, 2, 2 };
+            var seasonIds = new long[] { 2, 2, 2, 2, 2,
+                2, 2, 2, 5405, 6001 };
+            for (var i = 0; i < epNumbers.Length; i++)
+            {
+                allRequestModels.Add(new EpisodeCreationRequestModel(episodeNumber: epNumbers[i], airStatus: airStatuses[i], cover: covers[i], airDate: airDates[i],
+                    animeInfoId: animeInfoIds[i], seasonId: seasonIds[i], title: titles[i], description: descriptions[i]));
+            }
+        }
 
         [TestInitialize]
         public void InitDb()
         {
+            var now = DateTime.UtcNow;
+            var today = new DateTime(now.Year, now.Month, now.Day, 0, 0, 0, DateTimeKind.Utc);
+
             allAnimeInfos = new List<AnimeInfo> {
                 new AnimeInfo { Id = 1, Title = "JoJo's Bizarre Adventure", Description = string.Empty, IsNsfw = false },
                 new AnimeInfo { Id = 2, Title = "Kuroku no Basketball", Description = string.Empty, IsNsfw = false }
             };
             allSeasons = new List<Season>
             {
-                 new Season{Id = 1, SeasonNumber = 1, Title = "Phantom Blood", Description = "In this season we know the story of Jonathan, Dio and Speedwagon, then Joseph and the Pillarmen's story",
+                 new Season{ Id = 1, SeasonNumber = 1, Title = "Phantom Blood", Description = "In this season we know the story of Jonathan, Dio and Speedwagon, then Joseph and the Pillarmen's story",
                     StartDate = new DateTime(2012, 1, 1, 0 ,0 ,0, DateTimeKind.Utc), EndDate = new DateTime(2012, 3, 5, 0 ,0 ,0, DateTimeKind.Utc),
                     AirStatus = (int)AirStatusEnum.Aired, NumberOfEpisodes = 24, AnimeInfoId = 1,
                     CoverCarousel = Encoding.UTF8.GetBytes("JoJoCarousel"), Cover = Encoding.UTF8.GetBytes("JoJoCover"),
                 },
-                new Season{Id = 2, SeasonNumber = 1, Title = "Stardust Crusaders", Description = "In this season we know the story of old Joseph and young Jotaro Kujo's story while they trying to get into Egypt.",
+                new Season{ Id = 2, SeasonNumber = 1, Title = "Stardust Crusaders", Description = "In this season we know the story of old Joseph and young Jotaro Kujo's story while they trying to get into Egypt.",
                     StartDate = new DateTime(2014, 3, 1, 0 ,0 ,0, DateTimeKind.Utc), EndDate = new DateTime(2014, 7, 10, 0 ,0 ,0, DateTimeKind.Utc),
                     AirStatus = (int)AirStatusEnum.Aired, NumberOfEpisodes = 24, AnimeInfoId = 1,
                     CoverCarousel = Encoding.UTF8.GetBytes("JoJoCarousel"), Cover = Encoding.UTF8.GetBytes("JoJoCover"),
                 },
-                new Season{Id = 5401, SeasonNumber = 1, Title = "Stardust Crusaders", Description = "In this season we know the story of old Joseph and young Jotaro Kujo's story while they trying to get into Egypt.",
+                new Season{ Id = 5401, SeasonNumber = 1, Title = "The Pillarmen's revenge", Description = "In this season the pillarmen are taking revenge for their death.",
                     StartDate = new DateTime(2014, 3, 1, 0 ,0 ,0, DateTimeKind.Utc), EndDate = new DateTime(2014, 7, 10, 0 ,0 ,0, DateTimeKind.Utc),
                     AirStatus = (int)AirStatusEnum.Aired, NumberOfEpisodes = 24, AnimeInfoId = 412,
                     CoverCarousel = Encoding.UTF8.GetBytes("JoJoCarousel"), Cover = Encoding.UTF8.GetBytes("JoJoCover"),
                 },
+                new Season{ Id = 5405, SeasonNumber = 1, Title = "Life is basketball", Description = "We know the MC, who wants to get his revenge for kicking her out of the basketball team by making a new team.",
+                    StartDate = today.AddYears(-10).AddMonths(-3), EndDate = today.AddYears(-9),
+                    AirStatus = (int)AirStatusEnum.Aired, NumberOfEpisodes = 24, AnimeInfoId = 2,
+                    CoverCarousel = Encoding.UTF8.GetBytes("Basketball Carousel"), Cover = Encoding.UTF8.GetBytes("Basketball Cover"),
+                },
+                  new Season{ Id = 6001, SeasonNumber = 1, Title = "Monochrome", Description = "Mc sees everything in monochrome. Due to his illness, demons attack him.",
+                    StartDate = null, EndDate = null,
+                    AirStatus = (int)AirStatusEnum.NotAired, NumberOfEpisodes = 10, AnimeInfoId = 2,
+                    CoverCarousel = Encoding.UTF8.GetBytes("Basketball Carousel"), Cover = Encoding.UTF8.GetBytes("Basketball Cover"),
+                }
             };
             allEpisodes = new List<Episode> {
                 new Episode { Id = 1, EpisodeNumber = 1, AirStatus = (int)AirStatusEnum.Aired, Title = "Prologue", Description = "This episode tells the backstory of Jonathan and Dio and their fights",
@@ -61,93 +105,64 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
                 new Episode { Id = 2, EpisodeNumber = 2, AirStatus = (int)AirStatusEnum.Aired, Title = "Beginning of something new", Description = "More fighting for the family.",
                     AirDate =  new DateTime(2012, 1, 8, 0, 0, 0, DateTimeKind.Utc), Cover = Encoding.UTF8.GetBytes("S1Ep2Cover"), SeasonId = 1, AnimeInfoId = 1},
                 new Episode { Id = 3, EpisodeNumber = 1, AirStatus = (int)AirStatusEnum.Aired, Title = "Family relations", Description = "Jotaro is in prison and we will know who is Jotaro and the old man.",
-                    AirDate =  new DateTime(2014, 3, 1, 0, 0, 0, DateTimeKind.Utc), Cover = Encoding.UTF8.GetBytes("S2Ep1Cover"), SeasonId = 2, AnimeInfoId = 1}
+                    AirDate =  new DateTime(2014, 3, 1, 0, 0, 0, DateTimeKind.Utc), Cover = Encoding.UTF8.GetBytes("S2Ep1Cover"), SeasonId = 2, AnimeInfoId = 1},
+                new Episode { Id = 4, EpisodeNumber = 2, AirStatus = (int)AirStatusEnum.NotAired, Title = "Parasites", Description = "No one knows what it's like...",
+                    AirDate =  null, Cover = Encoding.UTF8.GetBytes("S2Ep2Cover"), SeasonId = 2, AnimeInfoId = 6001}
             };
         }
 
         private static IEnumerable<object[]> GetBasicData()
         {
-            var now = DateTime.UtcNow;
-            var today = new DateTime(now.Year, now.Month, now.Day, 0, 0, 0, DateTimeKind.Utc);
-            var epNumbers = new int[] { 5, 6, 7, 10, 20 };
-            var titles = new string[] { "", "T", new string('T', 150), new string('T', 254), new string('T', 255) };
-            var description = new string[] { "", "D", new string('D', 1500), new string('T', 29999), new string('T', 30000) };
-            var airStatuses = new AirStatusEnum[] { AirStatusEnum.UNKNOWN, AirStatusEnum.UNKNOWN, AirStatusEnum.UNKNOWN, AirStatusEnum.NotAired, AirStatusEnum.NotAired };
-            for (var i = 0; i < epNumbers.Length; i++)
+            for (var i = 0; i < allRequestModels.Count; i++)
             {
-                yield return new object[] { new EpisodeCreationRequestModel(episodeNumber: epNumbers[i], airStatus: airStatuses[i], title: titles[i], description: description[i], cover: Encoding.UTF8.GetBytes("Cover"),
-                            airDate: null, animeInfoId: 1, seasonId: 2) };
+                var erm = allRequestModels[i];
+                yield return new object[] { new EpisodeCreationRequestModel(episodeNumber: erm.EpisodeNumber, airStatus: erm.AirStatus, title: erm.Title, description: erm.Description,
+                    cover: erm.Cover, airDate: erm.AirDate, animeInfoId: erm.AnimeInfoId, seasonId: erm.SeasonId) };
             }
-            yield return new object[] { new EpisodeCreationRequestModel(episodeNumber: 12, airStatus: AirStatusEnum.Airing, title: "", description: "", cover: Encoding.UTF8.GetBytes("Cover"),
-                airDate: today.AddHours(-2), animeInfoId: 1, seasonId: 2) };
-            yield return new object[] { new EpisodeCreationRequestModel(episodeNumber: 15, airStatus: AirStatusEnum.Aired, title: "T", description: "D", cover: Encoding.UTF8.GetBytes("Cover"),
-                airDate: today, animeInfoId: 1, seasonId: 2) };
-            yield return new object[] { new EpisodeCreationRequestModel(episodeNumber: 18, airStatus: AirStatusEnum.Aired, title: "T", description: "D", cover: Encoding.UTF8.GetBytes("Cover"),
-                airDate: new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc), animeInfoId: 1, seasonId: 2) };
-            yield return new object[] { new EpisodeCreationRequestModel(episodeNumber: 35, airStatus: AirStatusEnum.Aired, title: "T", description: "D", cover: Encoding.UTF8.GetBytes("Cover"),
-                airDate: today.AddYears(-10), animeInfoId: 1, seasonId: 2) };
-            yield return new object[] { new EpisodeCreationRequestModel(episodeNumber: 36, airStatus: AirStatusEnum.NotAired, title: "T", description: "D", cover: Encoding.UTF8.GetBytes("Cover"),
-                airDate: today.AddYears(10), animeInfoId: 1, seasonId: 2) };
         }
 
 
         private static IEnumerable<object[]> GetInvalidEpisodeNumberData()
         {
-            var now = DateTime.UtcNow;
-            var today = new DateTime(now.Year, now.Month, now.Day, 0, 0, 0, DateTimeKind.Utc);
             var epNumbers = new int[] { 0, -1, -3, -213 };
-            var titles = new string[] { "", "T", new string('T', 150), new string('T', 254), new string('T', 255) };
-            var description = new string[] { "", "D", new string('D', 1500), new string('T', 29999), new string('T', 30000) };
-            var airStatuses = new AirStatusEnum[] { AirStatusEnum.UNKNOWN, AirStatusEnum.UNKNOWN, AirStatusEnum.UNKNOWN, AirStatusEnum.NotAired, AirStatusEnum.NotAired };
             for (var i = 0; i < epNumbers.Length; i++)
             {
-                yield return new object[] { new EpisodeCreationRequestModel(episodeNumber: epNumbers[i], airStatus: airStatuses[i], title: titles[i], description: description[i], cover: Encoding.UTF8.GetBytes("Cover"),
-                            airDate: null, animeInfoId: 1, seasonId: 2), ErrorCodes.EmptyProperty, nameof(EpisodeCreationRequestModel.EpisodeNumber) };
+                var erm = allRequestModels[i];
+                yield return new object[] { new EpisodeCreationRequestModel(episodeNumber: epNumbers[i], airStatus: erm.AirStatus, title: erm.Title, description: erm.Description,
+                    cover: erm.Cover, airDate: erm.AirDate, animeInfoId: erm.AnimeInfoId, seasonId: erm.SeasonId), ErrorCodes.EmptyProperty, nameof(EpisodeCreationRequestModel.EpisodeNumber) };
             }
         }
 
         private static IEnumerable<object[]> GetInvalidAirStatusData()
         {
-            var now = DateTime.UtcNow;
-            var today = new DateTime(now.Year, now.Month, now.Day, 0, 0, 0, DateTimeKind.Utc);
-            var epNumbers = new int[] { 5, 6, 7, 10, 20 };
-            var titles = new string[] { "", "T", new string('T', 150), new string('T', 254), new string('T', 255) };
-            var description = new string[] { "", "D", new string('D', 1500), new string('T', 29999), new string('T', 30000) };
             var airStatuses = new AirStatusEnum[] { (AirStatusEnum)(-10), (AirStatusEnum)(-30), (AirStatusEnum)3, (AirStatusEnum)4, (AirStatusEnum)(-1) };
-            for (var i = 0; i < epNumbers.Length; i++)
+            for (var i = 0; i < airStatuses.Length; i++)
             {
-                yield return new object[] { new EpisodeCreationRequestModel(episodeNumber: epNumbers[i], airStatus: airStatuses[i], title: titles[i], description: description[i], cover: Encoding.UTF8.GetBytes("Cover"),
-                            airDate: null, animeInfoId: 1, seasonId: 2), ErrorCodes.OutOfRangeProperty, nameof(EpisodeCreationRequestModel.AirStatus) };
+                var erm = allRequestModels[i];
+                yield return new object[] { new EpisodeCreationRequestModel(episodeNumber: erm.EpisodeNumber, airStatus: airStatuses[i], title: erm.Title, description: erm.Description,
+                    cover: erm.Cover, airDate: erm.AirDate, animeInfoId: erm.AnimeInfoId, seasonId: erm.SeasonId), ErrorCodes.OutOfRangeProperty, nameof(EpisodeCreationRequestModel.AirStatus) };
             }
         }
 
         private static IEnumerable<object[]> GetInvalidTitleData()
         {
-            var now = DateTime.UtcNow;
-            var today = new DateTime(now.Year, now.Month, now.Day, 0, 0, 0, DateTimeKind.Utc);
-            var epNumbers = new int[] { 5, 6, 7, 10, 20 };
             var titles = new string[] { new string('T', 256), new string('T', 300), new string('T', 355) };
-            var description = new string[] { "", "D", new string('D', 1500), new string('T', 29999), new string('T', 30000) };
-            var airStatuses = new AirStatusEnum[] { AirStatusEnum.UNKNOWN, AirStatusEnum.UNKNOWN, AirStatusEnum.UNKNOWN, AirStatusEnum.NotAired, AirStatusEnum.NotAired };
             for (var i = 0; i < titles.Length; i++)
             {
-                yield return new object[] { new EpisodeCreationRequestModel(episodeNumber: epNumbers[i], airStatus: airStatuses[i], title: titles[i], description: description[i], cover: Encoding.UTF8.GetBytes("Cover"),
-                            airDate: null, animeInfoId: 1, seasonId: 2), ErrorCodes.TooLongProperty, nameof(EpisodeCreationRequestModel.Title)  };
+                var erm = allRequestModels[i];
+                yield return new object[] { new EpisodeCreationRequestModel(episodeNumber: erm.EpisodeNumber, airStatus: erm.AirStatus, title: titles[i], description: erm.Description,
+                    cover: erm.Cover, airDate: erm.AirDate, animeInfoId: erm.AnimeInfoId, seasonId: erm.SeasonId), ErrorCodes.TooLongProperty, nameof(EpisodeCreationRequestModel.Title) };
             }
         }
 
         private static IEnumerable<object[]> GetInvalidDescriptionData()
         {
-            var now = DateTime.UtcNow;
-            var today = new DateTime(now.Year, now.Month, now.Day, 0, 0, 0, DateTimeKind.Utc);
-            var epNumbers = new int[] { 5, 6, 7, 10, 20 };
-            var titles = new string[] { "", "T", new string('T', 150), new string('T', 254), new string('T', 255) };
-            var description = new string[] { new string('D', 30001), new string('T', 35000), new string('T', 40000) };
-            var airStatuses = new AirStatusEnum[] { AirStatusEnum.UNKNOWN, AirStatusEnum.UNKNOWN, AirStatusEnum.UNKNOWN, AirStatusEnum.NotAired, AirStatusEnum.NotAired };
-            for (var i = 0; i < description.Length; i++)
+            var descriptions = new string[] { new string('D', 30001), new string('T', 35000), new string('T', 40000) };
+            for (var i = 0; i < descriptions.Length; i++)
             {
-                yield return new object[] { new EpisodeCreationRequestModel(episodeNumber: epNumbers[i], airStatus: airStatuses[i], title: titles[i], description: description[i], cover: Encoding.UTF8.GetBytes("Cover"),
-                            airDate: null, animeInfoId: 1, seasonId: 2), ErrorCodes.TooLongProperty, nameof(EpisodeCreationRequestModel.Description) };
+                var erm = allRequestModels[i];
+                yield return new object[] { new EpisodeCreationRequestModel(episodeNumber: erm.EpisodeNumber, airStatus: erm.AirStatus, title: erm.Title, description: descriptions[i],
+                    cover: erm.Cover, airDate: erm.AirDate, animeInfoId: erm.AnimeInfoId, seasonId: erm.SeasonId), ErrorCodes.TooLongProperty, nameof(EpisodeCreationRequestModel.Description) };
             }
         }
 
@@ -155,9 +170,6 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
         {
             var now = DateTime.UtcNow;
             var today = new DateTime(now.Year, now.Month, now.Day, 0, 0, 0, DateTimeKind.Utc);
-            var epNumbers = new int[] { 5, 6, 7, 10, 20, 30, 40, 50, 70, 100 };
-            var titles = new string[] { "", "T", "TITLE", "TI", "TIT", "TITL", "TITLE", "TITLE1", "TITLE2", "TITLE3" };
-            var description = new string[] { "", "D", "DE", "DES", "DESC", "DESCR", "DESCRI", "DESCRIP", "DESCRIPT", "DESCRIPTI" };
             var airStatuses = new AirStatusEnum[] {
                 AirStatusEnum.NotAired,
                 AirStatusEnum.Airing,
@@ -194,92 +206,67 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
                 ErrorCodes.OutOfRangeProperty,
                 ErrorCodes.OutOfRangeProperty
             };
-            for (var i = 0; i < airDates.Length; i++)
+            for (var i = 0; i < airStatuses.Length; i++)
             {
-                yield return new object[] { new EpisodeCreationRequestModel(episodeNumber: epNumbers[i], airStatus: airStatuses[i], title: titles[i], description: description[i], cover: Encoding.UTF8.GetBytes("Cover"),
-                            airDate: airDates[i], animeInfoId: 1, seasonId: 2), errorCodes[i], nameof(EpisodeCreationRequestModel.AirDate) };
+                var erm = allRequestModels[i];
+                yield return new object[] { new EpisodeCreationRequestModel(episodeNumber: erm.EpisodeNumber, airStatus: airStatuses[i], title: erm.Title, description: erm.Description,
+                    cover: erm.Cover, airDate: airDates[i], animeInfoId: erm.AnimeInfoId, seasonId: erm.SeasonId), errorCodes[i], nameof(EpisodeCreationRequestModel.AirDate) };
             }
         }
 
         private static IEnumerable<object[]> GetInvalidCoverData()
         {
-            var now = DateTime.UtcNow;
-            var today = new DateTime(now.Year, now.Month, now.Day, 0, 0, 0, DateTimeKind.Utc);
-            var epNumbers = new int[] { 5, 6, 7, 10, 20 };
-            var titles = new string[] { "", "T", new string('T', 150), new string('T', 254), new string('T', 255) };
-            var description = new string[] { "", "D", new string('D', 1500), new string('T', 29999), new string('T', 30000) };
-            var airStatuses = new AirStatusEnum[] { AirStatusEnum.UNKNOWN, AirStatusEnum.UNKNOWN, AirStatusEnum.UNKNOWN, AirStatusEnum.NotAired, AirStatusEnum.NotAired };
             var covers = new byte[][] { null, Encoding.UTF8.GetBytes(""), new byte[0] { } };
             for (var i = 0; i < covers.Length; i++)
             {
-                yield return new object[] { new EpisodeCreationRequestModel(episodeNumber: epNumbers[i], airStatus: airStatuses[i], title: titles[i], description: description[i], cover: covers[i],
-                            airDate: null, animeInfoId: 1, seasonId: 2), ErrorCodes.EmptyProperty, nameof(EpisodeCreationRequestModel.Cover) };
+                var erm = allRequestModels[i];
+                yield return new object[] { new EpisodeCreationRequestModel(episodeNumber: erm.EpisodeNumber, airStatus: erm.AirStatus, title: erm.Title, description: erm.Description,
+                    cover: covers[i], airDate: erm.AirDate, animeInfoId: erm.AnimeInfoId, seasonId: erm.SeasonId), ErrorCodes.EmptyProperty, nameof(EpisodeCreationRequestModel.Cover) };
             }
         }
 
         private static IEnumerable<object[]> GetInvalidSeasonIdData()
         {
-            var now = DateTime.UtcNow;
-            var today = new DateTime(now.Year, now.Month, now.Day, 0, 0, 0, DateTimeKind.Utc);
-            var epNumbers = new int[] { 5, 6, 7, 10, 20 };
-            var titles = new string[] { "", "T", new string('T', 150), new string('T', 254), new string('T', 255) };
-            var description = new string[] { "", "D", new string('D', 1500), new string('T', 29999), new string('T', 30000) };
-            var airStatuses = new AirStatusEnum[] { AirStatusEnum.UNKNOWN, AirStatusEnum.UNKNOWN, AirStatusEnum.UNKNOWN, AirStatusEnum.NotAired, AirStatusEnum.NotAired };
             var seasonIds = new long[] { 0, -1, -123 };
             for (var i = 0; i < seasonIds.Length; i++)
             {
-                yield return new object[] { new EpisodeCreationRequestModel(episodeNumber: epNumbers[i], airStatus: airStatuses[i], title: titles[i], description: description[i], cover: Encoding.UTF8.GetBytes("Cover"),
-                            airDate: null, animeInfoId: 1, seasonId: seasonIds[i]), ErrorCodes.EmptyProperty, nameof(EpisodeCreationRequestModel.SeasonId) };
+                var erm = allRequestModels[i];
+                yield return new object[] { new EpisodeCreationRequestModel(episodeNumber: erm.EpisodeNumber, airStatus: erm.AirStatus, title: erm.Title, description: erm.Description,
+                    cover: erm.Cover, airDate: erm.AirDate, animeInfoId: erm.AnimeInfoId, seasonId: seasonIds[i]), ErrorCodes.EmptyProperty, nameof(EpisodeCreationRequestModel.SeasonId) };
             }
         }
 
         private static IEnumerable<object[]> GetInvalidAnimeInfoIdData()
         {
-            var now = DateTime.UtcNow;
-            var today = new DateTime(now.Year, now.Month, now.Day, 0, 0, 0, DateTimeKind.Utc);
-            var epNumbers = new int[] { 5, 6, 7, 10, 20 };
-            var titles = new string[] { "", "T", new string('T', 150), new string('T', 254), new string('T', 255) };
-            var description = new string[] { "", "D", new string('D', 1500), new string('T', 29999), new string('T', 30000) };
-            var airStatuses = new AirStatusEnum[] { AirStatusEnum.UNKNOWN, AirStatusEnum.UNKNOWN, AirStatusEnum.UNKNOWN, AirStatusEnum.NotAired, AirStatusEnum.NotAired };
             var animeInfoIds = new long[] { 0, -1, -123 };
             for (var i = 0; i < animeInfoIds.Length; i++)
             {
-                yield return new object[] { new EpisodeCreationRequestModel(episodeNumber: epNumbers[i], airStatus: airStatuses[i], title: titles[i], description: description[i], cover: Encoding.UTF8.GetBytes("Cover"),
-                            airDate: null, animeInfoId: animeInfoIds[i], seasonId: 2), ErrorCodes.EmptyProperty, nameof(EpisodeCreationRequestModel.AnimeInfoId) };
+                var erm = allRequestModels[i];
+                yield return new object[] { new EpisodeCreationRequestModel(episodeNumber: erm.EpisodeNumber, airStatus: erm.AirStatus, title: erm.Title, description: erm.Description,
+                    cover: erm.Cover, airDate: erm.AirDate, animeInfoId: animeInfoIds[i], seasonId: erm.SeasonId), ErrorCodes.EmptyProperty, nameof(EpisodeCreationRequestModel.AnimeInfoId) };
             }
         }
 
         private static IEnumerable<object[]> GetMismatchingIdsData()
         {
-            var now = DateTime.UtcNow;
-            var today = new DateTime(now.Year, now.Month, now.Day, 0, 0, 0, DateTimeKind.Utc);
-            var epNumbers = new int[] { 5, 6, 7, 10, 20 };
-            var titles = new string[] { "", "T", new string('T', 150), new string('T', 254), new string('T', 255) };
-            var description = new string[] { "", "D", new string('D', 1500), new string('T', 29999), new string('T', 30000) };
-            var airStatuses = new AirStatusEnum[] { AirStatusEnum.UNKNOWN, AirStatusEnum.UNKNOWN, AirStatusEnum.UNKNOWN, AirStatusEnum.NotAired, AirStatusEnum.NotAired };
             var seasonIds = new long[] { 1, 2, 5401 };
             var animeInfoIds = new long[] { 2, 3, 412 };
             for (var i = 0; i < seasonIds.Length; i++)
             {
-                yield return new object[] { new EpisodeCreationRequestModel(episodeNumber: epNumbers[i], airStatus: airStatuses[i], title: titles[i], description: description[i], cover: Encoding.UTF8.GetBytes("Cover"),
-                            airDate: null, animeInfoId: animeInfoIds[i], seasonId: seasonIds[i]) };
+                var erm = allRequestModels[i];
+                yield return new object[] { new EpisodeCreationRequestModel(episodeNumber: erm.EpisodeNumber, airStatus: erm.AirStatus, title: erm.Title, description: erm.Description,
+                    cover: erm.Cover, airDate: erm.AirDate, animeInfoId: animeInfoIds[i], seasonId: seasonIds[i]) };
             }
         }
 
         private static IEnumerable<object[]> GetAlreadyExistingEpisodeData()
         {
-            var now = DateTime.UtcNow;
-            var today = new DateTime(now.Year, now.Month, now.Day, 0, 0, 0, DateTimeKind.Utc);
-            var epNumbers = new int[] { 1, 2, 1 };
-            var titles = new string[] { "", "T", new string('T', 150), new string('T', 254), new string('T', 255) };
-            var description = new string[] { "", "D", new string('D', 1500), new string('T', 29999), new string('T', 30000) };
-            var airStatuses = new AirStatusEnum[] { AirStatusEnum.UNKNOWN, AirStatusEnum.UNKNOWN, AirStatusEnum.UNKNOWN, AirStatusEnum.NotAired, AirStatusEnum.NotAired };
-            var seasonIds = new long[] { 1, 1, 2 };
-            var animeInfoIds = new long[] { 1, 1, 1 };
+            var epNumbers = new int[] { 1, 2 };
             for (var i = 0; i < epNumbers.Length; i++)
             {
-                yield return new object[] { new EpisodeCreationRequestModel(episodeNumber: epNumbers[i], airStatus: airStatuses[i], title: titles[i], description: description[i], cover: Encoding.UTF8.GetBytes("Cover"),
-                            airDate: null, animeInfoId: animeInfoIds[i], seasonId: seasonIds[i]) };
+                var erm = allRequestModels[i];
+                yield return new object[] { new EpisodeCreationRequestModel(episodeNumber: epNumbers[i], airStatus: erm.AirStatus, title: erm.Title, description: erm.Description,
+                    cover: erm.Cover, airDate: erm.AirDate, animeInfoId: erm.AnimeInfoId, seasonId: erm.SeasonId) };
             }
         }
 
@@ -291,10 +278,13 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
             var isExistWithSameEpNum = false;
             var isExistAnimeInfoAndSeason = false;
             Episode savedEpisode = null;
+            Season foundSeason = null;
             var sp = SetupDI(services =>
             {
                 var episodeReadRepo = new Mock<IEpisodeRead>();
                 var episodeWriteRepo = new Mock<IEpisodeWrite>();
+                var seasonReadRepo = new Mock<ISeasonRead>();
+                seasonReadRepo.Setup(sr => sr.GetSeasonById(It.IsAny<long>())).Callback<long>(sId => foundSeason = allSeasons.SingleOrDefault(s => s.Id == sId)).ReturnsAsync(() => foundSeason);
                 episodeReadRepo.Setup(er => er.IsSeasonAndAnimeInfoExistsAndReferences(It.IsAny<long>(), It.IsAny<long>()))
                     .Callback<long, long>((sId, aiId) =>
                         {
@@ -313,6 +303,7 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
                     .Returns(() => isExistWithSameEpNum);
                 episodeWriteRepo.Setup(ew => ew.CreateEpisode(It.IsAny<Episode>())).Callback<Episode>(e => { savedEpisode = e; savedEpisode.Id = 10; }).ReturnsAsync(() => savedEpisode!);
                 services.AddSingleton<IDateTime, DateTimeProvider>();
+                services.AddTransient(factory => seasonReadRepo.Object);
                 services.AddTransient(factory => episodeReadRepo.Object);
                 services.AddTransient(factory => episodeWriteRepo.Object);
                 services.AddTransient<IEpisodeCreation, EpisodeCreationHandler>();
@@ -331,11 +322,15 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
         public async Task CreateEpisode_InvalidEpisodeNumber_ThrowException(EpisodeCreationRequestModel requestModel, ErrorCodes errorCode, string propertyName)
         {
             var errors = CreateErrorList(errorCode, propertyName);
+            Season foundSeason = null;
             var sp = SetupDI(services =>
            {
                var episodeReadRepo = new Mock<IEpisodeRead>();
                var episodeWriteRepo = new Mock<IEpisodeWrite>();
+               var seasonReadRepo = new Mock<ISeasonRead>();
+               seasonReadRepo.Setup(sr => sr.GetSeasonById(It.IsAny<long>())).Callback<long>(sId => foundSeason = allSeasons.SingleOrDefault(s => s.Id == sId)).ReturnsAsync(() => foundSeason);
                services.AddSingleton<IDateTime, DateTimeProvider>();
+               services.AddTransient(factory => seasonReadRepo.Object);
                services.AddTransient(factory => episodeReadRepo.Object);
                services.AddTransient(factory => episodeWriteRepo.Object);
                services.AddTransient<IEpisodeCreation, EpisodeCreationHandler>();
@@ -354,11 +349,15 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
         public async Task CreateEpisode_InvalidAirStatus_ThrowException(EpisodeCreationRequestModel requestModel, ErrorCodes errorCode, string propertyName)
         {
             var errors = CreateErrorList(errorCode, propertyName);
+            Season foundSeason = null;
             var sp = SetupDI(services =>
             {
                 var episodeReadRepo = new Mock<IEpisodeRead>();
                 var episodeWriteRepo = new Mock<IEpisodeWrite>();
+                var seasonReadRepo = new Mock<ISeasonRead>();
+                seasonReadRepo.Setup(sr => sr.GetSeasonById(It.IsAny<long>())).Callback<long>(sId => foundSeason = allSeasons.SingleOrDefault(s => s.Id == sId)).ReturnsAsync(() => foundSeason);
                 services.AddSingleton<IDateTime, DateTimeProvider>();
+                services.AddTransient(factory => seasonReadRepo.Object);
                 services.AddTransient(factory => episodeReadRepo.Object);
                 services.AddTransient(factory => episodeWriteRepo.Object);
                 services.AddTransient<IEpisodeCreation, EpisodeCreationHandler>();
@@ -377,11 +376,15 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
         public async Task CreateEpisode_InvalidTitle_ThrowException(EpisodeCreationRequestModel requestModel, ErrorCodes errorCode, string propertyName)
         {
             var errors = CreateErrorList(errorCode, propertyName);
+            Season foundSeason = null;
             var sp = SetupDI(services =>
             {
                 var episodeReadRepo = new Mock<IEpisodeRead>();
                 var episodeWriteRepo = new Mock<IEpisodeWrite>();
+                var seasonReadRepo = new Mock<ISeasonRead>();
+                seasonReadRepo.Setup(sr => sr.GetSeasonById(It.IsAny<long>())).Callback<long>(sId => foundSeason = allSeasons.SingleOrDefault(s => s.Id == sId)).ReturnsAsync(() => foundSeason);
                 services.AddSingleton<IDateTime, DateTimeProvider>();
+                services.AddTransient(factory => seasonReadRepo.Object);
                 services.AddTransient(factory => episodeReadRepo.Object);
                 services.AddTransient(factory => episodeWriteRepo.Object);
                 services.AddTransient<IEpisodeCreation, EpisodeCreationHandler>();
@@ -400,11 +403,15 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
         public async Task CreateEpisode_InvalidDescription_ThrowException(EpisodeCreationRequestModel requestModel, ErrorCodes errorCode, string propertyName)
         {
             var errors = CreateErrorList(errorCode, propertyName);
+            Season foundSeason = null;
             var sp = SetupDI(services =>
             {
                 var episodeReadRepo = new Mock<IEpisodeRead>();
                 var episodeWriteRepo = new Mock<IEpisodeWrite>();
+                var seasonReadRepo = new Mock<ISeasonRead>();
+                seasonReadRepo.Setup(sr => sr.GetSeasonById(It.IsAny<long>())).Callback<long>(sId => foundSeason = allSeasons.SingleOrDefault(s => s.Id == sId)).ReturnsAsync(() => foundSeason);
                 services.AddSingleton<IDateTime, DateTimeProvider>();
+                services.AddTransient(factory => seasonReadRepo.Object);
                 services.AddTransient(factory => episodeReadRepo.Object);
                 services.AddTransient(factory => episodeWriteRepo.Object);
                 services.AddTransient<IEpisodeCreation, EpisodeCreationHandler>();
@@ -423,11 +430,15 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
         public async Task CreateEpisode_InvalidAirDate_ThrowException(EpisodeCreationRequestModel requestModel, ErrorCodes errorCode, string propertyName)
         {
             var errors = CreateErrorList(errorCode, propertyName);
+            Season foundSeason = null;
             var sp = SetupDI(services =>
             {
                 var episodeReadRepo = new Mock<IEpisodeRead>();
                 var episodeWriteRepo = new Mock<IEpisodeWrite>();
+                var seasonReadRepo = new Mock<ISeasonRead>();
+                seasonReadRepo.Setup(sr => sr.GetSeasonById(It.IsAny<long>())).Callback<long>(sId => foundSeason = allSeasons.SingleOrDefault(s => s.Id == sId)).ReturnsAsync(() => foundSeason);
                 services.AddSingleton<IDateTime, DateTimeProvider>();
+                services.AddTransient(factory => seasonReadRepo.Object);
                 services.AddTransient(factory => episodeReadRepo.Object);
                 services.AddTransient(factory => episodeWriteRepo.Object);
                 services.AddTransient<IEpisodeCreation, EpisodeCreationHandler>();
@@ -446,11 +457,15 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
         public async Task CreateEpisode_InvalidCover_ThrowException(EpisodeCreationRequestModel requestModel, ErrorCodes errorCode, string propertyName)
         {
             var errors = CreateErrorList(errorCode, propertyName);
+            Season foundSeason = null;
             var sp = SetupDI(services =>
             {
                 var episodeReadRepo = new Mock<IEpisodeRead>();
                 var episodeWriteRepo = new Mock<IEpisodeWrite>();
+                var seasonReadRepo = new Mock<ISeasonRead>();
+                seasonReadRepo.Setup(sr => sr.GetSeasonById(It.IsAny<long>())).Callback<long>(sId => foundSeason = allSeasons.SingleOrDefault(s => s.Id == sId)).ReturnsAsync(() => foundSeason);
                 services.AddSingleton<IDateTime, DateTimeProvider>();
+                services.AddTransient(factory => seasonReadRepo.Object);
                 services.AddTransient(factory => episodeReadRepo.Object);
                 services.AddTransient(factory => episodeWriteRepo.Object);
                 services.AddTransient<IEpisodeCreation, EpisodeCreationHandler>();
@@ -469,11 +484,15 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
         public async Task CreateEpisode_InvalidSeasonId_ThrowException(EpisodeCreationRequestModel requestModel, ErrorCodes errorCode, string propertyName)
         {
             var errors = CreateErrorList(errorCode, propertyName);
+            Season foundSeason = null;
             var sp = SetupDI(services =>
             {
                 var episodeReadRepo = new Mock<IEpisodeRead>();
                 var episodeWriteRepo = new Mock<IEpisodeWrite>();
+                var seasonReadRepo = new Mock<ISeasonRead>();
+                seasonReadRepo.Setup(sr => sr.GetSeasonById(It.IsAny<long>())).Callback<long>(sId => foundSeason = allSeasons.SingleOrDefault(s => s.Id == sId)).ReturnsAsync(() => foundSeason);
                 services.AddSingleton<IDateTime, DateTimeProvider>();
+                services.AddTransient(factory => seasonReadRepo.Object);
                 services.AddTransient(factory => episodeReadRepo.Object);
                 services.AddTransient(factory => episodeWriteRepo.Object);
                 services.AddTransient<IEpisodeCreation, EpisodeCreationHandler>();
@@ -492,11 +511,15 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
         public async Task CreateEpisode_InvalidAnimeInfoId_ThrowException(EpisodeCreationRequestModel requestModel, ErrorCodes errorCode, string propertyName)
         {
             var errors = CreateErrorList(errorCode, propertyName);
+            Season foundSeason = null;
             var sp = SetupDI(services =>
             {
                 var episodeReadRepo = new Mock<IEpisodeRead>();
                 var episodeWriteRepo = new Mock<IEpisodeWrite>();
+                var seasonReadRepo = new Mock<ISeasonRead>();
+                seasonReadRepo.Setup(sr => sr.GetSeasonById(It.IsAny<long>())).Callback<long>(sId => foundSeason = allSeasons.SingleOrDefault(s => s.Id == sId)).ReturnsAsync(() => foundSeason);
                 services.AddSingleton<IDateTime, DateTimeProvider>();
+                services.AddTransient(factory => seasonReadRepo.Object);
                 services.AddTransient(factory => episodeReadRepo.Object);
                 services.AddTransient(factory => episodeWriteRepo.Object);
                 services.AddTransient<IEpisodeCreation, EpisodeCreationHandler>();
@@ -515,13 +538,14 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
             DynamicData(nameof(GetMismatchingIdsData), DynamicDataSourceType.Method)]
         public async Task CreateEpisode_MismatchingIds_ThrowException(EpisodeCreationRequestModel requestModel)
         {
-            var isExistWithSameEpNum = false;
             var isExistAnimeInfoAndSeason = false;
-            Episode savedEpisode = null;
+            Season foundSeason = null;
             var sp = SetupDI(services =>
             {
                 var episodeReadRepo = new Mock<IEpisodeRead>();
                 var episodeWriteRepo = new Mock<IEpisodeWrite>();
+                var seasonReadRepo = new Mock<ISeasonRead>();
+                seasonReadRepo.Setup(sr => sr.GetSeasonById(It.IsAny<long>())).Callback<long>(sId => foundSeason = allSeasons.SingleOrDefault(s => s.Id == sId)).ReturnsAsync(() => foundSeason);
                 episodeReadRepo.Setup(er => er.IsSeasonAndAnimeInfoExistsAndReferences(It.IsAny<long>(), It.IsAny<long>()))
                     .Callback<long, long>((sId, aiId) =>
                     {
@@ -535,10 +559,8 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
                         }
                     })
                     .ReturnsAsync(() => isExistAnimeInfoAndSeason);
-                episodeReadRepo.Setup(er => er.IsEpisodeWithEpisodeNumberExists(It.IsAny<long>(), It.IsAny<int>()))
-                    .Callback<long, int>((sId, epNum) => isExistWithSameEpNum = allEpisodes.Any(e => e.SeasonId == sId && e.EpisodeNumber == epNum))
-                    .Returns(() => isExistWithSameEpNum);
                 services.AddSingleton<IDateTime, DateTimeProvider>();
+                services.AddTransient(factory => seasonReadRepo.Object);
                 services.AddTransient(factory => episodeReadRepo.Object);
                 services.AddTransient(factory => episodeWriteRepo.Object);
                 services.AddTransient<IEpisodeCreation, EpisodeCreationHandler>();
@@ -555,11 +577,13 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
         {
             var isExistWithSameEpNum = false;
             var isExistAnimeInfoAndSeason = false;
-            Episode savedEpisode = null;
+            Season foundSeason = null;
             var sp = SetupDI(services =>
             {
                 var episodeReadRepo = new Mock<IEpisodeRead>();
                 var episodeWriteRepo = new Mock<IEpisodeWrite>();
+                var seasonReadRepo = new Mock<ISeasonRead>();
+                seasonReadRepo.Setup(sr => sr.GetSeasonById(It.IsAny<long>())).Callback<long>(sId => foundSeason = allSeasons.SingleOrDefault(s => s.Id == sId)).ReturnsAsync(() => foundSeason);
                 episodeReadRepo.Setup(er => er.IsSeasonAndAnimeInfoExistsAndReferences(It.IsAny<long>(), It.IsAny<long>()))
                     .Callback<long, long>((sId, aiId) =>
                     {
@@ -577,6 +601,7 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
                     .Callback<long, int>((sId, epNum) => isExistWithSameEpNum = allEpisodes.Any(e => e.SeasonId == sId && e.EpisodeNumber == epNum))
                     .Returns(() => isExistWithSameEpNum);
                 services.AddSingleton<IDateTime, DateTimeProvider>();
+                services.AddTransient(factory => seasonReadRepo.Object);
                 services.AddTransient(factory => episodeReadRepo.Object);
                 services.AddTransient(factory => episodeWriteRepo.Object);
                 services.AddTransient<IEpisodeCreation, EpisodeCreationHandler>();
@@ -595,8 +620,10 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
             {
                 var episodeReadRepo = new Mock<IEpisodeRead>();
                 var episodeWriteRepo = new Mock<IEpisodeWrite>();
-                episodeReadRepo.Setup(er => er.IsSeasonAndAnimeInfoExistsAndReferences(It.IsAny<long>(), It.IsAny<long>())).ThrowsAsync(new InvalidOperationException());
+                var seasonReadRepo = new Mock<ISeasonRead>();
+                seasonReadRepo.Setup(sr => sr.GetSeasonById(It.IsAny<long>())).ThrowsAsync(new InvalidOperationException());
                 services.AddSingleton<IDateTime, DateTimeProvider>();
+                services.AddTransient(factory => seasonReadRepo.Object);
                 services.AddTransient(factory => episodeReadRepo.Object);
                 services.AddTransient(factory => episodeWriteRepo.Object);
                 services.AddTransient<IEpisodeCreation, EpisodeCreationHandler>();
@@ -610,14 +637,13 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
         [TestMethod]
         public async Task CreateEpisode_NullObject_ThrowException()
         {
-            var isExistWithSameEpNum = false;
-            var isExistAnimeInfoAndSeason = false;
-            Episode savedEpisode = null;
             var sp = SetupDI(services =>
             {
                 var episodeReadRepo = new Mock<IEpisodeRead>();
                 var episodeWriteRepo = new Mock<IEpisodeWrite>();
+                var seasonReadRepo = new Mock<ISeasonRead>();
                 services.AddSingleton<IDateTime, DateTimeProvider>();
+                services.AddTransient(factory => seasonReadRepo.Object);
                 services.AddTransient(factory => episodeReadRepo.Object);
                 services.AddTransient(factory => episodeWriteRepo.Object);
                 services.AddTransient<IEpisodeCreation, EpisodeCreationHandler>();
@@ -639,6 +665,14 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
             allEpisodes = null;
             allSeasons = null;
             allAnimeInfos = null;
+        }
+
+
+        [ClassCleanup]
+        public static void CleanRequests()
+        {
+            allRequestModels.Clear();
+            allRequestModels = null;
         }
     }
 }

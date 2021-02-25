@@ -12,11 +12,11 @@ namespace AnimeBrowser.BL.Validators
     {
         public EpisodeCreationValidator(IDateTime dateTimeProvider, DateTime? seasonStartDate, DateTime? seasonEndDate)
         {
-            var minDate = dateTimeProvider.FromYearUtc(1900);
-            var maxDate = dateTimeProvider.FromDateUtc(dateTimeProvider.UtcNow.AddYears(10));
-            var beforeTwoDays = dateTimeProvider.FromDateUtc(dateTimeProvider.UtcNow.AddDays(-2));
-            var afterTwoDays = dateTimeProvider.FromDateUtc(dateTimeProvider.UtcNow.AddDays(2));
             var today = dateTimeProvider.FromDateUtc(dateTimeProvider.UtcNow);
+            var minDate = dateTimeProvider.FromYearUtc(1900);
+            var maxDate = dateTimeProvider.FromDateUtc(today.AddYears(10));
+            var beforeTwoDays = dateTimeProvider.FromDateUtc(today.AddDays(-2));
+            var afterTwoDays = dateTimeProvider.FromDateUtc(today.AddDays(2));
             DateTime startDate = minDate;
             DateTime endDate = maxDate;
             if (seasonStartDate.HasValue)
