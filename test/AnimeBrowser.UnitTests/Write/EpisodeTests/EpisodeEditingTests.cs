@@ -50,11 +50,11 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
             var airStatuses = new AirStatusEnum[] { AirStatusEnum.UNKNOWN, AirStatusEnum.UNKNOWN, AirStatusEnum.UNKNOWN, AirStatusEnum.NotAired, AirStatusEnum.NotAired,
                 AirStatusEnum.Airing, AirStatusEnum.Aired, AirStatusEnum.Aired, AirStatusEnum.Aired, AirStatusEnum.NotAired, AirStatusEnum.NotAired };
             var airDates = new DateTime?[] { null, null, null, null, null,
-                today.AddHours(-2), today, new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc), today.AddYears(-10), today.AddYears(10), today.AddYears(5) };
+                today.AddHours(-2), new DateTime(2014, 6, 10, 0, 0, 0, DateTimeKind.Utc), new DateTime(2014, 4, 15, 0, 0, 0, DateTimeKind.Utc), today.AddYears(-10), today.AddYears(10), today.AddYears(5) };
             var animeInfoIds = new long[] { 1, 1, 1, 1, 1,
-                1, 1, 1, 1, 1, 1 };
+                1, 1, 1, 2, 2, 2 };
             var seasonIds = new long[] { 1, 1, 2, 2, 2,
-                2, 2, 2, 2, 2, 2 };
+                2, 2, 2, 5405, 6001, 6001 };
             for (var i = 0; i < epNumbers.Length; i++)
             {
                 var epReqMod = new EpisodeEditingRequestModel(id: ids[i], episodeNumber: epNumbers[i], airStatus: airStatuses[i], title: titles[i], description: description[i],
@@ -66,27 +66,40 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
         [TestInitialize]
         public void InitDb()
         {
+            var now = DateTime.UtcNow;
+            var today = new DateTime(now.Year, now.Month, now.Day, 0, 0, 0, DateTimeKind.Utc);
+
             allAnimeInfos = new List<AnimeInfo> {
                 new AnimeInfo { Id = 1, Title = "JoJo's Bizarre Adventure", Description = string.Empty, IsNsfw = false },
                 new AnimeInfo { Id = 2, Title = "Kuroku no Basketball", Description = string.Empty, IsNsfw = false }
             };
             allSeasons = new List<Season>
             {
-                 new Season{Id = 1, SeasonNumber = 1, Title = "Phantom Blood", Description = "In this season we know the story of Jonathan, Dio and Speedwagon, then Joseph and the Pillarmen's story",
+                 new Season{ Id = 1, SeasonNumber = 1, Title = "Phantom Blood", Description = "In this season we know the story of Jonathan, Dio and Speedwagon, then Joseph and the Pillarmen's story",
                     StartDate = new DateTime(2012, 1, 1, 0 ,0 ,0, DateTimeKind.Utc), EndDate = new DateTime(2012, 3, 5, 0 ,0 ,0, DateTimeKind.Utc),
                     AirStatus = (int)AirStatusEnum.Aired, NumberOfEpisodes = 24, AnimeInfoId = 1,
                     CoverCarousel = Encoding.UTF8.GetBytes("JoJoCarousel"), Cover = Encoding.UTF8.GetBytes("JoJoCover"),
                 },
-                new Season{Id = 2, SeasonNumber = 1, Title = "Stardust Crusaders", Description = "In this season we know the story of old Joseph and young Jotaro Kujo's story while they trying to get into Egypt.",
+                new Season{ Id = 2, SeasonNumber = 1, Title = "Stardust Crusaders", Description = "In this season we know the story of old Joseph and young Jotaro Kujo's story while they trying to get into Egypt.",
                     StartDate = new DateTime(2014, 3, 1, 0 ,0 ,0, DateTimeKind.Utc), EndDate = new DateTime(2014, 7, 10, 0 ,0 ,0, DateTimeKind.Utc),
                     AirStatus = (int)AirStatusEnum.Aired, NumberOfEpisodes = 24, AnimeInfoId = 1,
                     CoverCarousel = Encoding.UTF8.GetBytes("JoJoCarousel"), Cover = Encoding.UTF8.GetBytes("JoJoCover"),
                 },
-                new Season{Id = 5401, SeasonNumber = 1, Title = "Stardust Crusaders", Description = "In this season we know the story of old Joseph and young Jotaro Kujo's story while they trying to get into Egypt.",
+                new Season{ Id = 5401, SeasonNumber = 1, Title = "The Pillarmen's revenge", Description = "In this season the pillarmen are taking revenge for their death.",
                     StartDate = new DateTime(2014, 3, 1, 0 ,0 ,0, DateTimeKind.Utc), EndDate = new DateTime(2014, 7, 10, 0 ,0 ,0, DateTimeKind.Utc),
                     AirStatus = (int)AirStatusEnum.Aired, NumberOfEpisodes = 24, AnimeInfoId = 412,
                     CoverCarousel = Encoding.UTF8.GetBytes("JoJoCarousel"), Cover = Encoding.UTF8.GetBytes("JoJoCover"),
                 },
+                new Season{ Id = 5405, SeasonNumber = 1, Title = "Life is basketball", Description = "We know the MC, who wants to get his revenge for kicking her out of the basketball team by making a new team.",
+                    StartDate = today.AddYears(-10).AddMonths(-3), EndDate = today.AddYears(-9),
+                    AirStatus = (int)AirStatusEnum.Aired, NumberOfEpisodes = 24, AnimeInfoId = 2,
+                    CoverCarousel = Encoding.UTF8.GetBytes("Basketball Carousel"), Cover = Encoding.UTF8.GetBytes("Basketball Cover"),
+                },
+                  new Season{ Id = 6001, SeasonNumber = 1, Title = "Monochrome", Description = "Mc sees everything in monochrome. Due to his illness, demons attack him.",
+                    StartDate = null, EndDate = null,
+                    AirStatus = (int)AirStatusEnum.NotAired, NumberOfEpisodes = 10, AnimeInfoId = 2,
+                    CoverCarousel = Encoding.UTF8.GetBytes("Basketball Carousel"), Cover = Encoding.UTF8.GetBytes("Basketball Cover"),
+                }
             };
             allEpisodes = new List<Episode> {
                 new Episode { Id = 1, EpisodeNumber = 1, AirStatus = (int)AirStatusEnum.Aired, Title = "Prologue", Description = "This episode tells the backstory of Jonathan and Dio and their fights",
@@ -104,7 +117,9 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
                 new Episode { Id = 7, EpisodeNumber = 5, AirStatus = (int)AirStatusEnum.Aired, Title = "S2 Episode 5", Description = "More fighting for the family.",
                     AirDate =  new DateTime(2014, 3, 28, 0, 0, 0, DateTimeKind.Utc), Cover = Encoding.UTF8.GetBytes("S1Ep2Cover"), SeasonId = 2, AnimeInfoId = 1},
                 new Episode { Id = 8, EpisodeNumber = 6, AirStatus = (int)AirStatusEnum.Aired, Title = "S2 Episode 6", Description = "Jotaro is in prison and we will know who is Jotaro and the old man.",
-                    AirDate =  new DateTime(2014, 4, 5, 0, 0, 0, DateTimeKind.Utc), Cover = Encoding.UTF8.GetBytes("S2Ep1Cover"), SeasonId = 2, AnimeInfoId = 1}
+                    AirDate =  new DateTime(2014, 4, 5, 0, 0, 0, DateTimeKind.Utc), Cover = Encoding.UTF8.GetBytes("S2Ep1Cover"), SeasonId = 2, AnimeInfoId = 1},
+                new Episode { Id = 9, EpisodeNumber = 2, AirStatus = (int)AirStatusEnum.NotAired, Title = "Parasites", Description = "No one knows what it's like...",
+                    AirDate =  null, Cover = Encoding.UTF8.GetBytes("S2Ep2Cover"), SeasonId = 6001, AnimeInfoId = 2}
             };
         }
 
@@ -228,7 +243,7 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
             {
                 var erm = allRequestModels[i];
                 yield return new object[] { erm.Id, new EpisodeEditingRequestModel(id: erm.Id, episodeNumber: erm.EpisodeNumber, airStatus: erm.AirStatus, title: erm.Title, description: erm.Description, cover: erm.Cover,
-                            airDate: erm.AirDate, animeInfoId: erm.AnimeInfoId, seasonId: seasonIds [i]), ErrorCodes.EmptyProperty, nameof(EpisodeEditingRequestModel.SeasonId) };
+                            airDate: erm.AirDate, animeInfoId: erm.AnimeInfoId, seasonId: seasonIds [i]) };
             }
         }
 
@@ -239,7 +254,7 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
             {
                 var erm = allRequestModels[i];
                 yield return new object[] { erm.Id, new EpisodeEditingRequestModel(id: erm.Id, episodeNumber: erm.EpisodeNumber, airStatus: erm.AirStatus, title: erm.Title, description: erm.Description, cover: erm.Cover,
-                            airDate: erm.AirDate, animeInfoId: animeInfoIds[i], seasonId: erm.SeasonId), ErrorCodes.EmptyProperty, nameof(EpisodeEditingRequestModel.AnimeInfoId) };
+                            airDate: erm.AirDate, animeInfoId: animeInfoIds[i], seasonId: erm.SeasonId) };
             }
         }
 
@@ -284,32 +299,36 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
         public async Task EditingEpisode_ShouldWork(long id, EpisodeEditingRequestModel requestModel)
         {
             var isExistWithSameEpNum = false;
-            var isExistAnimeInfoAndSeason = false;
+            //var isExistAnimeInfoAndSeason = false;
             Episode savedEpisode = null;
             Episode foundEpisode = null;
+            Season foundSeason = null;
             var sp = SetupDI(services =>
             {
                 var episodeReadRepo = new Mock<IEpisodeRead>();
                 var episodeWriteRepo = new Mock<IEpisodeWrite>();
-                episodeReadRepo.Setup(er => er.IsSeasonAndAnimeInfoExistsAndReferences(It.IsAny<long>(), It.IsAny<long>()))
-                    .Callback<long, long>((sId, aiId) =>
-                    {
-                        var season = allSeasons.SingleOrDefault(s => s.Id == sId);
-                        if (season == null || season.AnimeInfoId != aiId) isExistAnimeInfoAndSeason = false;
-                        else
-                        {
-                            var animeInfo = allAnimeInfos.SingleOrDefault(ai => ai.Id == aiId);
-                            if (animeInfo == null) isExistAnimeInfoAndSeason = false;
-                            else isExistAnimeInfoAndSeason = true;
-                        }
-                    })
-                    .ReturnsAsync(() => isExistAnimeInfoAndSeason);
+                var seasonReadRepo = new Mock<ISeasonRead>();
+                seasonReadRepo.Setup(sr => sr.GetSeasonById(It.IsAny<long>())).Callback<long>(sId => foundSeason = allSeasons.SingleOrDefault(s => s.Id == sId)).ReturnsAsync(() => foundSeason);
+                //episodeReadRepo.Setup(er => er.IsSeasonAndAnimeInfoExistsAndReferences(It.IsAny<long>(), It.IsAny<long>()))
+                //    .Callback<long, long>((sId, aiId) =>
+                //    {
+                //        var season = allSeasons.SingleOrDefault(s => s.Id == sId);
+                //        if (season == null || season.AnimeInfoId != aiId) isExistAnimeInfoAndSeason = false;
+                //        else
+                //        {
+                //            var animeInfo = allAnimeInfos.SingleOrDefault(ai => ai.Id == aiId);
+                //            if (animeInfo == null) isExistAnimeInfoAndSeason = false;
+                //            else isExistAnimeInfoAndSeason = true;
+                //        }
+                //    })
+                //    .ReturnsAsync(() => isExistAnimeInfoAndSeason);
                 episodeReadRepo.Setup(er => er.IsEpisodeWithEpisodeNumberExists(It.IsAny<long>(), It.IsAny<int>()))
                     .Callback<long, int>((sId, epNum) => isExistWithSameEpNum = allEpisodes.Any(e => e.SeasonId == sId && e.EpisodeNumber == epNum))
                     .Returns(() => isExistWithSameEpNum);
                 episodeReadRepo.Setup(er => er.GetEpisodeById(It.IsAny<long>())).Callback<long>(eId => foundEpisode = allEpisodes.SingleOrDefault(e => e.Id == eId)).ReturnsAsync(() => foundEpisode);
                 episodeWriteRepo.Setup(ew => ew.UpdateEpisode(It.IsAny<Episode>())).Callback<Episode>(e => savedEpisode = e).ReturnsAsync(() => savedEpisode!);
                 services.AddSingleton<IDateTime, DateTimeProvider>();
+                services.AddTransient(factory => seasonReadRepo.Object);
                 services.AddTransient(factory => episodeReadRepo.Object);
                 services.AddTransient(factory => episodeWriteRepo.Object);
                 services.AddTransient<IEpisodeEditing, EpisodeEditingHandler>();
@@ -327,18 +346,20 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
         public async Task EditingEpisode_InvalidEpisodeNumber_ThrowException(long id, EpisodeEditingRequestModel requestModel, ErrorCodes errorCode, string propertyName)
         {
             var errors = CreateErrorList(errorCode, propertyName);
+            Season foundSeason = null;
             var sp = SetupDI(services =>
             {
                 var episodeReadRepo = new Mock<IEpisodeRead>();
                 var episodeWriteRepo = new Mock<IEpisodeWrite>();
+                var seasonReadRepo = new Mock<ISeasonRead>();
+                seasonReadRepo.Setup(sr => sr.GetSeasonById(It.IsAny<long>())).Callback<long>(sId => foundSeason = allSeasons.SingleOrDefault(s => s.Id == sId)).ReturnsAsync(() => foundSeason);
                 services.AddSingleton<IDateTime, DateTimeProvider>();
+                services.AddTransient(factory => seasonReadRepo.Object);
                 services.AddTransient(factory => episodeReadRepo.Object);
                 services.AddTransient(factory => episodeWriteRepo.Object);
                 services.AddTransient<IEpisodeEditing, EpisodeEditingHandler>();
             });
 
-            var responseModel = requestModel.ToEpisode().ToEditingResponseModel();
-            responseModel.Id = 10;
             var episodeEditingHandler = sp.GetService<IEpisodeEditing>();
             Func<Task> createEpisodeFunc = async () => await episodeEditingHandler.EditEpisode(id, requestModel);
             var valEx = await createEpisodeFunc.Should().ThrowAsync<ValidationException>();
@@ -350,18 +371,20 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
         public async Task EditingEpisode_InvalidAirStatus_ThrowException(long id, EpisodeEditingRequestModel requestModel, ErrorCodes errorCode, string propertyName)
         {
             var errors = CreateErrorList(errorCode, propertyName);
+            Season foundSeason = null;
             var sp = SetupDI(services =>
             {
                 var episodeReadRepo = new Mock<IEpisodeRead>();
                 var episodeWriteRepo = new Mock<IEpisodeWrite>();
+                var seasonReadRepo = new Mock<ISeasonRead>();
+                seasonReadRepo.Setup(sr => sr.GetSeasonById(It.IsAny<long>())).Callback<long>(sId => foundSeason = allSeasons.SingleOrDefault(s => s.Id == sId)).ReturnsAsync(() => foundSeason);
                 services.AddSingleton<IDateTime, DateTimeProvider>();
+                services.AddTransient(factory => seasonReadRepo.Object);
                 services.AddTransient(factory => episodeReadRepo.Object);
                 services.AddTransient(factory => episodeWriteRepo.Object);
                 services.AddTransient<IEpisodeEditing, EpisodeEditingHandler>();
             });
 
-            var responseModel = requestModel.ToEpisode().ToEditingResponseModel();
-            responseModel.Id = 10;
             var episodeEditingHandler = sp.GetService<IEpisodeEditing>();
             Func<Task> createEpisodeFunc = async () => await episodeEditingHandler.EditEpisode(id, requestModel);
             var valEx = await createEpisodeFunc.Should().ThrowAsync<ValidationException>();
@@ -373,18 +396,20 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
         public async Task EditingEpisode_InvalidTitle_ThrowException(long id, EpisodeEditingRequestModel requestModel, ErrorCodes errorCode, string propertyName)
         {
             var errors = CreateErrorList(errorCode, propertyName);
+            Season foundSeason = null;
             var sp = SetupDI(services =>
             {
                 var episodeReadRepo = new Mock<IEpisodeRead>();
                 var episodeWriteRepo = new Mock<IEpisodeWrite>();
+                var seasonReadRepo = new Mock<ISeasonRead>();
+                seasonReadRepo.Setup(sr => sr.GetSeasonById(It.IsAny<long>())).Callback<long>(sId => foundSeason = allSeasons.SingleOrDefault(s => s.Id == sId)).ReturnsAsync(() => foundSeason);
                 services.AddSingleton<IDateTime, DateTimeProvider>();
+                services.AddTransient(factory => seasonReadRepo.Object);
                 services.AddTransient(factory => episodeReadRepo.Object);
                 services.AddTransient(factory => episodeWriteRepo.Object);
                 services.AddTransient<IEpisodeEditing, EpisodeEditingHandler>();
             });
 
-            var responseModel = requestModel.ToEpisode().ToEditingResponseModel();
-            responseModel.Id = 10;
             var episodeEditingHandler = sp.GetService<IEpisodeEditing>();
             Func<Task> createEpisodeFunc = async () => await episodeEditingHandler.EditEpisode(id, requestModel);
             var valEx = await createEpisodeFunc.Should().ThrowAsync<ValidationException>();
@@ -396,18 +421,20 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
         public async Task EditingEpisode_InvalidDescription_ThrowException(long id, EpisodeEditingRequestModel requestModel, ErrorCodes errorCode, string propertyName)
         {
             var errors = CreateErrorList(errorCode, propertyName);
+            Season foundSeason = null;
             var sp = SetupDI(services =>
             {
                 var episodeReadRepo = new Mock<IEpisodeRead>();
                 var episodeWriteRepo = new Mock<IEpisodeWrite>();
+                var seasonReadRepo = new Mock<ISeasonRead>();
+                seasonReadRepo.Setup(sr => sr.GetSeasonById(It.IsAny<long>())).Callback<long>(sId => foundSeason = allSeasons.SingleOrDefault(s => s.Id == sId)).ReturnsAsync(() => foundSeason);
                 services.AddSingleton<IDateTime, DateTimeProvider>();
+                services.AddTransient(factory => seasonReadRepo.Object);
                 services.AddTransient(factory => episodeReadRepo.Object);
                 services.AddTransient(factory => episodeWriteRepo.Object);
                 services.AddTransient<IEpisodeEditing, EpisodeEditingHandler>();
             });
 
-            var responseModel = requestModel.ToEpisode().ToEditingResponseModel();
-            responseModel.Id = 10;
             var episodeEditingHandler = sp.GetService<IEpisodeEditing>();
             Func<Task> createEpisodeFunc = async () => await episodeEditingHandler.EditEpisode(id, requestModel);
             var valEx = await createEpisodeFunc.Should().ThrowAsync<ValidationException>();
@@ -419,18 +446,20 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
         public async Task EditingEpisode_InvalidAirDate_ThrowException(long id, EpisodeEditingRequestModel requestModel, ErrorCodes errorCode, string propertyName)
         {
             var errors = CreateErrorList(errorCode, propertyName);
+            Season foundSeason = null;
             var sp = SetupDI(services =>
             {
                 var episodeReadRepo = new Mock<IEpisodeRead>();
                 var episodeWriteRepo = new Mock<IEpisodeWrite>();
+                var seasonReadRepo = new Mock<ISeasonRead>();
+                seasonReadRepo.Setup(sr => sr.GetSeasonById(It.IsAny<long>())).Callback<long>(sId => foundSeason = allSeasons.SingleOrDefault(s => s.Id == sId)).ReturnsAsync(() => foundSeason);
                 services.AddSingleton<IDateTime, DateTimeProvider>();
+                services.AddTransient(factory => seasonReadRepo.Object);
                 services.AddTransient(factory => episodeReadRepo.Object);
                 services.AddTransient(factory => episodeWriteRepo.Object);
                 services.AddTransient<IEpisodeEditing, EpisodeEditingHandler>();
             });
 
-            var responseModel = requestModel.ToEpisode().ToEditingResponseModel();
-            responseModel.Id = 10;
             var episodeEditingHandler = sp.GetService<IEpisodeEditing>();
             Func<Task> createEpisodeFunc = async () => await episodeEditingHandler.EditEpisode(id, requestModel);
             var valEx = await createEpisodeFunc.Should().ThrowAsync<ValidationException>();
@@ -442,18 +471,20 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
         public async Task EditingEpisode_InvalidCover_ThrowException(long id, EpisodeEditingRequestModel requestModel, ErrorCodes errorCode, string propertyName)
         {
             var errors = CreateErrorList(errorCode, propertyName);
+            Season foundSeason = null;
             var sp = SetupDI(services =>
             {
                 var episodeReadRepo = new Mock<IEpisodeRead>();
                 var episodeWriteRepo = new Mock<IEpisodeWrite>();
+                var seasonReadRepo = new Mock<ISeasonRead>();
+                seasonReadRepo.Setup(sr => sr.GetSeasonById(It.IsAny<long>())).Callback<long>(sId => foundSeason = allSeasons.SingleOrDefault(s => s.Id == sId)).ReturnsAsync(() => foundSeason);
                 services.AddSingleton<IDateTime, DateTimeProvider>();
+                services.AddTransient(factory => seasonReadRepo.Object);
                 services.AddTransient(factory => episodeReadRepo.Object);
                 services.AddTransient(factory => episodeWriteRepo.Object);
                 services.AddTransient<IEpisodeEditing, EpisodeEditingHandler>();
             });
 
-            var responseModel = requestModel.ToEpisode().ToEditingResponseModel();
-            responseModel.Id = 10;
             var episodeEditingHandler = sp.GetService<IEpisodeEditing>();
             Func<Task> createEpisodeFunc = async () => await episodeEditingHandler.EditEpisode(id, requestModel);
             var valEx = await createEpisodeFunc.Should().ThrowAsync<ValidationException>();
@@ -462,48 +493,48 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
 
         [DataTestMethod,
             DynamicData(nameof(GetInvalidSeasonIdData), DynamicDataSourceType.Method)]
-        public async Task EditingEpisode_InvalidSeasonId_ThrowException(long id, EpisodeEditingRequestModel requestModel, ErrorCodes errorCode, string propertyName)
+        public async Task EditingEpisode_InvalidSeasonId_ThrowException(long id, EpisodeEditingRequestModel requestModel)
         {
-            var errors = CreateErrorList(errorCode, propertyName);
+            Season foundSeason = null;
             var sp = SetupDI(services =>
             {
                 var episodeReadRepo = new Mock<IEpisodeRead>();
                 var episodeWriteRepo = new Mock<IEpisodeWrite>();
+                var seasonReadRepo = new Mock<ISeasonRead>();
+                seasonReadRepo.Setup(sr => sr.GetSeasonById(It.IsAny<long>())).Callback<long>(sId => foundSeason = allSeasons.SingleOrDefault(s => s.Id == sId)).ReturnsAsync(() => foundSeason);
                 services.AddSingleton<IDateTime, DateTimeProvider>();
+                services.AddTransient(factory => seasonReadRepo.Object);
                 services.AddTransient(factory => episodeReadRepo.Object);
                 services.AddTransient(factory => episodeWriteRepo.Object);
                 services.AddTransient<IEpisodeEditing, EpisodeEditingHandler>();
             });
 
-            var responseModel = requestModel.ToEpisode().ToEditingResponseModel();
-            responseModel.Id = 10;
             var episodeEditingHandler = sp.GetService<IEpisodeEditing>();
             Func<Task> createEpisodeFunc = async () => await episodeEditingHandler.EditEpisode(id, requestModel);
-            var valEx = await createEpisodeFunc.Should().ThrowAsync<ValidationException>();
-            valEx.And.Errors.Should().BeEquivalentTo(errors, options => options.Excluding(e => e.Description));
+            await createEpisodeFunc.Should().ThrowAsync<NotFoundObjectException<Season>>();
         }
 
         [DataTestMethod,
             DynamicData(nameof(GetInvalidAnimeInfoIdData), DynamicDataSourceType.Method)]
-        public async Task EditingEpisode_InvalidAnimeInfoId_ThrowException(long id, EpisodeEditingRequestModel requestModel, ErrorCodes errorCode, string propertyName)
+        public async Task EditingEpisode_InvalidAnimeInfoId_ThrowException(long id, EpisodeEditingRequestModel requestModel)
         {
-            var errors = CreateErrorList(errorCode, propertyName);
+            Season foundSeason = null;
             var sp = SetupDI(services =>
             {
                 var episodeReadRepo = new Mock<IEpisodeRead>();
                 var episodeWriteRepo = new Mock<IEpisodeWrite>();
+                var seasonReadRepo = new Mock<ISeasonRead>();
+                seasonReadRepo.Setup(sr => sr.GetSeasonById(It.IsAny<long>())).Callback<long>(sId => foundSeason = allSeasons.SingleOrDefault(s => s.Id == sId)).ReturnsAsync(() => foundSeason);
                 services.AddSingleton<IDateTime, DateTimeProvider>();
+                services.AddTransient(factory => seasonReadRepo.Object);
                 services.AddTransient(factory => episodeReadRepo.Object);
                 services.AddTransient(factory => episodeWriteRepo.Object);
                 services.AddTransient<IEpisodeEditing, EpisodeEditingHandler>();
             });
 
-            var responseModel = requestModel.ToEpisode().ToEditingResponseModel();
-            responseModel.Id = 10;
             var episodeEditingHandler = sp.GetService<IEpisodeEditing>();
             Func<Task> createEpisodeFunc = async () => await episodeEditingHandler.EditEpisode(id, requestModel);
-            var valEx = await createEpisodeFunc.Should().ThrowAsync<ValidationException>();
-            valEx.And.Errors.Should().BeEquivalentTo(errors, options => options.Excluding(e => e.Description));
+            await createEpisodeFunc.Should().ThrowAsync<MismatchingIdException>();
         }
 
 
@@ -512,30 +543,34 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
         public async Task EditingEpisode_MismatchingIds_ThrowException(long id, EpisodeEditingRequestModel requestModel)
         {
             var isExistWithSameEpNum = false;
-            var isExistAnimeInfoAndSeason = false;
+            //var isExistAnimeInfoAndSeason = false;
             Episode foundEpisode = null;
+            Season foundSeason = null;
             var sp = SetupDI(services =>
             {
                 var episodeReadRepo = new Mock<IEpisodeRead>();
                 var episodeWriteRepo = new Mock<IEpisodeWrite>();
-                episodeReadRepo.Setup(er => er.IsSeasonAndAnimeInfoExistsAndReferences(It.IsAny<long>(), It.IsAny<long>()))
-                    .Callback<long, long>((sId, aiId) =>
-                    {
-                        var season = allSeasons.SingleOrDefault(s => s.Id == sId);
-                        if (season == null || season.AnimeInfoId != aiId) isExistAnimeInfoAndSeason = false;
-                        else
-                        {
-                            var animeInfo = allAnimeInfos.SingleOrDefault(ai => ai.Id == aiId);
-                            if (animeInfo == null) isExistAnimeInfoAndSeason = false;
-                            else isExistAnimeInfoAndSeason = true;
-                        }
-                    })
-                    .ReturnsAsync(() => isExistAnimeInfoAndSeason);
+                var seasonReadRepo = new Mock<ISeasonRead>();
+                seasonReadRepo.Setup(sr => sr.GetSeasonById(It.IsAny<long>())).Callback<long>(sId => foundSeason = allSeasons.SingleOrDefault(s => s.Id == sId)).ReturnsAsync(() => foundSeason);
+                //episodeReadRepo.Setup(er => er.IsSeasonAndAnimeInfoExistsAndReferences(It.IsAny<long>(), It.IsAny<long>()))
+                //    .Callback<long, long>((sId, aiId) =>
+                //    {
+                //        var season = allSeasons.SingleOrDefault(s => s.Id == sId);
+                //        if (season == null || season.AnimeInfoId != aiId) isExistAnimeInfoAndSeason = false;
+                //        else
+                //        {
+                //            var animeInfo = allAnimeInfos.SingleOrDefault(ai => ai.Id == aiId);
+                //            if (animeInfo == null) isExistAnimeInfoAndSeason = false;
+                //            else isExistAnimeInfoAndSeason = true;
+                //        }
+                //    })
+                //    .ReturnsAsync(() => isExistAnimeInfoAndSeason);
                 episodeReadRepo.Setup(er => er.IsEpisodeWithEpisodeNumberExists(It.IsAny<long>(), It.IsAny<int>()))
                     .Callback<long, int>((sId, epNum) => isExistWithSameEpNum = allEpisodes.Any(e => e.SeasonId == sId && e.EpisodeNumber == epNum))
                     .Returns(() => isExistWithSameEpNum);
                 episodeReadRepo.Setup(er => er.GetEpisodeById(It.IsAny<long>())).Callback<long>(eId => foundEpisode = allEpisodes.SingleOrDefault(e => e.Id == eId)).ReturnsAsync(() => foundEpisode);
                 services.AddSingleton<IDateTime, DateTimeProvider>();
+                services.AddTransient(factory => seasonReadRepo.Object);
                 services.AddTransient(factory => episodeReadRepo.Object);
                 services.AddTransient(factory => episodeWriteRepo.Object);
                 services.AddTransient<IEpisodeEditing, EpisodeEditingHandler>();
@@ -551,30 +586,34 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
         public async Task EditingEpisode_AlreadyExistingEpisode_ThrowException(long id, EpisodeEditingRequestModel requestModel)
         {
             var isExistWithSameEpNum = false;
-            var isExistAnimeInfoAndSeason = false;
+            //var isExistAnimeInfoAndSeason = false;
             Episode foundEpisode = null;
+            Season foundSeason = null;
             var sp = SetupDI(services =>
             {
                 var episodeReadRepo = new Mock<IEpisodeRead>();
                 var episodeWriteRepo = new Mock<IEpisodeWrite>();
-                episodeReadRepo.Setup(er => er.IsSeasonAndAnimeInfoExistsAndReferences(It.IsAny<long>(), It.IsAny<long>()))
-                    .Callback<long, long>((sId, aiId) =>
-                    {
-                        var season = allSeasons.SingleOrDefault(s => s.Id == sId);
-                        if (season == null || season.AnimeInfoId != aiId) isExistAnimeInfoAndSeason = false;
-                        else
-                        {
-                            var animeInfo = allAnimeInfos.SingleOrDefault(ai => ai.Id == aiId);
-                            if (animeInfo == null) isExistAnimeInfoAndSeason = false;
-                            else isExistAnimeInfoAndSeason = true;
-                        }
-                    })
-                    .ReturnsAsync(() => isExistAnimeInfoAndSeason);
+                var seasonReadRepo = new Mock<ISeasonRead>();
+                seasonReadRepo.Setup(sr => sr.GetSeasonById(It.IsAny<long>())).Callback<long>(sId => foundSeason = allSeasons.SingleOrDefault(s => s.Id == sId)).ReturnsAsync(() => foundSeason);
+                //episodeReadRepo.Setup(er => er.IsSeasonAndAnimeInfoExistsAndReferences(It.IsAny<long>(), It.IsAny<long>()))
+                //    .Callback<long, long>((sId, aiId) =>
+                //    {
+                //        var season = allSeasons.SingleOrDefault(s => s.Id == sId);
+                //        if (season == null || season.AnimeInfoId != aiId) isExistAnimeInfoAndSeason = false;
+                //        else
+                //        {
+                //            var animeInfo = allAnimeInfos.SingleOrDefault(ai => ai.Id == aiId);
+                //            if (animeInfo == null) isExistAnimeInfoAndSeason = false;
+                //            else isExistAnimeInfoAndSeason = true;
+                //        }
+                //    })
+                //    .ReturnsAsync(() => isExistAnimeInfoAndSeason);
                 episodeReadRepo.Setup(er => er.IsEpisodeWithEpisodeNumberExists(It.IsAny<long>(), It.IsAny<int>()))
                     .Callback<long, int>((sId, epNum) => isExistWithSameEpNum = allEpisodes.Any(e => e.SeasonId == sId && e.EpisodeNumber == epNum))
                     .Returns(() => isExistWithSameEpNum);
                 episodeReadRepo.Setup(er => er.GetEpisodeById(It.IsAny<long>())).Callback<long>(eId => foundEpisode = allEpisodes.SingleOrDefault(e => e.Id == eId)).ReturnsAsync(() => foundEpisode);
                 services.AddSingleton<IDateTime, DateTimeProvider>();
+                services.AddTransient(factory => seasonReadRepo.Object);
                 services.AddTransient(factory => episodeReadRepo.Object);
                 services.AddTransient(factory => episodeWriteRepo.Object);
                 services.AddTransient<IEpisodeEditing, EpisodeEditingHandler>();
@@ -589,31 +628,17 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
             DynamicData(nameof(GetNotExistingIdData), DynamicDataSourceType.Method)]
         public async Task EditingEpisode_NotExistingId_ThrowException(long id, EpisodeEditingRequestModel requestModel)
         {
-            var isExistWithSameEpNum = false;
-            var isExistAnimeInfoAndSeason = false;
             Episode foundEpisode = null;
+            Season foundSeason = null;
             var sp = SetupDI(services =>
             {
                 var episodeReadRepo = new Mock<IEpisodeRead>();
                 var episodeWriteRepo = new Mock<IEpisodeWrite>();
-                episodeReadRepo.Setup(er => er.IsSeasonAndAnimeInfoExistsAndReferences(It.IsAny<long>(), It.IsAny<long>()))
-                    .Callback<long, long>((sId, aiId) =>
-                    {
-                        var season = allSeasons.SingleOrDefault(s => s.Id == sId);
-                        if (season == null || season.AnimeInfoId != aiId) isExistAnimeInfoAndSeason = false;
-                        else
-                        {
-                            var animeInfo = allAnimeInfos.SingleOrDefault(ai => ai.Id == aiId);
-                            if (animeInfo == null) isExistAnimeInfoAndSeason = false;
-                            else isExistAnimeInfoAndSeason = true;
-                        }
-                    })
-                    .ReturnsAsync(() => isExistAnimeInfoAndSeason);
-                episodeReadRepo.Setup(er => er.IsEpisodeWithEpisodeNumberExists(It.IsAny<long>(), It.IsAny<int>()))
-                    .Callback<long, int>((sId, epNum) => isExistWithSameEpNum = allEpisodes.Any(e => e.SeasonId == sId && e.EpisodeNumber == epNum))
-                    .Returns(() => isExistWithSameEpNum);
+                var seasonReadRepo = new Mock<ISeasonRead>();
+                seasonReadRepo.Setup(sr => sr.GetSeasonById(It.IsAny<long>())).Callback<long>(sId => foundSeason = allSeasons.SingleOrDefault(s => s.Id == sId)).ReturnsAsync(() => foundSeason);
                 episodeReadRepo.Setup(er => er.GetEpisodeById(It.IsAny<long>())).Callback<long>(eId => foundEpisode = allEpisodes.SingleOrDefault(e => e.Id == eId)).ReturnsAsync(() => foundEpisode);
                 services.AddSingleton<IDateTime, DateTimeProvider>();
+                services.AddTransient(factory => seasonReadRepo.Object);
                 services.AddTransient(factory => episodeReadRepo.Object);
                 services.AddTransient(factory => episodeWriteRepo.Object);
                 services.AddTransient<IEpisodeEditing, EpisodeEditingHandler>();
@@ -621,7 +646,7 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
 
             var episodeEditingHandler = sp.GetService<IEpisodeEditing>();
             Func<Task> createEpisodeFunc = async () => await episodeEditingHandler.EditEpisode(id, requestModel);
-            await createEpisodeFunc.Should().ThrowAsync<NotFoundObjectException<EpisodeEditingRequestModel>>();
+            await createEpisodeFunc.Should().ThrowAsync<NotFoundObjectException<Episode>>();
         }
 
         [DataTestMethod,
@@ -632,8 +657,10 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
             {
                 var episodeReadRepo = new Mock<IEpisodeRead>();
                 var episodeWriteRepo = new Mock<IEpisodeWrite>();
-                episodeReadRepo.Setup(er => er.GetEpisodeById(It.IsAny<long>())).ThrowsAsync(new InvalidOperationException());
+                var seasonReadRepo = new Mock<ISeasonRead>();
+                seasonReadRepo.Setup(sr => sr.GetSeasonById(It.IsAny<long>())).ThrowsAsync(new InvalidOperationException());
                 services.AddSingleton<IDateTime, DateTimeProvider>();
+                services.AddTransient(factory => seasonReadRepo.Object);
                 services.AddTransient(factory => episodeReadRepo.Object);
                 services.AddTransient(factory => episodeWriteRepo.Object);
                 services.AddTransient<IEpisodeEditing, EpisodeEditingHandler>();
@@ -651,7 +678,9 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
             {
                 var episodeReadRepo = new Mock<IEpisodeRead>();
                 var episodeWriteRepo = new Mock<IEpisodeWrite>();
+                var seasonReadRepo = new Mock<ISeasonRead>();
                 services.AddSingleton<IDateTime, DateTimeProvider>();
+                services.AddTransient(factory => seasonReadRepo.Object);
                 services.AddTransient(factory => episodeReadRepo.Object);
                 services.AddTransient(factory => episodeWriteRepo.Object);
                 services.AddTransient<IEpisodeEditing, EpisodeEditingHandler>();

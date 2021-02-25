@@ -47,6 +47,11 @@ namespace AnimeBrowser.API.Controllers
                 logger.Warning(emptyEx, $"Empty request model [{nameof(episodeRequestModel)}] in {MethodNameHelper.GetCurrentMethodName()}. Message: [{emptyEx.Message}].");
                 return BadRequest(emptyEx.Error);
             }
+            catch (NotFoundObjectException<Season> notFoundEx)
+            {
+                logger.Warning(notFoundEx, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{notFoundEx.Message}].");
+                return BadRequest(notFoundEx.Error);
+            }
             catch (ValidationException valEx)
             {
                 logger.Warning(valEx, $"Validation error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{valEx.Message}].");
@@ -87,6 +92,11 @@ namespace AnimeBrowser.API.Controllers
             {
                 logger.Warning(misEx, $"Mismatching Id error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{misEx.Message}].");
                 return BadRequest(misEx.Error);
+            }
+            catch (NotFoundObjectException<Season> notFoundEx)
+            {
+                logger.Warning(notFoundEx, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{notFoundEx.Message}].");
+                return BadRequest(notFoundEx.Error);
             }
             catch (ValidationException valEx)
             {

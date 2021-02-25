@@ -72,10 +72,10 @@ namespace AnimeBrowser.BL.Validators
             });
             RuleFor(x => x.Cover).NotEmpty()
                 .WithErrorCode(ErrorCodes.EmptyProperty.GetIntValueAsString());
-            RuleFor(x => x.SeasonId).GreaterThan(0)
-                .WithErrorCode(ErrorCodes.EmptyProperty.GetIntValueAsString());
-            RuleFor(x => x.AnimeInfoId).GreaterThan(0)
-                .WithErrorCode(ErrorCodes.EmptyProperty.GetIntValueAsString());
+            //RuleFor(x => x.SeasonId).GreaterThan(0)
+            //    .WithErrorCode(ErrorCodes.EmptyProperty.GetIntValueAsString());
+            //RuleFor(x => x.AnimeInfoId).GreaterThan(0)
+            //    .WithErrorCode(ErrorCodes.EmptyProperty.GetIntValueAsString());
         }
     }
 }
