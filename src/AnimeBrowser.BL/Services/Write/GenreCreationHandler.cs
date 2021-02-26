@@ -7,6 +7,8 @@ using AnimeBrowser.Common.Models.ErrorModels;
 using AnimeBrowser.Common.Models.RequestModels;
 using AnimeBrowser.Common.Models.ResponseModels;
 using AnimeBrowser.Data.Converters;
+using AnimeBrowser.Data.Entities;
+using AnimeBrowser.Data.Interfaces.Read;
 using AnimeBrowser.Data.Interfaces.Write;
 using Serilog;
 using System;
@@ -18,10 +20,12 @@ namespace AnimeBrowser.BL.Services.Write
     {
         private readonly ILogger logger = Log.ForContext<GenreCreationHandler>();
         private readonly IGenreWrite genreWriteRepo;
+        private readonly IGenreRead genreReadRepo;
 
-        public GenreCreationHandler(IGenreWrite genreWrite)
+        public GenreCreationHandler(IGenreWrite genreWrite, IGenreRead genreReadRepo)
         {
             this.genreWriteRepo = genreWrite;
+            this.genreReadRepo = genreReadRepo;
         }
 
         public async Task<GenreCreationResponseModel> CreateGenre(GenreCreationRequestModel genreRequestModel)
@@ -43,6 +47,14 @@ namespace AnimeBrowser.BL.Services.Write
                     var errorList = validationResult.Errors.ConvertToErrorModel();
                     throw new ValidationException(errorList, $"Validation error in [{nameof(GenreCreationRequestModel)}].{Environment.NewLine}Validation errors:[{string.Join(", ", errorList)}].");
                 }
+                var isAlreadyExisting = genreReadRepo.IsExistWithSameName(genreRequestModel.GenreName);
+                if (isAlreadyExisting)
+                {
+                    var error = new ErrorModel(code: ErrorCodes.NotUniqueProperty.GetIntValueAsString(), description: $"Another {nameof(Genre)} can be found with the same {nameof(Genre.GenreName)} [{genreRequestModel.GenreName}].",
+                        source: nameof(GenreCreationRequestModel.GenreName), title: ErrorCodes.NotUniqueProperty.GetDescription());
+                    var alreadyExistingEx = new AlreadyExistingObjectException<Genre>(error, $"There is already an {nameof(Genre)} with the same {nameof(Genre.GenreName)} value.");
+                    throw alreadyExistingEx;
+                }
                 var createdGenre = await genreWriteRepo.CreateGenre(genreRequestModel.ToGenre());
 
                 var responseModel = createdGenre.ToCreationResponseModel();
@@ -59,6 +71,11 @@ namespace AnimeBrowser.BL.Services.Write
             catch (ValidationException valEx)
             {
                 logger.Warning(valEx, $"Validation error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{valEx.Message}].");
+                throw;
+            }
+            catch (AlreadyExistingObjectException<Genre> alreadyExistingEx)
+            {
+                logger.Warning(alreadyExistingEx, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{alreadyExistingEx.Message}].");
                 throw;
             }
             catch (Exception ex)

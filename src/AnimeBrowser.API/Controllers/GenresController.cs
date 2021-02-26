@@ -53,6 +53,11 @@ namespace AnimeBrowser.API.Controllers
                 logger.Warning(valEx, $"Validation error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{valEx.Message}].");
                 return BadRequest(valEx.Errors);
             }
+            catch (AlreadyExistingObjectException<Genre> alreadyExistingEx)
+            {
+                logger.Warning(alreadyExistingEx, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{alreadyExistingEx.Message}].");
+                return BadRequest(alreadyExistingEx.Error);
+            }
             catch (Exception ex)
             {
                 logger.Error(ex, $"Error in [{MethodNameHelper.GetCurrentMethodName()}]. Message: [{ex.Message}].");
