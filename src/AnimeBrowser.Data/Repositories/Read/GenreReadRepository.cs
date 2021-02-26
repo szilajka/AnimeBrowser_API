@@ -37,5 +37,15 @@ namespace AnimeBrowser.Data.Repositories.Read
             logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. {nameof(result)}: [{result}].");
             return result;
         }
+
+        public bool IsExistWithSameName(long genreId, string genreName)
+        {
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method started. {nameof(genreId)}: [{genreId}], {nameof(genreName)}: [{genreName}].");
+
+            var result = abContext.Genres.ToList().Any(g => g.Id != genreId && g.GenreName.Equals(genreName, StringComparison.OrdinalIgnoreCase));
+
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. {nameof(result)}: [{result}].");
+            return result;
+        }
     }
 }
