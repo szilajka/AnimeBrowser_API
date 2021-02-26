@@ -78,7 +78,6 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
             };
         }
 
-
         [ClassInitialize]
         public static void InitRequests(TestContext context)
         {
@@ -89,8 +88,10 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
 
             var ids = new long[] { 1, 2, 3, 10, 20, 22,
                 1, 2, 3, 10, 20, 22 };
-            var seasonNumbers = new int[] { 3, 2, 2, 2, 2, 4,
-                3, 2, 2, 2, 2, 4 };
+            var seasonNumbers = new int[] { 3, 4, 2, 2, 2, 4,
+                3, 4, 2, 2, 2, 4 };
+            var animeInfoIds = new long[] { 1, 1, 2, 10, 15, 201,
+                1, 1, 2, 10, 15, 201 };
             var titles = new string[] { "Stardust Crusaders - Battle in Egypt", "Season 2", "Dark hopes", "New expeditions", "Season 2", "Season 4",
                 "T", new string('T', 100), new string('T', 254), new string('T', 255), $"{new string(' ', 100)}Title{new string(' ', 200)}", $"{new string(' ', 300)}Title" };
             var descriptions = new string[] { "D", "DE", "DES", "DESC", "DESCR", "DESCRI",
@@ -136,8 +137,6 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
                 null, Encoding.UTF8.GetBytes("CC"), null, null, Encoding.UTF8.GetBytes("Cover Carousel CCCC"), null };
             var covers = new byte[]?[] { Encoding.UTF8.GetBytes("Cover Jojo"), Encoding.UTF8.GetBytes("Cover BnHA"), Encoding.UTF8.GetBytes("Cover Dorohedoro"), Encoding.UTF8.GetBytes("Cover SnK"), Encoding.UTF8.GetBytes("Cover YnN2"), Encoding.UTF8.GetBytes("Cover YnN4"),
                 null, Encoding.UTF8.GetBytes("C"), null, null, Encoding.UTF8.GetBytes("Cover CCCC"), null };
-            var animeInfoIds = new long[] { 1, 1, 2, 10, 15, 201,
-                1, 1, 2, 10, 15, 201 };
             for (var i = 0; i < ids.Length; i++)
             {
                 allRequestModels.Add(new SeasonEditingRequestModel(id: ids[i], seasonNumber: seasonNumbers[i], title: titles[i], description: descriptions[i], startDate: startDates[i], endDate: endDates[i],
@@ -360,6 +359,18 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
             }
         }
 
+        private static IEnumerable<object[]> GetAlreadyExistingSeasonData()
+        {
+            var ids = new long[] { 1, 2, 3, 10 };
+            var animeInfoIds = new long[] { 10, 15, 1, 201 };
+            var seasonNumbers = new int[] { 1, 1, 1, 1 };
+            for (var i = 0; i < ids.Length; i++)
+            {
+                var srm = allRequestModels[i];
+                yield return new object[] { ids[i], new SeasonEditingRequestModel(id: ids[i], seasonNumber: seasonNumbers[i], title: srm.Title, description: srm.Description, startDate: srm.StartDate, endDate: srm.EndDate,
+                    airStatus: srm.AirStatus, numberOfEpisodes: srm.NumberOfEpisodes, coverCarousel: srm.CoverCarousel, cover: srm.Cover, animeInfoId: animeInfoIds[i]) };
+            }
+        }
 
         [DataTestMethod,
             DynamicData(nameof(GetBasicDatesData), DynamicDataSourceType.Method)]
@@ -368,6 +379,7 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
             AnimeInfo foundAnimeInfo = null;
             Season foundSeason = null;
             Season callbackSeason = null;
+            var isAlreadyExistingSeason = false;
             var sp = SetupDI(services =>
             {
                 var seasonReadRepo = new Mock<ISeasonRead>();
@@ -375,6 +387,9 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
                 var animeInfoReadRepo = new Mock<IAnimeInfoRead>();
                 animeInfoReadRepo.Setup(air => air.GetAnimeInfoById(It.IsAny<long>())).Callback<long>(aiId => foundAnimeInfo = allAnimeInfos.SingleOrDefault(ai => ai.Id == aiId)).ReturnsAsync(() => foundAnimeInfo);
                 seasonReadRepo.Setup(sr => sr.GetSeasonById(It.IsAny<long>())).Callback<long>(sId => foundSeason = allSeasons.SingleOrDefault(s => s.Id == sId)).ReturnsAsync(() => foundSeason);
+                seasonReadRepo.Setup(sr => sr.IsExistsSeasonWithSeasonNumber(It.IsAny<long>(), It.IsAny<int>()))
+                    .Callback<long, int>((aiId, sn) => isAlreadyExistingSeason = allSeasons.Any(s => s.AnimeInfoId == aiId && s.SeasonNumber == sn))
+                    .Returns(() => isAlreadyExistingSeason);
                 seasonWriteRepo.Setup(sw => sw.UpdateSeason(It.IsAny<Season>())).Callback<Season>(s => callbackSeason = s).ReturnsAsync(() => callbackSeason);
                 services.AddTransient<IDateTime, DateTimeProvider>();
                 services.AddTransient(factory => animeInfoReadRepo.Object);
@@ -660,17 +675,48 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
         #endregion If I don't separate these tests into multiple tests, then VS kills itself when viewing test results.....
 
         [DataTestMethod,
-          DynamicData(nameof(GetNotExistingIdData), DynamicDataSourceType.Method)]
-        public async Task EditSeason_NotExistingId_ThrowException(long seasonId, SeasonEditingRequestModel requestModel)
+            DynamicData(nameof(GetAlreadyExistingSeasonData), DynamicDataSourceType.Method)]
+        public async Task EditSeason_AlreadyExistingSeason_ThrowException(long seasonId, SeasonEditingRequestModel requestModel)
         {
             AnimeInfo foundAnimeInfo = null;
-            Season foundSeason = null;
+            var isAlreadyExistingSeason = false;
             var sp = SetupDI(services =>
             {
                 var seasonReadRepo = new Mock<ISeasonRead>();
                 var seasonWriteRepo = new Mock<ISeasonWrite>();
                 var animeInfoReadRepo = new Mock<IAnimeInfoRead>();
                 animeInfoReadRepo.Setup(air => air.GetAnimeInfoById(It.IsAny<long>())).Callback<long>(aiId => foundAnimeInfo = allAnimeInfos.SingleOrDefault(ai => ai.Id == aiId)).ReturnsAsync(() => foundAnimeInfo);
+                seasonReadRepo.Setup(sr => sr.IsExistsSeasonWithSeasonNumber(It.IsAny<long>(), It.IsAny<int>()))
+                    .Callback<long, int>((aiId, sn) => isAlreadyExistingSeason = allSeasons.Any(s => s.AnimeInfoId == aiId && s.SeasonNumber == sn))
+                    .Returns(() => isAlreadyExistingSeason);
+                services.AddTransient<IDateTime, DateTimeProvider>();
+                services.AddTransient(factory => animeInfoReadRepo.Object);
+                services.AddTransient(factory => seasonReadRepo.Object);
+                services.AddTransient(factory => seasonWriteRepo.Object);
+                services.AddTransient<ISeasonEditing, SeasonEditingHandler>();
+            });
+
+            var seasonEditingHandler = sp.GetService<ISeasonEditing>();
+            Func<Task> createSeasonFunc = async () => await seasonEditingHandler.EditSeason(seasonId, requestModel);
+            await createSeasonFunc.Should().ThrowAsync<AlreadyExistingObjectException<Season>>();
+        }
+
+        [DataTestMethod,
+          DynamicData(nameof(GetNotExistingIdData), DynamicDataSourceType.Method)]
+        public async Task EditSeason_NotExistingId_ThrowException(long seasonId, SeasonEditingRequestModel requestModel)
+        {
+            AnimeInfo foundAnimeInfo = null;
+            Season foundSeason = null;
+            var isAlreadyExistingSeason = false;
+            var sp = SetupDI(services =>
+            {
+                var seasonReadRepo = new Mock<ISeasonRead>();
+                var seasonWriteRepo = new Mock<ISeasonWrite>();
+                var animeInfoReadRepo = new Mock<IAnimeInfoRead>();
+                animeInfoReadRepo.Setup(air => air.GetAnimeInfoById(It.IsAny<long>())).Callback<long>(aiId => foundAnimeInfo = allAnimeInfos.SingleOrDefault(ai => ai.Id == aiId)).ReturnsAsync(() => foundAnimeInfo);
+                seasonReadRepo.Setup(sr => sr.IsExistsSeasonWithSeasonNumber(It.IsAny<long>(), It.IsAny<int>()))
+                    .Callback<long, int>((aiId, sn) => isAlreadyExistingSeason = allSeasons.Any(s => s.AnimeInfoId == aiId && s.SeasonNumber == sn))
+                    .Returns(() => isAlreadyExistingSeason);
                 seasonReadRepo.Setup(sr => sr.GetSeasonById(It.IsAny<long>())).Callback<long>(sId => foundSeason = allSeasons.SingleOrDefault(s => s.Id == sId)).ReturnsAsync(() => foundSeason);
                 services.AddTransient<IDateTime, DateTimeProvider>();
                 services.AddTransient(factory => animeInfoReadRepo.Object);
@@ -693,12 +739,16 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
         {
             Season foundSeason = null;
             AnimeInfo foundAnimeInfo = null;
+            var isAlreadyExistingSeason = false;
             var sp = SetupDI(services =>
             {
                 var seasonReadRepo = new Mock<ISeasonRead>();
                 var seasonWriteRepo = new Mock<ISeasonWrite>();
                 var animeInfoReadRepo = new Mock<IAnimeInfoRead>();
                 animeInfoReadRepo.Setup(air => air.GetAnimeInfoById(It.IsAny<long>())).Callback<long>(aiId => foundAnimeInfo = allAnimeInfos.SingleOrDefault(ai => ai.Id == aiId)).ReturnsAsync(() => foundAnimeInfo);
+                seasonReadRepo.Setup(sr => sr.IsExistsSeasonWithSeasonNumber(It.IsAny<long>(), It.IsAny<int>()))
+                    .Callback<long, int>((aiId, sn) => isAlreadyExistingSeason = allSeasons.Any(s => s.AnimeInfoId == aiId && s.SeasonNumber == sn))
+                    .Returns(() => isAlreadyExistingSeason);
                 seasonReadRepo.Setup(sr => sr.GetSeasonById(It.IsAny<long>())).Callback<long>(sId => foundSeason = allSeasons.SingleOrDefault(s => s.Id == sId)).ReturnsAsync(() => foundSeason);
                 services.AddTransient<IDateTime, DateTimeProvider>();
                 services.AddTransient(factory => animeInfoReadRepo.Object);
@@ -743,7 +793,7 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
                 var seasonReadRepo = new Mock<ISeasonRead>();
                 var seasonWriteRepo = new Mock<ISeasonWrite>();
                 var animeInfoReadRepo = new Mock<IAnimeInfoRead>();
-                seasonReadRepo.Setup(sr => sr.GetSeasonById(It.IsAny<long>())).ThrowsAsync(new InvalidOperationException());
+                seasonReadRepo.Setup(sr => sr.IsExistsSeasonWithSeasonNumber(It.IsAny<long>(), It.IsAny<int>())).Throws(new InvalidOperationException());
                 services.AddTransient<IDateTime, DateTimeProvider>();
                 services.AddTransient(factory => animeInfoReadRepo.Object);
                 services.AddTransient(factory => seasonReadRepo.Object);
