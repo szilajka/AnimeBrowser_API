@@ -404,15 +404,11 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
         public async Task CreateSeason_InvalidSeasonNumbers_ThrowException(SeasonCreationRequestModel requestModel, ErrorCodes errorCode, string propertyName)
         {
             var errors = CreateErrorList(errorCode, propertyName);
-            AnimeInfo foundAnimeInfo = null;
-            Season callbackSeason = null;
             var sp = SetupDI(services =>
             {
                 var seasonWriteRepo = new Mock<ISeasonWrite>();
                 var seasonReadRepo = new Mock<ISeasonRead>();
                 var animeInfoReadRepo = new Mock<IAnimeInfoRead>();
-                animeInfoReadRepo.Setup(air => air.GetAnimeInfoById(It.IsAny<long>())).Callback<long>(aiId => foundAnimeInfo = allAnimeInfos.SingleOrDefault(ai => ai.Id == aiId)).ReturnsAsync(() => foundAnimeInfo);
-                seasonWriteRepo.Setup(sw => sw.CreateSeason(It.IsAny<Season>())).Callback<Season>(s => { callbackSeason = s; callbackSeason.Id = 1; }).ReturnsAsync(() => callbackSeason);
                 services.AddTransient<IDateTime, DateTimeProvider>();
                 services.AddTransient(factory => animeInfoReadRepo.Object);
                 services.AddTransient(factory => seasonReadRepo.Object);
@@ -420,8 +416,6 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
                 services.AddTransient<ISeasonCreation, SeasonCreationHandler>();
             });
 
-            var responseModel = requestModel.ToSeason().ToCreationResponseModel();
-            responseModel.Id = 1;
             var seasonCreationHandler = sp.GetService<ISeasonCreation>();
             Func<Task> createSeasonFunc = async () => await seasonCreationHandler.CreateSeason(requestModel);
 
@@ -434,15 +428,11 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
         public async Task CreateSeason_InvalidTitle_ThrowException(SeasonCreationRequestModel requestModel, ErrorCodes errorCode, string propertyName)
         {
             var errors = CreateErrorList(errorCode, propertyName);
-            AnimeInfo foundAnimeInfo = null;
-            Season callbackSeason = null;
             var sp = SetupDI(services =>
             {
                 var seasonWriteRepo = new Mock<ISeasonWrite>();
                 var seasonReadRepo = new Mock<ISeasonRead>();
                 var animeInfoReadRepo = new Mock<IAnimeInfoRead>();
-                animeInfoReadRepo.Setup(air => air.GetAnimeInfoById(It.IsAny<long>())).Callback<long>(aiId => foundAnimeInfo = allAnimeInfos.SingleOrDefault(ai => ai.Id == aiId)).ReturnsAsync(() => foundAnimeInfo);
-                seasonWriteRepo.Setup(sw => sw.CreateSeason(It.IsAny<Season>())).Callback<Season>(s => { callbackSeason = s; callbackSeason.Id = 1; }).ReturnsAsync(() => callbackSeason);
                 services.AddTransient<IDateTime, DateTimeProvider>();
                 services.AddTransient(factory => animeInfoReadRepo.Object);
                 services.AddTransient(factory => seasonReadRepo.Object);
@@ -450,8 +440,6 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
                 services.AddTransient<ISeasonCreation, SeasonCreationHandler>();
             });
 
-            var responseModel = requestModel.ToSeason().ToCreationResponseModel();
-            responseModel.Id = 1;
             var seasonCreationHandler = sp.GetService<ISeasonCreation>();
             Func<Task> createSeasonFunc = async () => await seasonCreationHandler.CreateSeason(requestModel);
 
@@ -464,15 +452,11 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
         public async Task CreateSeason_InvalidDescription_ThrowException(SeasonCreationRequestModel requestModel, ErrorCodes errorCode, string propertyName)
         {
             var errors = CreateErrorList(errorCode, propertyName);
-            AnimeInfo foundAnimeInfo = null;
-            Season callbackSeason = null;
             var sp = SetupDI(services =>
             {
                 var seasonWriteRepo = new Mock<ISeasonWrite>();
                 var seasonReadRepo = new Mock<ISeasonRead>();
                 var animeInfoReadRepo = new Mock<IAnimeInfoRead>();
-                animeInfoReadRepo.Setup(air => air.GetAnimeInfoById(It.IsAny<long>())).Callback<long>(aiId => foundAnimeInfo = allAnimeInfos.SingleOrDefault(ai => ai.Id == aiId)).ReturnsAsync(() => foundAnimeInfo);
-                seasonWriteRepo.Setup(sw => sw.CreateSeason(It.IsAny<Season>())).Callback<Season>(s => { callbackSeason = s; callbackSeason.Id = 1; }).ReturnsAsync(() => callbackSeason);
                 services.AddTransient<IDateTime, DateTimeProvider>();
                 services.AddTransient(factory => animeInfoReadRepo.Object);
                 services.AddTransient(factory => seasonReadRepo.Object);
@@ -480,8 +464,6 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
                 services.AddTransient<ISeasonCreation, SeasonCreationHandler>();
             });
 
-            var responseModel = requestModel.ToSeason().ToCreationResponseModel();
-            responseModel.Id = 1;
             var seasonCreationHandler = sp.GetService<ISeasonCreation>();
             Func<Task> createSeasonFunc = async () => await seasonCreationHandler.CreateSeason(requestModel);
 
@@ -494,15 +476,11 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
         public async Task CreateSeason_InvalidStartDate_ThrowException(SeasonCreationRequestModel requestModel, ErrorCodes errorCode, string propertyName)
         {
             var errors = CreateErrorList(errorCode, propertyName);
-            AnimeInfo foundAnimeInfo = null;
-            Season callbackSeason = null;
             var sp = SetupDI(services =>
             {
                 var seasonWriteRepo = new Mock<ISeasonWrite>();
                 var seasonReadRepo = new Mock<ISeasonRead>();
                 var animeInfoReadRepo = new Mock<IAnimeInfoRead>();
-                animeInfoReadRepo.Setup(air => air.GetAnimeInfoById(It.IsAny<long>())).Callback<long>(aiId => foundAnimeInfo = allAnimeInfos.SingleOrDefault(ai => ai.Id == aiId)).ReturnsAsync(() => foundAnimeInfo);
-                seasonWriteRepo.Setup(sw => sw.CreateSeason(It.IsAny<Season>())).Callback<Season>(s => { callbackSeason = s; callbackSeason.Id = 1; }).ReturnsAsync(() => callbackSeason);
                 services.AddTransient<IDateTime, DateTimeProvider>();
                 services.AddTransient(factory => animeInfoReadRepo.Object);
                 services.AddTransient(factory => seasonReadRepo.Object);
@@ -510,8 +488,6 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
                 services.AddTransient<ISeasonCreation, SeasonCreationHandler>();
             });
 
-            var responseModel = requestModel.ToSeason().ToCreationResponseModel();
-            responseModel.Id = 1;
             var seasonCreationHandler = sp.GetService<ISeasonCreation>();
             Func<Task> createSeasonFunc = async () => await seasonCreationHandler.CreateSeason(requestModel);
 
@@ -524,15 +500,11 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
         public async Task CreateSeason_InvalidEndDate_ThrowException(SeasonCreationRequestModel requestModel, ErrorCodes errorCode, string propertyName)
         {
             var errors = CreateErrorList(errorCode, propertyName);
-            AnimeInfo foundAnimeInfo = null;
-            Season callbackSeason = null;
             var sp = SetupDI(services =>
             {
                 var seasonWriteRepo = new Mock<ISeasonWrite>();
                 var seasonReadRepo = new Mock<ISeasonRead>();
                 var animeInfoReadRepo = new Mock<IAnimeInfoRead>();
-                animeInfoReadRepo.Setup(air => air.GetAnimeInfoById(It.IsAny<long>())).Callback<long>(aiId => foundAnimeInfo = allAnimeInfos.SingleOrDefault(ai => ai.Id == aiId)).ReturnsAsync(() => foundAnimeInfo);
-                seasonWriteRepo.Setup(sw => sw.CreateSeason(It.IsAny<Season>())).Callback<Season>(s => { callbackSeason = s; callbackSeason.Id = 1; }).ReturnsAsync(() => callbackSeason);
                 services.AddTransient<IDateTime, DateTimeProvider>();
                 services.AddTransient(factory => animeInfoReadRepo.Object);
                 services.AddTransient(factory => seasonReadRepo.Object);
@@ -540,8 +512,6 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
                 services.AddTransient<ISeasonCreation, SeasonCreationHandler>();
             });
 
-            var responseModel = requestModel.ToSeason().ToCreationResponseModel();
-            responseModel.Id = 1;
             var seasonCreationHandler = sp.GetService<ISeasonCreation>();
             Func<Task> createSeasonFunc = async () => await seasonCreationHandler.CreateSeason(requestModel);
 
@@ -554,15 +524,11 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
         public async Task CreateSeason_InvalidAirStatus_ThrowException(SeasonCreationRequestModel requestModel, ErrorCodes errorCode, string propertyName)
         {
             var errors = CreateErrorList(errorCode, propertyName);
-            AnimeInfo foundAnimeInfo = null;
-            Season callbackSeason = null;
             var sp = SetupDI(services =>
             {
                 var seasonWriteRepo = new Mock<ISeasonWrite>();
                 var seasonReadRepo = new Mock<ISeasonRead>();
                 var animeInfoReadRepo = new Mock<IAnimeInfoRead>();
-                animeInfoReadRepo.Setup(air => air.GetAnimeInfoById(It.IsAny<long>())).Callback<long>(aiId => foundAnimeInfo = allAnimeInfos.SingleOrDefault(ai => ai.Id == aiId)).ReturnsAsync(() => foundAnimeInfo);
-                seasonWriteRepo.Setup(sw => sw.CreateSeason(It.IsAny<Season>())).Callback<Season>(s => { callbackSeason = s; callbackSeason.Id = 1; }).ReturnsAsync(() => callbackSeason);
                 services.AddTransient<IDateTime, DateTimeProvider>();
                 services.AddTransient(factory => animeInfoReadRepo.Object);
                 services.AddTransient(factory => seasonReadRepo.Object);
@@ -570,8 +536,6 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
                 services.AddTransient<ISeasonCreation, SeasonCreationHandler>();
             });
 
-            var responseModel = requestModel.ToSeason().ToCreationResponseModel();
-            responseModel.Id = 1;
             var seasonCreationHandler = sp.GetService<ISeasonCreation>();
             Func<Task> createSeasonFunc = async () => await seasonCreationHandler.CreateSeason(requestModel);
 
@@ -584,15 +548,11 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
         public async Task CreateSeason_InvalidNumOfEpisodes_ThrowException(SeasonCreationRequestModel requestModel, ErrorCodes errorCode, string propertyName)
         {
             var errors = CreateErrorList(errorCode, propertyName);
-            AnimeInfo foundAnimeInfo = null;
-            Season callbackSeason = null;
             var sp = SetupDI(services =>
             {
                 var seasonWriteRepo = new Mock<ISeasonWrite>();
                 var seasonReadRepo = new Mock<ISeasonRead>();
                 var animeInfoReadRepo = new Mock<IAnimeInfoRead>();
-                animeInfoReadRepo.Setup(air => air.GetAnimeInfoById(It.IsAny<long>())).Callback<long>(aiId => foundAnimeInfo = allAnimeInfos.SingleOrDefault(ai => ai.Id == aiId)).ReturnsAsync(() => foundAnimeInfo);
-                seasonWriteRepo.Setup(sw => sw.CreateSeason(It.IsAny<Season>())).Callback<Season>(s => { callbackSeason = s; callbackSeason.Id = 1; }).ReturnsAsync(() => callbackSeason);
                 services.AddTransient<IDateTime, DateTimeProvider>();
                 services.AddTransient(factory => animeInfoReadRepo.Object);
                 services.AddTransient(factory => seasonReadRepo.Object);
@@ -600,8 +560,6 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
                 services.AddTransient<ISeasonCreation, SeasonCreationHandler>();
             });
 
-            var responseModel = requestModel.ToSeason().ToCreationResponseModel();
-            responseModel.Id = 1;
             var seasonCreationHandler = sp.GetService<ISeasonCreation>();
             Func<Task> createSeasonFunc = async () => await seasonCreationHandler.CreateSeason(requestModel);
 
@@ -614,15 +572,11 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
         public async Task CreateSeason_InvalidCoverCarousel_ThrowException(SeasonCreationRequestModel requestModel, ErrorCodes errorCode, string propertyName)
         {
             var errors = CreateErrorList(errorCode, propertyName);
-            AnimeInfo foundAnimeInfo = null;
-            Season callbackSeason = null;
             var sp = SetupDI(services =>
             {
                 var seasonWriteRepo = new Mock<ISeasonWrite>();
                 var seasonReadRepo = new Mock<ISeasonRead>();
                 var animeInfoReadRepo = new Mock<IAnimeInfoRead>();
-                animeInfoReadRepo.Setup(air => air.GetAnimeInfoById(It.IsAny<long>())).Callback<long>(aiId => foundAnimeInfo = allAnimeInfos.SingleOrDefault(ai => ai.Id == aiId)).ReturnsAsync(() => foundAnimeInfo);
-                seasonWriteRepo.Setup(sw => sw.CreateSeason(It.IsAny<Season>())).Callback<Season>(s => { callbackSeason = s; callbackSeason.Id = 1; }).ReturnsAsync(() => callbackSeason);
                 services.AddTransient<IDateTime, DateTimeProvider>();
                 services.AddTransient(factory => animeInfoReadRepo.Object);
                 services.AddTransient(factory => seasonReadRepo.Object);
@@ -630,8 +584,6 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
                 services.AddTransient<ISeasonCreation, SeasonCreationHandler>();
             });
 
-            var responseModel = requestModel.ToSeason().ToCreationResponseModel();
-            responseModel.Id = 1;
             var seasonCreationHandler = sp.GetService<ISeasonCreation>();
             Func<Task> createSeasonFunc = async () => await seasonCreationHandler.CreateSeason(requestModel);
 
@@ -644,15 +596,11 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
         public async Task CreateSeason_InvalidCover_ThrowException(SeasonCreationRequestModel requestModel, ErrorCodes errorCode, string propertyName)
         {
             var errors = CreateErrorList(errorCode, propertyName);
-            AnimeInfo foundAnimeInfo = null;
-            Season callbackSeason = null;
             var sp = SetupDI(services =>
             {
                 var seasonWriteRepo = new Mock<ISeasonWrite>();
                 var seasonReadRepo = new Mock<ISeasonRead>();
                 var animeInfoReadRepo = new Mock<IAnimeInfoRead>();
-                animeInfoReadRepo.Setup(air => air.GetAnimeInfoById(It.IsAny<long>())).Callback<long>(aiId => foundAnimeInfo = allAnimeInfos.SingleOrDefault(ai => ai.Id == aiId)).ReturnsAsync(() => foundAnimeInfo);
-                seasonWriteRepo.Setup(sw => sw.CreateSeason(It.IsAny<Season>())).Callback<Season>(s => { callbackSeason = s; callbackSeason.Id = 1; }).ReturnsAsync(() => callbackSeason);
                 services.AddTransient<IDateTime, DateTimeProvider>();
                 services.AddTransient(factory => animeInfoReadRepo.Object);
                 services.AddTransient(factory => seasonReadRepo.Object);
@@ -660,8 +608,6 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
                 services.AddTransient<ISeasonCreation, SeasonCreationHandler>();
             });
 
-            var responseModel = requestModel.ToSeason().ToCreationResponseModel();
-            responseModel.Id = 1;
             var seasonCreationHandler = sp.GetService<ISeasonCreation>();
             Func<Task> createSeasonFunc = async () => await seasonCreationHandler.CreateSeason(requestModel);
 
@@ -674,15 +620,11 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
         public async Task CreateSeason_InvalidAnimeInfoId_ThrowException(SeasonCreationRequestModel requestModel, ErrorCodes errorCode, string propertyName)
         {
             var errors = CreateErrorList(errorCode, propertyName);
-            AnimeInfo foundAnimeInfo = null;
-            Season callbackSeason = null;
             var sp = SetupDI(services =>
             {
                 var seasonWriteRepo = new Mock<ISeasonWrite>();
                 var seasonReadRepo = new Mock<ISeasonRead>();
                 var animeInfoReadRepo = new Mock<IAnimeInfoRead>();
-                animeInfoReadRepo.Setup(air => air.GetAnimeInfoById(It.IsAny<long>())).Callback<long>(aiId => foundAnimeInfo = allAnimeInfos.SingleOrDefault(ai => ai.Id == aiId)).ReturnsAsync(() => foundAnimeInfo);
-                seasonWriteRepo.Setup(sw => sw.CreateSeason(It.IsAny<Season>())).Callback<Season>(s => { callbackSeason = s; callbackSeason.Id = 1; }).ReturnsAsync(() => callbackSeason);
                 services.AddTransient<IDateTime, DateTimeProvider>();
                 services.AddTransient(factory => animeInfoReadRepo.Object);
                 services.AddTransient(factory => seasonReadRepo.Object);
@@ -690,8 +632,6 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
                 services.AddTransient<ISeasonCreation, SeasonCreationHandler>();
             });
 
-            var responseModel = requestModel.ToSeason().ToCreationResponseModel();
-            responseModel.Id = 1;
             var seasonCreationHandler = sp.GetService<ISeasonCreation>();
             Func<Task> createSeasonFunc = async () => await seasonCreationHandler.CreateSeason(requestModel);
 
@@ -735,7 +675,6 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
         public async Task CreateSeason_AlreadyExistingSeason_ThrowException(SeasonCreationRequestModel requestModel)
         {
             AnimeInfo foundAnimeInfo = null;
-            Season callbackSeason = null;
             var isSameEpisodeExists = false;
             var sp = SetupDI(services =>
             {
@@ -746,7 +685,6 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
                     .Callback<long, int>((aiId, sn) => isSameEpisodeExists = allSeasons.Any(s => s.AnimeInfoId == aiId && s.SeasonNumber == sn))
                     .Returns(() => isSameEpisodeExists);
                 animeInfoReadRepo.Setup(air => air.GetAnimeInfoById(It.IsAny<long>())).Callback<long>(aiId => foundAnimeInfo = allAnimeInfos.SingleOrDefault(ai => ai.Id == aiId)).ReturnsAsync(() => foundAnimeInfo);
-                seasonWriteRepo.Setup(sw => sw.CreateSeason(It.IsAny<Season>())).Callback<Season>(s => { callbackSeason = s; callbackSeason.Id = 1; }).ReturnsAsync(() => callbackSeason);
                 services.AddTransient<IDateTime, DateTimeProvider>();
                 services.AddTransient(factory => animeInfoReadRepo.Object);
                 services.AddTransient(factory => seasonReadRepo.Object);
@@ -754,8 +692,6 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
                 services.AddTransient<ISeasonCreation, SeasonCreationHandler>();
             });
 
-            var responseModel = requestModel.ToSeason().ToCreationResponseModel();
-            responseModel.Id = 1;
             var seasonCreationHandler = sp.GetService<ISeasonCreation>();
             Func<Task> createSeasonFunc = async () => await seasonCreationHandler.CreateSeason(requestModel);
 
