@@ -387,8 +387,8 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
                 var animeInfoReadRepo = new Mock<IAnimeInfoRead>();
                 animeInfoReadRepo.Setup(air => air.GetAnimeInfoById(It.IsAny<long>())).Callback<long>(aiId => foundAnimeInfo = allAnimeInfos.SingleOrDefault(ai => ai.Id == aiId)).ReturnsAsync(() => foundAnimeInfo);
                 seasonReadRepo.Setup(sr => sr.GetSeasonById(It.IsAny<long>())).Callback<long>(sId => foundSeason = allSeasons.SingleOrDefault(s => s.Id == sId)).ReturnsAsync(() => foundSeason);
-                seasonReadRepo.Setup(sr => sr.IsExistsSeasonWithSeasonNumber(It.IsAny<long>(), It.IsAny<int>()))
-                    .Callback<long, int>((aiId, sn) => isAlreadyExistingSeason = allSeasons.Any(s => s.AnimeInfoId == aiId && s.SeasonNumber == sn))
+                seasonReadRepo.Setup(sr => sr.IsExistsSeasonWithSeasonNumber(It.IsAny<long>(), It.IsAny<long>(), It.IsAny<int>()))
+                    .Callback<long, long, int>((sId, aiId, sn) => isAlreadyExistingSeason = allSeasons.Any(s => s.Id != sId && s.AnimeInfoId == aiId && s.SeasonNumber == sn))
                     .Returns(() => isAlreadyExistingSeason);
                 seasonWriteRepo.Setup(sw => sw.UpdateSeason(It.IsAny<Season>())).Callback<Season>(s => callbackSeason = s).ReturnsAsync(() => callbackSeason);
                 services.AddTransient<IDateTime, DateTimeProvider>();
@@ -686,8 +686,8 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
                 var seasonWriteRepo = new Mock<ISeasonWrite>();
                 var animeInfoReadRepo = new Mock<IAnimeInfoRead>();
                 animeInfoReadRepo.Setup(air => air.GetAnimeInfoById(It.IsAny<long>())).Callback<long>(aiId => foundAnimeInfo = allAnimeInfos.SingleOrDefault(ai => ai.Id == aiId)).ReturnsAsync(() => foundAnimeInfo);
-                seasonReadRepo.Setup(sr => sr.IsExistsSeasonWithSeasonNumber(It.IsAny<long>(), It.IsAny<int>()))
-                    .Callback<long, int>((aiId, sn) => isAlreadyExistingSeason = allSeasons.Any(s => s.AnimeInfoId == aiId && s.SeasonNumber == sn))
+                seasonReadRepo.Setup(sr => sr.IsExistsSeasonWithSeasonNumber(It.IsAny<long>(), It.IsAny<long>(), It.IsAny<int>()))
+                    .Callback<long, long, int>((sId, aiId, sn) => isAlreadyExistingSeason = allSeasons.Any(s => s.Id != sId && s.AnimeInfoId == aiId && s.SeasonNumber == sn))
                     .Returns(() => isAlreadyExistingSeason);
                 services.AddTransient<IDateTime, DateTimeProvider>();
                 services.AddTransient(factory => animeInfoReadRepo.Object);
@@ -714,8 +714,8 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
                 var seasonWriteRepo = new Mock<ISeasonWrite>();
                 var animeInfoReadRepo = new Mock<IAnimeInfoRead>();
                 animeInfoReadRepo.Setup(air => air.GetAnimeInfoById(It.IsAny<long>())).Callback<long>(aiId => foundAnimeInfo = allAnimeInfos.SingleOrDefault(ai => ai.Id == aiId)).ReturnsAsync(() => foundAnimeInfo);
-                seasonReadRepo.Setup(sr => sr.IsExistsSeasonWithSeasonNumber(It.IsAny<long>(), It.IsAny<int>()))
-                    .Callback<long, int>((aiId, sn) => isAlreadyExistingSeason = allSeasons.Any(s => s.AnimeInfoId == aiId && s.SeasonNumber == sn))
+                seasonReadRepo.Setup(sr => sr.IsExistsSeasonWithSeasonNumber(It.IsAny<long>(), It.IsAny<long>(), It.IsAny<int>()))
+                    .Callback<long, long, int>((sId, aiId, sn) => isAlreadyExistingSeason = allSeasons.Any(s => s.Id != sId && s.AnimeInfoId == aiId && s.SeasonNumber == sn))
                     .Returns(() => isAlreadyExistingSeason);
                 seasonReadRepo.Setup(sr => sr.GetSeasonById(It.IsAny<long>())).Callback<long>(sId => foundSeason = allSeasons.SingleOrDefault(s => s.Id == sId)).ReturnsAsync(() => foundSeason);
                 services.AddTransient<IDateTime, DateTimeProvider>();
@@ -746,8 +746,8 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
                 var seasonWriteRepo = new Mock<ISeasonWrite>();
                 var animeInfoReadRepo = new Mock<IAnimeInfoRead>();
                 animeInfoReadRepo.Setup(air => air.GetAnimeInfoById(It.IsAny<long>())).Callback<long>(aiId => foundAnimeInfo = allAnimeInfos.SingleOrDefault(ai => ai.Id == aiId)).ReturnsAsync(() => foundAnimeInfo);
-                seasonReadRepo.Setup(sr => sr.IsExistsSeasonWithSeasonNumber(It.IsAny<long>(), It.IsAny<int>()))
-                    .Callback<long, int>((aiId, sn) => isAlreadyExistingSeason = allSeasons.Any(s => s.AnimeInfoId == aiId && s.SeasonNumber == sn))
+                seasonReadRepo.Setup(sr => sr.IsExistsSeasonWithSeasonNumber(It.IsAny<long>(), It.IsAny<long>(), It.IsAny<int>()))
+                    .Callback<long, long, int>((sId, aiId, sn) => isAlreadyExistingSeason = allSeasons.Any(s => s.Id != sId && s.AnimeInfoId == aiId && s.SeasonNumber == sn))
                     .Returns(() => isAlreadyExistingSeason);
                 seasonReadRepo.Setup(sr => sr.GetSeasonById(It.IsAny<long>())).Callback<long>(sId => foundSeason = allSeasons.SingleOrDefault(s => s.Id == sId)).ReturnsAsync(() => foundSeason);
                 services.AddTransient<IDateTime, DateTimeProvider>();
@@ -793,7 +793,7 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
                 var seasonReadRepo = new Mock<ISeasonRead>();
                 var seasonWriteRepo = new Mock<ISeasonWrite>();
                 var animeInfoReadRepo = new Mock<IAnimeInfoRead>();
-                seasonReadRepo.Setup(sr => sr.IsExistsSeasonWithSeasonNumber(It.IsAny<long>(), It.IsAny<int>())).Throws(new InvalidOperationException());
+                seasonReadRepo.Setup(sr => sr.IsExistsSeasonWithSeasonNumber(It.IsAny<long>(), It.IsAny<long>(), It.IsAny<int>())).Throws(new InvalidOperationException());
                 services.AddTransient<IDateTime, DateTimeProvider>();
                 services.AddTransient(factory => animeInfoReadRepo.Object);
                 services.AddTransient(factory => seasonReadRepo.Object);

@@ -58,7 +58,7 @@ namespace AnimeBrowser.BL.Services.Write
                     var notExistingSeasonEx = new NotFoundObjectException<Season>(error, $"There is no {nameof(Season)} with given id: [{episodeRequestModel.SeasonId}].");
                     throw notExistingSeasonEx;
                 }
-                if (season.AnimeInfoId != episodeRequestModel.AnimeInfoId)
+                if (season.AnimeInfoId != episodeRequestModel?.AnimeInfoId)
                 {
                     var error = new ErrorModel(code: ErrorCodes.MismatchingProperty.GetIntValueAsString(),
                         description: $"The given [{nameof(EpisodeEditingRequestModel.AnimeInfoId)}] not matches the given {nameof(Season)}'s {nameof(Season.AnimeInfoId)}!",

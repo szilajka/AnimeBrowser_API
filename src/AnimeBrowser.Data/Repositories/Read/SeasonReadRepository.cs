@@ -36,5 +36,15 @@ namespace AnimeBrowser.Data.Repositories.Read
             logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. {nameof(result)}: [{result}].");
             return result;
         }
+
+        public bool IsExistsSeasonWithSeasonNumber(long seasonId, long animeInfoId, int seasonNumber)
+        {
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method started. {nameof(seasonId)}: [{seasonId}], {nameof(animeInfoId)}: [{animeInfoId}], {nameof(seasonNumber)}: [{nameof(seasonNumber)}].");
+
+            var result = abContext.Seasons.ToList().Any(s => s.Id != seasonId && s.AnimeInfoId == animeInfoId && s.SeasonNumber == seasonNumber);
+
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. {nameof(result)}: [{result}].");
+            return result;
+        }
     }
 }

@@ -7,5 +7,6 @@ namespace AnimeBrowser.Data.Interfaces.Read
     {
         Task<Season?> GetSeasonById(long id);
         bool IsExistsSeasonWithSeasonNumber(long animeInfoId, int seasonNumber);
+        bool IsExistsSeasonWithSeasonNumber(long seasonId, long animeInfoId, int seasonNumber);
     }
 }

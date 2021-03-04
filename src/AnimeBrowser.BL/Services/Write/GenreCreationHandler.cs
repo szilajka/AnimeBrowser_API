@@ -47,7 +47,8 @@ namespace AnimeBrowser.BL.Services.Write
                     var errorList = validationResult.Errors.ConvertToErrorModel();
                     throw new ValidationException(errorList, $"Validation error in [{nameof(GenreCreationRequestModel)}].{Environment.NewLine}Validation errors:[{string.Join(", ", errorList)}].");
                 }
-                var isAlreadyExisting = genreReadRepo.IsExistWithSameName(genreRequestModel.GenreName);
+                var trimmedGenreRequestModel = genreRequestModel.ToGenre();
+                var isAlreadyExisting = genreReadRepo.IsExistWithSameName(trimmedGenreRequestModel.GenreName);
                 if (isAlreadyExisting)
                 {
                     var error = new ErrorModel(code: ErrorCodes.NotUniqueProperty.GetIntValueAsString(), description: $"Another {nameof(Genre)} can be found with the same {nameof(Genre.GenreName)} [{genreRequestModel.GenreName}].",
@@ -55,7 +56,7 @@ namespace AnimeBrowser.BL.Services.Write
                     var alreadyExistingEx = new AlreadyExistingObjectException<Genre>(error, $"There is already an {nameof(Genre)} with the same {nameof(Genre.GenreName)} value.");
                     throw alreadyExistingEx;
                 }
-                var createdGenre = await genreWriteRepo.CreateGenre(genreRequestModel.ToGenre());
+                var createdGenre = await genreWriteRepo.CreateGenre(trimmedGenreRequestModel);
 
                 var responseModel = createdGenre.ToCreationResponseModel();
 

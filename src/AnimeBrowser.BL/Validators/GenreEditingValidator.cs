@@ -11,16 +11,19 @@ namespace AnimeBrowser.BL.Validators
         {
             RuleFor(x => x).NotNull()
                 .WithErrorCode(ErrorCodes.EmptyObject.GetIntValueAsString());
-            RuleFor(x => x.Id).GreaterThan(0)
-                .WithErrorCode(ErrorCodes.EmptyProperty.GetIntValueAsString());
-            Transform(x => x.GenreName, x => string.IsNullOrEmpty(x) ? x : x.Trim()).NotEmpty()
-                .WithErrorCode(ErrorCodes.EmptyProperty.GetIntValueAsString())
-                .MaximumLength(100)
-                .WithErrorCode(ErrorCodes.TooLongProperty.GetIntValueAsString());
-            Transform(x => x.Description, x => string.IsNullOrEmpty(x) ? x : x.Trim()).NotEmpty()
-                .WithErrorCode(ErrorCodes.EmptyProperty.GetIntValueAsString())
-                .MaximumLength(10000)
-                .WithErrorCode(ErrorCodes.TooLongProperty.GetIntValueAsString());
+            When(x => x != null, () =>
+            {
+                RuleFor(x => x.Id).GreaterThan(0)
+                    .WithErrorCode(ErrorCodes.EmptyProperty.GetIntValueAsString());
+                Transform(x => x.GenreName, x => string.IsNullOrEmpty(x) ? x : x.Trim()).NotEmpty()
+                    .WithErrorCode(ErrorCodes.EmptyProperty.GetIntValueAsString())
+                    .MaximumLength(100)
+                    .WithErrorCode(ErrorCodes.TooLongProperty.GetIntValueAsString());
+                Transform(x => x.Description, x => string.IsNullOrEmpty(x) ? x : x.Trim()).NotEmpty()
+                    .WithErrorCode(ErrorCodes.EmptyProperty.GetIntValueAsString())
+                    .MaximumLength(10000)
+                    .WithErrorCode(ErrorCodes.TooLongProperty.GetIntValueAsString());
+            });
         }
     }
 }
