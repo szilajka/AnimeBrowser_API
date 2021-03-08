@@ -60,6 +60,16 @@ namespace AnimeBrowser.UnitTests.Write.AnimeInfoNameTests
             }
         }
 
+        private static IEnumerable<object[]> GetInvalidAnimeInfoIdData()
+        {
+            var animeInfoIds = new long[] { 0, -1, -30 };
+            for (var i = 0; i < animeInfoIds.Length; i++)
+            {
+                var arm = allRequestModels[i];
+                yield return new object[] { new AnimeInfoNameCreationRequestModel(title: arm.Title, animeInfoId: animeInfoIds[i]) };
+            }
+        }
+
         private static IEnumerable<object[]> GetNotExistingAnimeInfoIdData()
         {
             var animeInfoIds = new long[] { 10, 130, 15 };
@@ -112,7 +122,8 @@ namespace AnimeBrowser.UnitTests.Write.AnimeInfoNameTests
         }
 
         [DataTestMethod,
-            DynamicData(nameof(GetNotExistingAnimeInfoIdData), DynamicDataSourceType.Method)]
+            DynamicData(nameof(GetNotExistingAnimeInfoIdData), DynamicDataSourceType.Method),
+            DynamicData(nameof(GetInvalidAnimeInfoIdData), DynamicDataSourceType.Method)]
         public async Task CreateAnimeInfoName_NotExistingAnimeInfoId_ThrowException(AnimeInfoNameCreationRequestModel requestModel)
         {
             AnimeInfo foundAnimeInfo = null;
