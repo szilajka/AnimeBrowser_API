@@ -1,7 +1,11 @@
-﻿using AnimeBrowser.Data.Interfaces.Read;
-using AnimeBrowser.Data.Interfaces.Write;
-using AnimeBrowser.Data.Repositories.Read;
-using AnimeBrowser.Data.Repositories.Write;
+﻿using AnimeBrowser.Data.Interfaces.Read.MainInterfaces;
+using AnimeBrowser.Data.Interfaces.Read.SecondaryInterfaces;
+using AnimeBrowser.Data.Interfaces.Write.MainInterfaces;
+using AnimeBrowser.Data.Interfaces.Write.SecondaryInterfaces;
+using AnimeBrowser.Data.Repositories.Read.MainRepositories;
+using AnimeBrowser.Data.Repositories.Read.SecondaryRepositories;
+using AnimeBrowser.Data.Repositories.Write.MainRepositories;
+using AnimeBrowser.Data.Repositories.Write.SecondaryRepositories;
 using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics.CodeAnalysis;
 
@@ -12,6 +16,7 @@ namespace AnimeBrowser.Data.Helpers
     {
         public static void AddRepositories(this IServiceCollection services)
         {
+            #region Main Repositories
             services.AddTransient<IAnimeInfoRead, AnimeInfoReadRepository>();
             services.AddTransient<IAnimeInfoWrite, AnimeInfoWriteRepository>();
             services.AddTransient<IGenreRead, GenreReadRepository>();
@@ -20,6 +25,12 @@ namespace AnimeBrowser.Data.Helpers
             services.AddTransient<ISeasonWrite, SeasonWriteRepository>();
             services.AddTransient<IEpisodeRead, EpisodeReadRepository>();
             services.AddTransient<IEpisodeWrite, EpisodeWriteRepository>();
+            #endregion Main Repositories
+
+            #region Secondary Repositories
+            services.AddTransient<IAnimeInfoNameRead, AnimeInfoNameReadRepository>();
+            services.AddTransient<IAnimeInfoNameWrite, AnimeInfoNameWriteRepository>();
+            #endregion Secondary Repositories
         }
     }
 }

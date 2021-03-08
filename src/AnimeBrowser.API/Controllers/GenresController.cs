@@ -1,8 +1,8 @@
 ﻿using AnimeBrowser.API.Helpers;
-using AnimeBrowser.BL.Interfaces.Write;
+using AnimeBrowser.BL.Interfaces.Write.MainInterfaces;
 using AnimeBrowser.Common.Exceptions;
 using AnimeBrowser.Common.Helpers;
-using AnimeBrowser.Common.Models.RequestModels;
+using AnimeBrowser.Common.Models.RequestModels.MainModels;
 using AnimeBrowser.Data.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;

@@ -7,5 +7,6 @@
         public const string GENRES_CONTROLLER_NAME = "api/v1/genres";
         public const string SEASONS_CONTROLLER_NAME = "api/v1/seasons";
         public const string EPISODES_CONTROLLER_NAME = "api/v1/episodes";
+        public const string ANIME_INFO_NAMES_CONTROLLER_NAME = "api/v1/animeInfoNames";
     }
 }

@@ -1,9 +1,9 @@
-﻿using AnimeBrowser.BL.Interfaces.Write;
-using AnimeBrowser.BL.Services.Write;
+﻿using AnimeBrowser.BL.Interfaces.Write.MainInterfaces;
+using AnimeBrowser.BL.Services.Write.MainHandlers;
 using AnimeBrowser.Common.Exceptions;
 using AnimeBrowser.Data.Entities;
-using AnimeBrowser.Data.Interfaces.Read;
-using AnimeBrowser.Data.Interfaces.Write;
+using AnimeBrowser.Data.Interfaces.Read.MainInterfaces;
+using AnimeBrowser.Data.Interfaces.Write.MainInterfaces;
 using AnimeBrowser.UnitTests.Helpers;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;

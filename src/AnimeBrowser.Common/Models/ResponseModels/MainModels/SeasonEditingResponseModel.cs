@@ -1,0 +1,15 @@
+﻿using AnimeBrowser.Common.Models.BaseModels.MainModels;
+using System;
+
+namespace AnimeBrowser.Common.Models.ResponseModels.MainModels
+{
+    public class SeasonEditingResponseModel : SeasonResponseModel
+    {
+        public SeasonEditingResponseModel(long id, int seasonNumber, string title, string description, DateTime? startDate, DateTime? endDate,
+                                            int airStatus, int? numberOfEpisodes, byte[] coverCarousel, byte[] cover, long animeInfoId) :
+            base(id: id, seasonNumber: seasonNumber, title: title, description: description, startDate: startDate, endDate: endDate,
+                                            airStatus: airStatus, numberOfEpisodes: numberOfEpisodes, coverCarousel: coverCarousel, cover: cover, animeInfoId: animeInfoId)
+        {
+        }
+    }
+}
