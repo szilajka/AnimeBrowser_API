@@ -9,7 +9,7 @@ namespace AnimeBrowser.BL.Validators.SecondaryValidators
     {
         public AnimeInfoNameCreationValidator()
         {
-            RuleFor(x => x.Title).NotEmpty()
+            Transform(x => x.Title, x => string.IsNullOrEmpty(x) ? x : x.Trim()).NotEmpty()
                 .WithErrorCode(ErrorCodes.EmptyProperty.GetIntValueAsString())
                 .MaximumLength(255)
                 .WithErrorCode(ErrorCodes.TooLongProperty.GetIntValueAsString());
