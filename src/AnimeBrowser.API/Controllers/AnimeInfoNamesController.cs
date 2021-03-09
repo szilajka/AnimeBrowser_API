@@ -20,11 +20,13 @@ namespace AnimeBrowser.API.Controllers
         private readonly ILogger logger = Log.ForContext<AnimeInfoNamesController>();
         private readonly IAnimeInfoNameCreation animeInfoNameCreateHandler;
         private readonly IAnimeInfoNameEditing animeInfoNameEditingHandler;
+        private readonly IAnimeInfoNameDelete animeInfoNameDeleteHandler;
 
-        public AnimeInfoNamesController(IAnimeInfoNameCreation animeInfoNameCreateHandler, IAnimeInfoNameEditing animeInfoNameEditingHandler)
+        public AnimeInfoNamesController(IAnimeInfoNameCreation animeInfoNameCreateHandler, IAnimeInfoNameEditing animeInfoNameEditingHandler, IAnimeInfoNameDelete animeInfoNameDeleteHandler)
         {
             this.animeInfoNameCreateHandler = animeInfoNameCreateHandler;
             this.animeInfoNameEditingHandler = animeInfoNameEditingHandler;
+            this.animeInfoNameDeleteHandler = animeInfoNameDeleteHandler;
         }
 
 
@@ -101,6 +103,36 @@ namespace AnimeBrowser.API.Controllers
             {
                 logger.Warning(ex, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{ex.Message}].");
                 return BadRequest(ex.Error);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"Error in [{MethodNameHelper.GetCurrentMethodName()}]. Message: [{ex.Message}].");
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        [HttpDelete("{id}")]
+        [Authorize("AnimeInfoAdmin")]
+        public async Task<IActionResult> Delete([FromRoute] long id)
+        {
+            try
+            {
+                logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method started. {nameof(id)}: [{id}].");
+
+                await animeInfoNameDeleteHandler.DeleteAnimeInfoName(id);
+
+                logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method finished.");
+                return Ok();
+            }
+            catch (NotExistingIdException notExistingEx)
+            {
+                logger.Warning(notExistingEx, $"Error in [{MethodNameHelper.GetCurrentMethodName()}]. Message: [{notExistingEx.Message}].");
+                return NotFound(notExistingEx.Error);
+            }
+            catch (NotFoundObjectException<AnimeInfoName> nfoEx)
+            {
+                logger.Warning(nfoEx, $"Error in [{MethodNameHelper.GetCurrentMethodName()}]. Message: [{nfoEx.Message}].");
+                return NotFound(nfoEx.Error);
             }
             catch (Exception ex)
             {

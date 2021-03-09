@@ -7,5 +7,6 @@ namespace AnimeBrowser.Data.Interfaces.Write.SecondaryInterfaces
     {
         Task<AnimeInfoName> CreateAnimeInfoName(AnimeInfoName animeInfoName);
         Task<AnimeInfoName> UpdateAnimeInfoName(AnimeInfoName animeInfoName);
+        Task DeleteAnimeInfoName(AnimeInfoName animeInfoName);
     }
 }
