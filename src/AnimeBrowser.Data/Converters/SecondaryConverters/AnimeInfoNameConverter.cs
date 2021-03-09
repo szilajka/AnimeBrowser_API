@@ -17,26 +17,26 @@ namespace AnimeBrowser.Data.Converters.SecondaryConverters
             return animeInfoName;
         }
 
-        //public static AnimeInfoName ToAnimeInfoName(this AnimeInfoNameEditingRequestModel requestModel)
-        //{
-        //    var animeInfoName = new AnimeInfoName
-        //    {
-        //        Id = requestModel.Id,
-        //        Title = requestModel.Title?.Trim(),
-        //        AnimeInfoId = requestModel.AnimeInfoId
-        //    };
-        //    return animeInfoName;
-        //}
+        public static AnimeInfoName ToAnimeInfoName(this AnimeInfoNameEditingRequestModel requestModel)
+        {
+            var animeInfoName = new AnimeInfoName
+            {
+                Id = requestModel.Id,
+                Title = requestModel.Title?.Trim(),
+                AnimeInfoId = requestModel.AnimeInfoId
+            };
+            return animeInfoName;
+        }
 
 
         #endregion RequestModel
 
         #region ResponseModel
-        //public static AnimeInfoNameEditingResponseModel ToEditingResponseModel(this AnimeInfoName animeInfoName)
-        //{
-        //    var responseModel = new AnimeInfoNameEditingResponseModel(id: animeInfoName.Id, title: animeInfoName.Title, animeInfoId: animeInfoName.AnimeInfoId);
-        //    return responseModel;
-        //}
+        public static AnimeInfoNameEditingResponseModel ToEditingResponseModel(this AnimeInfoName animeInfoName)
+        {
+            var responseModel = new AnimeInfoNameEditingResponseModel(id: animeInfoName.Id, title: animeInfoName.Title, animeInfoId: animeInfoName.AnimeInfoId);
+            return responseModel;
+        }
 
         public static AnimeInfoNameCreationResponseModel ToCreationResponseModel(this AnimeInfoName animeInfoName)
         {

@@ -5,7 +5,7 @@ namespace AnimeBrowser.Common.Models.RequestModels.SecondaryModels
     public class AnimeInfoNameCreationRequestModel : AnimeInfoNameRequestModel
     {
         public AnimeInfoNameCreationRequestModel(long animeInfoId, string title = "")
-            : base(animeInfoId, title)
+            : base(animeInfoId: animeInfoId, title: title)
         {
         }
     }

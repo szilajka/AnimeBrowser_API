@@ -19,10 +19,12 @@ namespace AnimeBrowser.API.Controllers
     {
         private readonly ILogger logger = Log.ForContext<AnimeInfoNamesController>();
         private readonly IAnimeInfoNameCreation animeInfoNameCreateHandler;
+        private readonly IAnimeInfoNameEditing animeInfoNameEditingHandler;
 
-        public AnimeInfoNamesController(IAnimeInfoNameCreation animeInfoNameCreateHandler)
+        public AnimeInfoNamesController(IAnimeInfoNameCreation animeInfoNameCreateHandler, IAnimeInfoNameEditing animeInfoNameEditingHandler)
         {
             this.animeInfoNameCreateHandler = animeInfoNameCreateHandler;
+            this.animeInfoNameEditingHandler = animeInfoNameEditingHandler;
         }
 
 
@@ -60,5 +62,52 @@ namespace AnimeBrowser.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
+
+        [HttpPatch("{id}")]
+        [Authorize("AnimeInfoAdmin")]
+        public async Task<IActionResult> Edit([FromRoute] long id, [FromBody] AnimeInfoNameEditingRequestModel updateModel)
+        {
+            try
+            {
+                logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method started. {nameof(id)}: [{id}], {nameof(updateModel)}: [{updateModel}].");
+
+                var updatedAnimeInfoName = await animeInfoNameEditingHandler.EditAnimeInfoName(id, updateModel);
+
+                logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method finished. result: [{updatedAnimeInfoName}].");
+
+                return Ok(updatedAnimeInfoName);
+            }
+            catch (MismatchingIdException misEx)
+            {
+                logger.Warning(misEx, $"Mismatching Id error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{misEx.Message}].");
+                return BadRequest(misEx.Error);
+            }
+            catch (NotFoundObjectException<AnimeInfoName> ex)
+            {
+                logger.Warning(ex, $"Not found object error in {MethodNameHelper.GetCurrentMethodName()}. Returns 404 - Not Found. Message: [{ex.Message}].");
+                return NotFound(ex.Error);
+            }
+            catch (NotFoundObjectException<AnimeInfo> ex)
+            {
+                logger.Warning(ex, $"Not found object error in {MethodNameHelper.GetCurrentMethodName()}. Returns 404 - Not Found. Message: [{ex.Message}].");
+                return NotFound(ex.Error);
+            }
+            catch (ValidationException valEx)
+            {
+                logger.Warning(valEx, $"Validation error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{valEx.Message}].");
+                return BadRequest(valEx.Errors);
+            }
+            catch (AlreadyExistingObjectException<AnimeInfoName> ex)
+            {
+                logger.Warning(ex, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{ex.Message}].");
+                return BadRequest(ex.Error);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"Error in [{MethodNameHelper.GetCurrentMethodName()}]. Message: [{ex.Message}].");
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
     }
 }
