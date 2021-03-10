@@ -63,7 +63,7 @@ namespace AnimeBrowser.BL.Services.Write.SecondaryHandlers
 
                 seasonNameRequestModel.Title = seasonNameRequestModel.Title.Trim();
                 var isExistsWithSameTitle = seasonNameReadRepo.IsExistsWithSameTitle(seasonNameRequestModel.Title, seasonNameRequestModel.SeasonId);
-                if (isExistsWithSameTitle)
+                if (isExistsWithSameTitle || season.Title.Equals(seasonNameRequestModel.Title, StringComparison.OrdinalIgnoreCase))
                 {
                     var error = new ErrorModel(code: ErrorCodes.NotUniqueProperty.GetIntValueAsString(), description: $"Another {nameof(SeasonName)} can be found in the same {nameof(Season)} [{seasonNameRequestModel.SeasonId}] " +
                        $"and the same {nameof(SeasonNameCreationRequestModel.Title)} [{seasonNameRequestModel.Title}].",
