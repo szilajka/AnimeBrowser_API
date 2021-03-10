@@ -1,6 +1,8 @@
 ﻿using AnimeBrowser.BL.Interfaces.Write.SecondaryInterfaces;
 using AnimeBrowser.BL.Services.Write.SecondaryHandlers;
+using AnimeBrowser.Common.Exceptions;
 using AnimeBrowser.Common.Models.Enums;
+using AnimeBrowser.Common.Models.ErrorModels;
 using AnimeBrowser.Common.Models.RequestModels.SecondaryModels;
 using AnimeBrowser.Data.Converters.SecondaryConverters;
 using AnimeBrowser.Data.Entities;
@@ -110,6 +112,38 @@ namespace AnimeBrowser.UnitTests.Write.SeasonNameTests
             }
         }
 
+        private static IEnumerable<object[]> GetInvalidOrNotExistingSeasonIdData()
+        {
+            var seasonIds = new long[] { 0, -1, 36453, 49 };
+            for (var i = 0; i < seasonIds.Length; i++)
+            {
+                var srm = allRequestModels[i];
+                yield return new object[] { new SeasonNameCreationRequestModel(title: srm.Title, seasonId: seasonIds[i]) };
+            }
+        }
+
+        private static IEnumerable<object[]> GetInvalidTitleData()
+        {
+            var propertyName = nameof(SeasonNameCreationRequestModel.Title);
+            var errorCodes = new ErrorCodes[] { ErrorCodes.EmptyProperty, ErrorCodes.TooLongProperty, ErrorCodes.TooLongProperty, ErrorCodes.EmptyProperty };
+            var titles = new string[] { "", new string('T', 256), new string('T', 300), null };
+            for (var i = 0; i < titles.Length; i++)
+            {
+                var srm = allRequestModels[i];
+                yield return new object[] { new SeasonNameCreationRequestModel(title: titles[i], seasonId: srm.SeasonId), errorCodes[i], propertyName };
+            }
+        }
+
+        private static IEnumerable<object[]> GetAlreadyExistingTitleData()
+        {
+            var titles = new string[] { "JoJo Part 1-2", "Phantom Blood", };
+            for (var i = 0; i < titles.Length; i++)
+            {
+                var srm = allRequestModels[i];
+                yield return new object[] { new SeasonNameCreationRequestModel(title: titles[i], seasonId: srm.SeasonId) };
+            }
+        }
+
         [DataTestMethod,
             DynamicData(nameof(GetBasicData), DynamicDataSourceType.Method)]
         public async Task CreateSeasonName_ShouldWork(SeasonNameCreationRequestModel requestModel)
@@ -144,6 +178,127 @@ namespace AnimeBrowser.UnitTests.Write.SeasonNameTests
             responseModel.Should().BeEquivalentTo(seasonNameResponseModel);
             allSeasonNames.Should().ContainEquivalentOf(seasonName, options => options.Excluding(x => x.Season));
             allSeasonNames.Count.Should().Be(beforeCount + 1);
+        }
+
+
+        [TestMethod]
+        public async Task CreateSeasonName_EmptyObject_ThrowException()
+        {
+            var sp = SetupDI(services =>
+            {
+                var seasonReadRepo = new Mock<ISeasonRead>();
+                var seasonNameReadRepo = new Mock<ISeasonNameRead>();
+                var seasonNameWriteRepo = new Mock<ISeasonNameWrite>();
+                services.AddTransient(factory => seasonReadRepo.Object);
+                services.AddTransient(factory => seasonNameReadRepo.Object);
+                services.AddTransient(factory => seasonNameWriteRepo.Object);
+                services.AddTransient<ISeasonNameCreation, SeasonNameCreationHandler>();
+            });
+
+            var seasonNameCreationHandler = sp.GetService<ISeasonNameCreation>();
+            Func<Task> seasonNameCreationFunc = async () => await seasonNameCreationHandler!.CreateSeasonName(null);
+            await seasonNameCreationFunc.Should().ThrowAsync<EmptyObjectException<SeasonNameCreationRequestModel>>();
+        }
+
+        [DataTestMethod,
+            DynamicData(nameof(GetInvalidOrNotExistingSeasonIdData), DynamicDataSourceType.Method)]
+        public async Task CreateSeasonName_InvalidOrNotExistingSeasonId_ThrowException(SeasonNameCreationRequestModel requestModel)
+        {
+            Season foundSeason = null;
+            var sp = SetupDI(services =>
+            {
+                var seasonReadRepo = new Mock<ISeasonRead>();
+                var seasonNameReadRepo = new Mock<ISeasonNameRead>();
+                var seasonNameWriteRepo = new Mock<ISeasonNameWrite>();
+
+                seasonReadRepo.Setup(sr => sr.GetSeasonById(It.IsAny<long>())).Callback<long>(sId => foundSeason = allSeasons.SingleOrDefault(s => s.Id == sId)).ReturnsAsync(() => foundSeason);
+
+                services.AddTransient(factory => seasonReadRepo.Object);
+                services.AddTransient(factory => seasonNameReadRepo.Object);
+                services.AddTransient(factory => seasonNameWriteRepo.Object);
+                services.AddTransient<ISeasonNameCreation, SeasonNameCreationHandler>();
+            });
+
+            var seasonNameCreationHandler = sp.GetService<ISeasonNameCreation>();
+            Func<Task> seasonNameCreationFunc = async () => await seasonNameCreationHandler!.CreateSeasonName(requestModel);
+            await seasonNameCreationFunc.Should().ThrowAsync<NotFoundObjectException<Season>>();
+        }
+
+        [DataTestMethod,
+            DynamicData(nameof(GetInvalidTitleData), DynamicDataSourceType.Method)]
+        public async Task CreateSeasonName_InvalidTitle_ThrowException(SeasonNameCreationRequestModel requestModel, ErrorCodes errorCode, string propertyName)
+        {
+            var errors = CreateErrorList(errorCode, propertyName);
+            Season foundSeason = null;
+            var sp = SetupDI(services =>
+            {
+                var seasonReadRepo = new Mock<ISeasonRead>();
+                var seasonNameReadRepo = new Mock<ISeasonNameRead>();
+                var seasonNameWriteRepo = new Mock<ISeasonNameWrite>();
+
+                seasonReadRepo.Setup(sr => sr.GetSeasonById(It.IsAny<long>())).Callback<long>(sId => foundSeason = allSeasons.SingleOrDefault(s => s.Id == sId)).ReturnsAsync(() => foundSeason);
+
+                services.AddTransient(factory => seasonReadRepo.Object);
+                services.AddTransient(factory => seasonNameReadRepo.Object);
+                services.AddTransient(factory => seasonNameWriteRepo.Object);
+                services.AddTransient<ISeasonNameCreation, SeasonNameCreationHandler>();
+            });
+
+            var seasonNameCreationHandler = sp.GetService<ISeasonNameCreation>();
+            Func<Task> seasonNameCreationFunc = async () => await seasonNameCreationHandler!.CreateSeasonName(requestModel);
+            var valEx = await seasonNameCreationFunc.Should().ThrowAsync<ValidationException>();
+            valEx.And.Errors.Should().BeEquivalentTo(errors, options => options.Excluding(x => x.Description));
+        }
+
+        [DataTestMethod,
+            DynamicData(nameof(GetAlreadyExistingTitleData), DynamicDataSourceType.Method)]
+        public async Task CreateSeasonName_AlreadyExistingTitle_ThrowException(SeasonNameCreationRequestModel requestModel)
+        {
+            Season foundSeason = null;
+            bool isExistsWithSameTitle = false;
+            var sp = SetupDI(services =>
+            {
+                var seasonReadRepo = new Mock<ISeasonRead>();
+                var seasonNameReadRepo = new Mock<ISeasonNameRead>();
+                var seasonNameWriteRepo = new Mock<ISeasonNameWrite>();
+
+                seasonReadRepo.Setup(sr => sr.GetSeasonById(It.IsAny<long>())).Callback<long>(sId => foundSeason = allSeasons.SingleOrDefault(s => s.Id == sId)).ReturnsAsync(() => foundSeason);
+                seasonNameReadRepo.Setup(snr => snr.IsExistsWithSameTitle(It.IsAny<string>(), It.IsAny<long>()))
+                    .Callback<string, long>((snTitle, sId) => isExistsWithSameTitle = allSeasonNames.Any(sn => sn.SeasonId == sId && sn.Title.Equals(snTitle, StringComparison.OrdinalIgnoreCase)))
+                    .Returns(() => isExistsWithSameTitle);
+
+                services.AddTransient(factory => seasonReadRepo.Object);
+                services.AddTransient(factory => seasonNameReadRepo.Object);
+                services.AddTransient(factory => seasonNameWriteRepo.Object);
+                services.AddTransient<ISeasonNameCreation, SeasonNameCreationHandler>();
+            });
+
+            var seasonNameCreationHandler = sp.GetService<ISeasonNameCreation>();
+            Func<Task> seasonNameCreationFunc = async () => await seasonNameCreationHandler!.CreateSeasonName(requestModel);
+            await seasonNameCreationFunc.Should().ThrowAsync<AlreadyExistingObjectException<SeasonName>>();
+        }
+
+        [DataTestMethod,
+            DynamicData(nameof(GetBasicData), DynamicDataSourceType.Method)]
+        public async Task CreateSeasonName_ThrowException(SeasonNameCreationRequestModel requestModel)
+        {
+            var sp = SetupDI(services =>
+            {
+                var seasonReadRepo = new Mock<ISeasonRead>();
+                var seasonNameReadRepo = new Mock<ISeasonNameRead>();
+                var seasonNameWriteRepo = new Mock<ISeasonNameWrite>();
+
+                seasonReadRepo.Setup(sr => sr.GetSeasonById(It.IsAny<long>())).ThrowsAsync(new InvalidOperationException());
+
+                services.AddTransient(factory => seasonReadRepo.Object);
+                services.AddTransient(factory => seasonNameReadRepo.Object);
+                services.AddTransient(factory => seasonNameWriteRepo.Object);
+                services.AddTransient<ISeasonNameCreation, SeasonNameCreationHandler>();
+            });
+
+            var seasonNameCreationHandler = sp.GetService<ISeasonNameCreation>();
+            Func<Task> seasonNameCreationFunc = async () => await seasonNameCreationHandler!.CreateSeasonName(requestModel);
+            await seasonNameCreationFunc.Should().ThrowAsync<InvalidOperationException>();
         }
 
         [TestCleanup]
