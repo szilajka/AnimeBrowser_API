@@ -30,6 +30,8 @@ namespace AnimeBrowser.Data.Helpers
             #region Secondary Repositories
             services.AddTransient<IAnimeInfoNameRead, AnimeInfoNameReadRepository>();
             services.AddTransient<IAnimeInfoNameWrite, AnimeInfoNameWriteRepository>();
+            services.AddTransient<ISeasonNameRead, SeasonNameReadRepository>();
+            services.AddTransient<ISeasonNameWrite, SeasonNameWriteRepository>();
             #endregion Secondary Repositories
         }
     }

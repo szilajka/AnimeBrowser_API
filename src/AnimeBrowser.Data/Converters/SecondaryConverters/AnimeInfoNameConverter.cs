@@ -44,7 +44,6 @@ namespace AnimeBrowser.Data.Converters.SecondaryConverters
             return responseModel;
         }
 
-
         #endregion ResponseModel
     }
 }
