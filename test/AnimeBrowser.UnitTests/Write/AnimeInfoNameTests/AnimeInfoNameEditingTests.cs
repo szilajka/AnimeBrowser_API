@@ -35,7 +35,7 @@ namespace AnimeBrowser.UnitTests.Write.AnimeInfoNameTests
             var ids = new long[] { 1, 2, 3, 4, 5,
                 10, 11, 100, 110, 200 };
             var titles = new string[] { "Jo", "T", "JoJo ano no Kimyō na nana Bōken", "Some writing with ジョジョの奇妙な冒険", "Las extrañas aventuras de Jojo spanish title",
-                $"{new string(' ', 150)}JojoJoJoJoJoJo{new string(' ', 150)}", $"{new string(' ', 300)}ジョジョの奇妙な冒", $"JoJo no Kimyō{new string(' ', 300)}", new string('T', 254), new string('T', 255)};
+                $"{new string(' ', 150)}JojoJoJoJoJoJo{new string(' ', 150)}", $"{new string(' ', 300)}ジョジョの奇妙な冒-------", $"JoJo no Kimyō{new string(' ', 300)}", new string('T', 254), new string('T', 255)};
             var animeInfoIds = new long[] { 1, 1, 1, 1, 1,
                 2, 2, 2, 2, 2 };
             for (var i = 0; i < titles.Length; i++)
@@ -122,7 +122,7 @@ namespace AnimeBrowser.UnitTests.Write.AnimeInfoNameTests
 
         private static IEnumerable<object[]> GetAlreadyExistingTitleData()
         {
-            var titles = new string[] { "ジョジョの奇妙な冒険", "JoJo no Kimyō na Bōken", "JoJos bisarre eventyr", "ジョジョの奇妙な冒険" };
+            var titles = new string[] { "ジョジョの奇妙な冒険", "JoJo no Kimyō na Bōken", "JoJos bisarre eventyr", "ジョジョの奇妙な冒険", "JoJo's Bizarre Adventure", "Kuroko no Basketball" };
             for (var i = 0; i < titles.Length; i++)
             {
                 var arm = allRequestModels[i];
