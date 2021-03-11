@@ -22,26 +22,26 @@ namespace AnimeBrowser.Data.Converters.SecondaryConverters
             return seasonName;
         }
 
-        //public static SeasonName ToSeasonName(this SeasonNameEditingRequestModel requestModel)
-        //{
-        //    var seasonName = new SeasonName
-        //    {
-        //        Id = requestModel.Id,
-        //        Title = requestModel.Title?.Trim(),
-        //        SeasonId = requestModel.SeasonId
-        //    };
-        //    return seasonName;
-        //}
+        public static SeasonName ToSeasonName(this SeasonNameEditingRequestModel requestModel)
+        {
+            var seasonName = new SeasonName
+            {
+                Id = requestModel.Id,
+                Title = requestModel.Title?.Trim(),
+                SeasonId = requestModel.SeasonId
+            };
+            return seasonName;
+        }
 
 
         #endregion RequestModel
 
         #region ResponseModel
-        //public static SeasonNameEditingResponseModel ToEditingResponseModel(this SeasonName seasonName)
-        //{
-        //    var responseModel = new SeasonNameEditingResponseModel(id: seasonName.Id, title: seasonName.Title, seasonId: seasonName.SeasonId);
-        //    return responseModel;
-        //}
+        public static SeasonNameEditingResponseModel ToEditingResponseModel(this SeasonName seasonName)
+        {
+            var responseModel = new SeasonNameEditingResponseModel(id: seasonName.Id, title: seasonName.Title, seasonId: seasonName.SeasonId);
+            return responseModel;
+        }
 
         public static SeasonNameCreationResponseModel ToCreationResponseModel(this SeasonName seasonName)
         {

@@ -37,5 +37,15 @@ namespace AnimeBrowser.Data.Repositories.Read.SecondaryRepositories
             logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. Found {nameof(isExistsWithSameTitle)}: [{isExistsWithSameTitle}].");
             return isExistsWithSameTitle;
         }
+
+        public bool IsExistingWithSameTitle(string title, long animeInfoId)
+        {
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method started. {nameof(title)}: [{title}].");
+
+            var isExistsWithSameTitle = abContext.AnimeInfoNames.ToList().Any(ain => ain.AnimeInfoId == animeInfoId && ain.Title.Equals(title, StringComparison.OrdinalIgnoreCase));
+
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. Found {nameof(isExistsWithSameTitle)}: [{isExistsWithSameTitle}].");
+            return isExistsWithSameTitle;
+        }
     }
 }

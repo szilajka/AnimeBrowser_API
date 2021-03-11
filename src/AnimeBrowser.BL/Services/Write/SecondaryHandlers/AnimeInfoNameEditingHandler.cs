@@ -78,7 +78,7 @@ namespace AnimeBrowser.BL.Services.Write.SecondaryHandlers
 
                 requestModel.Title = requestModel.Title.Trim();
                 var isExistingWithSameTitle = animeInfoNameReadRepo.IsExistingWithSameTitle(requestModel.Id, requestModel.Title, requestModel.AnimeInfoId);
-                if (isExistingWithSameTitle)
+                if (isExistingWithSameTitle || animeInfo.Title.Equals(requestModel.Title, StringComparison.OrdinalIgnoreCase))
                 {
                     var error = new ErrorModel(code: ErrorCodes.NotUniqueProperty.GetIntValueAsString(), description: $"Another {nameof(AnimeInfoName)} can be found with the same {nameof(AnimeInfo)} [{requestModel.AnimeInfoId}] " +
                        $"and the same {nameof(AnimeInfoNameEditingRequestModel.Title)} [{requestModel.Title}].",

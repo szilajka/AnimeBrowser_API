@@ -7,5 +7,6 @@ namespace AnimeBrowser.Data.Interfaces.Read.SecondaryInterfaces
     {
         Task<AnimeInfoName?> GetAnimeInfoNameById(long id);
         bool IsExistingWithSameTitle(long id, string title, long animeInfoId);
+        bool IsExistingWithSameTitle(string title, long animeInfoId);
     }
 }

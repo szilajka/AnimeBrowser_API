@@ -9,6 +9,7 @@ using AnimeBrowser.Common.Models.ResponseModels.SecondaryModels;
 using AnimeBrowser.Data.Converters.SecondaryConverters;
 using AnimeBrowser.Data.Entities;
 using AnimeBrowser.Data.Interfaces.Read.MainInterfaces;
+using AnimeBrowser.Data.Interfaces.Read.SecondaryInterfaces;
 using AnimeBrowser.Data.Interfaces.Write.SecondaryInterfaces;
 using Serilog;
 using System;
@@ -21,11 +22,13 @@ namespace AnimeBrowser.BL.Services.Write.SecondaryHandlers
         private readonly ILogger logger = Log.ForContext<AnimeInfoNameCreationHandler>();
         private readonly IAnimeInfoNameWrite animeInfoNameWriteRepo;
         private readonly IAnimeInfoRead animeInfoReadRepo;
+        private readonly IAnimeInfoNameRead animeInfoNameReadRepo;
 
-        public AnimeInfoNameCreationHandler(IAnimeInfoNameWrite animeInfoNameWriteRepo, IAnimeInfoRead animeInfoReadRepo)
+        public AnimeInfoNameCreationHandler(IAnimeInfoNameWrite animeInfoNameWriteRepo, IAnimeInfoRead animeInfoReadRepo, IAnimeInfoNameRead animeInfoNameReadRepo)
         {
             this.animeInfoNameWriteRepo = animeInfoNameWriteRepo;
             this.animeInfoReadRepo = animeInfoReadRepo;
+            this.animeInfoNameReadRepo = animeInfoNameReadRepo;
         }
 
         public async Task<AnimeInfoNameCreationResponseModel> CreateAnimeInfoName(AnimeInfoNameCreationRequestModel animeInfoNameRequestModel)
@@ -58,6 +61,17 @@ namespace AnimeBrowser.BL.Services.Write.SecondaryHandlers
                     throw new ValidationException(errorList, $"Validation error in [{nameof(AnimeInfoNameCreationRequestModel)}].{Environment.NewLine}Validation errors:[{string.Join(", ", errorList)}].");
                 }
 
+                animeInfoNameRequestModel.Title = animeInfoNameRequestModel.Title.Trim();
+                var isExistingWithSameTitle = animeInfoNameReadRepo.IsExistingWithSameTitle(animeInfoNameRequestModel.Title, animeInfoNameRequestModel.AnimeInfoId);
+                if (isExistingWithSameTitle || animeInfo.Title.Equals(animeInfoNameRequestModel.Title, StringComparison.OrdinalIgnoreCase))
+                {
+                    var error = new ErrorModel(code: ErrorCodes.NotUniqueProperty.GetIntValueAsString(), description: $"Another {nameof(AnimeInfoName)} can be found with the same {nameof(AnimeInfo)} [{animeInfoNameRequestModel.AnimeInfoId}] " +
+                       $"and the same {nameof(AnimeInfoNameCreationRequestModel.Title)} [{animeInfoNameRequestModel.Title}].",
+                       source: nameof(AnimeInfoNameCreationRequestModel.Title), title: ErrorCodes.NotUniqueProperty.GetDescription());
+                    var alreadyExistingEx = new AlreadyExistingObjectException<AnimeInfoName>(error, $"There is already a {nameof(AnimeInfoName)} with the same {nameof(AnimeInfo)} and the same {nameof(AnimeInfoName.Title)} value.");
+                    throw alreadyExistingEx;
+                }
+
                 var animeInfoName = await animeInfoNameWriteRepo.CreateAnimeInfoName(animeInfoNameRequestModel.ToAnimeInfoName());
                 var responseModel = animeInfoName.ToCreationResponseModel();
                 logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. {nameof(AnimeInfoNameCreationResponseModel)}.{nameof(AnimeInfoNameCreationResponseModel.Id)}: [{responseModel.Id}]");
@@ -76,6 +90,11 @@ namespace AnimeBrowser.BL.Services.Write.SecondaryHandlers
             catch (ValidationException valEx)
             {
                 logger.Warning(valEx, $"Validation error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{valEx.Message}].");
+                throw;
+            }
+            catch (AlreadyExistingObjectException<AnimeInfoName> alreadyExistingEx)
+            {
+                logger.Warning(alreadyExistingEx, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{alreadyExistingEx.Message}].");
                 throw;
             }
             catch (Exception ex)
