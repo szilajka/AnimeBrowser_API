@@ -37,5 +37,15 @@ namespace AnimeBrowser.Data.Repositories.Write.SecondaryRepositories
             logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. {nameof(SeasonName)}.{nameof(SeasonName.Id)}: [{seasonName.Id}].");
             return seasonName;
         }
+
+        public async Task DeleteSeasonName(SeasonName seasonName)
+        {
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method started. {nameof(SeasonName)}: [{seasonName}].");
+
+            abContext.Remove(seasonName);
+            await abContext.SaveChangesAsync();
+
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished.");
+        }
     }
 }

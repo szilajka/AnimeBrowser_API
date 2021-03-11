@@ -7,5 +7,6 @@ namespace AnimeBrowser.Data.Interfaces.Write.SecondaryInterfaces
     {
         Task<SeasonName> CreateSeasonName(SeasonName seasonName);
         Task<SeasonName> UpdateSeasonName(SeasonName seasonName);
+        Task DeleteSeasonName(SeasonName seasonName);
     }
 }

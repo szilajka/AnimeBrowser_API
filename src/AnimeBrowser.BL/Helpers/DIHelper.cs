@@ -39,6 +39,7 @@ namespace AnimeBrowser.BL.Helpers
             services.AddTransient<IAnimeInfoNameDelete, AnimeInfoNameDeleteHandler>();
             services.AddTransient<ISeasonNameCreation, SeasonNameCreationHandler>();
             services.AddTransient<ISeasonNameEditing, SeasonNameEditingHandler>();
+            services.AddTransient<ISeasonNameDelete, SeasonNameDeleteHandler>();
             #endregion Secondary Handlers
         }
     }
