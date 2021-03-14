@@ -37,7 +37,7 @@ namespace AnimeBrowser.BL.Services.Write.SecondaryHandlers
         {
             try
             {
-                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method started with request model: [{string.Join(", ", requestModel)}].");
+                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method started with request model: [{string.Join(", ", requestModel ?? new List<SeasonGenreCreationRequestModel>())}].");
                 if (requestModel?.Any() != true)
                 {
                     var errorModel = new ErrorModel(code: ErrorCodes.EmptyObject.GetIntValueAsString(), description: $"The {nameof(SeasonGenreCreationRequestModel)} list is empty!",
