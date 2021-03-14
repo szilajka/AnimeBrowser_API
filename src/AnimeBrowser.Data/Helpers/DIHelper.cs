@@ -32,6 +32,8 @@ namespace AnimeBrowser.Data.Helpers
             services.AddTransient<IAnimeInfoNameWrite, AnimeInfoNameWriteRepository>();
             services.AddTransient<ISeasonNameRead, SeasonNameReadRepository>();
             services.AddTransient<ISeasonNameWrite, SeasonNameWriteRepository>();
+            services.AddTransient<ISeasonGenreRead, SeasonGenreReadRepository>();
+            services.AddTransient<ISeasonGenreWrite, SeasonGenreWriteRepository>();
             #endregion Secondary Repositories
         }
     }

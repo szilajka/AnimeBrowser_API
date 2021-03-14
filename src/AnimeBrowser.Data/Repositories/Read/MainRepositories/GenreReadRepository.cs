@@ -3,6 +3,7 @@ using AnimeBrowser.Data.Entities;
 using AnimeBrowser.Data.Interfaces.Read.MainInterfaces;
 using Serilog;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -26,6 +27,16 @@ namespace AnimeBrowser.Data.Repositories.Read.MainRepositories
 
             logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. {nameof(genre)}?.{nameof(genre.Id)}: [{genre?.Id}].");
             return genre;
+        }
+
+        public IList<Genre> GetGenresByIds(IEnumerable<long> genreIds)
+        {
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method started. {nameof(genreIds)}: [{string.Join(", ", genreIds)}].");
+
+            var foundGenres = abContext.Genres.ToList().Where(g => genreIds.Contains(g.Id)).ToList();
+
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. {nameof(foundGenres)}.Count: [{foundGenres.Count}].");
+            return foundGenres;
         }
 
         public bool IsExistWithSameName(string genreName)

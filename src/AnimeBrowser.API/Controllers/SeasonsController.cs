@@ -1,14 +1,17 @@
 ﻿using AnimeBrowser.API.Helpers;
 using AnimeBrowser.BL.Interfaces.Write.MainInterfaces;
+using AnimeBrowser.BL.Interfaces.Write.SecondaryInterfaces;
 using AnimeBrowser.Common.Exceptions;
 using AnimeBrowser.Common.Helpers;
 using AnimeBrowser.Common.Models.RequestModels.MainModels;
+using AnimeBrowser.Common.Models.RequestModels.SecondaryModels;
 using AnimeBrowser.Data.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace AnimeBrowser.API.Controllers
@@ -21,12 +24,15 @@ namespace AnimeBrowser.API.Controllers
         private readonly ISeasonCreation seasonCreationHandler;
         private readonly ISeasonEditing seasonEditingHandler;
         private readonly ISeasonDelete seasonDeleteHandler;
+        private readonly ISeasonGenreCreation seasonGenreCreationHandler;
 
-        public SeasonsController(ISeasonCreation seasonCreationHandler, ISeasonEditing seasonEditingHandler, ISeasonDelete seasonDeleteHandler)
+        public SeasonsController(ISeasonCreation seasonCreationHandler, ISeasonEditing seasonEditingHandler, ISeasonDelete seasonDeleteHandler,
+            ISeasonGenreCreation seasonGenreCreationHandler)
         {
             this.seasonCreationHandler = seasonCreationHandler;
             this.seasonEditingHandler = seasonEditingHandler;
             this.seasonDeleteHandler = seasonDeleteHandler;
+            this.seasonGenreCreationHandler = seasonGenreCreationHandler;
         }
 
         [HttpPost]
@@ -138,6 +144,47 @@ namespace AnimeBrowser.API.Controllers
             {
                 logger.Warning(nfoEx, $"Error in [{MethodNameHelper.GetCurrentMethodName()}]. Message: [{nfoEx.Message}].");
                 return NotFound(nfoEx.Error);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"Error in [{MethodNameHelper.GetCurrentMethodName()}]. Message: [{ex.Message}].");
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        [HttpPost("{id}/genres")]
+        [Authorize("SeasonAdmin")]
+        public async Task<IActionResult> CreateGenreMappings([FromBody] IList<SeasonGenreCreationRequestModel> requestModel)
+        {
+            try
+            {
+                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method started. {nameof(requestModel)}: [{string.Join(", ", requestModel)}].");
+
+                var createdSeasonGenreMappings = await seasonGenreCreationHandler.CreateSeasonGenres(requestModel);
+
+                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method finished.");
+
+                return Ok(createdSeasonGenreMappings);
+            }
+            catch (EmptyObjectException<SeasonCreationRequestModel> emptyEx)
+            {
+                logger.Warning(emptyEx, $"Empty request model in {MethodNameHelper.GetCurrentMethodName()}. Message: [{emptyEx.Message}].");
+                return BadRequest(emptyEx.Error);
+            }
+            catch (NotExistingIdException notExistingEx)
+            {
+                logger.Warning(notExistingEx, $"Error in [{MethodNameHelper.GetCurrentMethodName()}]. Message: [{notExistingEx.Message}].");
+                return NotFound(notExistingEx.Error);
+            }
+            catch (NotFoundObjectException<Season> notFoundEx)
+            {
+                logger.Warning(notFoundEx, $"Not found {nameof(Season)} in database in {MethodNameHelper.GetCurrentMethodName()}. Message: [{notFoundEx.Message}].");
+                return BadRequest(notFoundEx.Error);
+            }
+            catch (NotFoundObjectException<Genre> notFoundEx)
+            {
+                logger.Warning(notFoundEx, $"Not found {nameof(Genre)} in database in {MethodNameHelper.GetCurrentMethodName()}. Message: [{notFoundEx.Message}].");
+                return BadRequest(notFoundEx.Error);
             }
             catch (Exception ex)
             {
