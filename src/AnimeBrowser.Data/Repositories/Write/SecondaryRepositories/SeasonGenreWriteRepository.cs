@@ -2,10 +2,8 @@
 using AnimeBrowser.Data.Entities;
 using AnimeBrowser.Data.Interfaces.Write.SecondaryInterfaces;
 using Serilog;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace AnimeBrowser.Data.Repositories.Write.SecondaryRepositories
@@ -40,6 +38,16 @@ namespace AnimeBrowser.Data.Repositories.Write.SecondaryRepositories
 
             logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. {nameof(SeasonGenre.Id)}s: [{string.Join(", ", seasonGenres.Select(sg => sg.Id))}].");
             return seasonGenres;
+        }
+
+        public async Task DeleteSeasonGenres(IEnumerable<SeasonGenre> seasonGenres)
+        {
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method started. {nameof(SeasonGenre)}s: [{string.Join(", ", seasonGenres)}].");
+
+            abContext.RemoveRange(seasonGenres);
+            await abContext.SaveChangesAsync();
+
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished.");
         }
     }
 }

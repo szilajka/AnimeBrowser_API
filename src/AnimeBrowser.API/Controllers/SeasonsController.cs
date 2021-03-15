@@ -25,14 +25,16 @@ namespace AnimeBrowser.API.Controllers
         private readonly ISeasonEditing seasonEditingHandler;
         private readonly ISeasonDelete seasonDeleteHandler;
         private readonly ISeasonGenreCreation seasonGenreCreationHandler;
+        private readonly ISeasonGenreDelete seasonGenreDeleteHandler;
 
         public SeasonsController(ISeasonCreation seasonCreationHandler, ISeasonEditing seasonEditingHandler, ISeasonDelete seasonDeleteHandler,
-            ISeasonGenreCreation seasonGenreCreationHandler)
+            ISeasonGenreCreation seasonGenreCreationHandler, ISeasonGenreDelete seasonGenreDeleteHandler)
         {
             this.seasonCreationHandler = seasonCreationHandler;
             this.seasonEditingHandler = seasonEditingHandler;
             this.seasonDeleteHandler = seasonDeleteHandler;
             this.seasonGenreCreationHandler = seasonGenreCreationHandler;
+            this.seasonGenreDeleteHandler = seasonGenreDeleteHandler;
         }
 
         [HttpPost]
@@ -152,7 +154,7 @@ namespace AnimeBrowser.API.Controllers
             }
         }
 
-        [HttpPost("{id}/genres")]
+        [HttpPost("genres:batchCreate")]
         [Authorize("SeasonAdmin")]
         public async Task<IActionResult> CreateGenreMappings([FromBody] IList<SeasonGenreCreationRequestModel> requestModel)
         {
@@ -184,6 +186,37 @@ namespace AnimeBrowser.API.Controllers
             catch (NotFoundObjectException<Genre> notFoundEx)
             {
                 logger.Warning(notFoundEx, $"Not found {nameof(Genre)} in database in {MethodNameHelper.GetCurrentMethodName()}. Message: [{notFoundEx.Message}].");
+                return BadRequest(notFoundEx.Error);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"Error in [{MethodNameHelper.GetCurrentMethodName()}]. Message: [{ex.Message}].");
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        [HttpPost("genres:batchDelete")]
+        [Authorize("SeasonAdmin")]
+        public async Task<IActionResult> DeleteGenreMappings([FromBody] IList<long> requestModel)
+        {
+            try
+            {
+                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method started. {nameof(requestModel)}: [{string.Join(", ", requestModel)}].");
+
+                await seasonGenreDeleteHandler.DeleteSeasonGenres(requestModel);
+
+                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method finished.");
+
+                return Ok();
+            }
+            catch (NotExistingIdException notExistingEx)
+            {
+                logger.Warning(notExistingEx, $"Error in [{MethodNameHelper.GetCurrentMethodName()}]. Message: [{notExistingEx.Message}].");
+                return NotFound(notExistingEx.Error);
+            }
+            catch (NotFoundObjectException<SeasonGenre> notFoundEx)
+            {
+                logger.Warning(notFoundEx, $"Not found {nameof(Season)} in database in {MethodNameHelper.GetCurrentMethodName()}. Message: [{notFoundEx.Message}].");
                 return BadRequest(notFoundEx.Error);
             }
             catch (Exception ex)

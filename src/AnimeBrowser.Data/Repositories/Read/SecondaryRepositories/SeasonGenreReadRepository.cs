@@ -49,5 +49,15 @@ namespace AnimeBrowser.Data.Repositories.Read.SecondaryRepositories
             logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. Found {nameof(foundSeasonGenres)}.{nameof(foundSeasonGenres.Count)}: [{foundSeasonGenres.Count}].");
             return foundSeasonGenres;
         }
+
+        public IList<SeasonGenre> GetSeasonGenresByIds(IEnumerable<long> seasonGenreIds)
+        {
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method started. {nameof(seasonGenreIds)}: [{string.Join(", ", seasonGenreIds)}].");
+
+            var seasonGenres = abContext.SeasonGenres.ToList().Where(sg => seasonGenreIds.Contains(sg.Id)).ToList();
+
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. Found {nameof(seasonGenres)}.{nameof(seasonGenres.Count)}: [{seasonGenres.Count}].");
+            return seasonGenres;
+        }
     }
 }

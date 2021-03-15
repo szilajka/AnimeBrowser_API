@@ -11,5 +11,7 @@ namespace AnimeBrowser.Data.Interfaces.Write.SecondaryInterfaces
     {
         Task<SeasonGenre> CreateSeasonGenre(SeasonGenre seasonGenre);
         Task<IEnumerable<SeasonGenre>> CreateSeasonGenres(IEnumerable<SeasonGenre> seasonGenres);
+
+        Task DeleteSeasonGenres(IEnumerable<SeasonGenre> seasonGenres);
     }
 }
