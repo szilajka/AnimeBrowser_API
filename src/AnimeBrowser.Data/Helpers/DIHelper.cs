@@ -1,7 +1,9 @@
-﻿using AnimeBrowser.Data.Interfaces.Read.MainInterfaces;
+﻿using AnimeBrowser.Data.Interfaces.Read.IdentityInterfaces;
+using AnimeBrowser.Data.Interfaces.Read.MainInterfaces;
 using AnimeBrowser.Data.Interfaces.Read.SecondaryInterfaces;
 using AnimeBrowser.Data.Interfaces.Write.MainInterfaces;
 using AnimeBrowser.Data.Interfaces.Write.SecondaryInterfaces;
+using AnimeBrowser.Data.Repositories.Read.IdentityRepositories;
 using AnimeBrowser.Data.Repositories.Read.MainRepositories;
 using AnimeBrowser.Data.Repositories.Read.SecondaryRepositories;
 using AnimeBrowser.Data.Repositories.Write.MainRepositories;
@@ -34,7 +36,13 @@ namespace AnimeBrowser.Data.Helpers
             services.AddTransient<ISeasonNameWrite, SeasonNameWriteRepository>();
             services.AddTransient<ISeasonGenreRead, SeasonGenreReadRepository>();
             services.AddTransient<ISeasonGenreWrite, SeasonGenreWriteRepository>();
+            services.AddTransient<IEpisodeRatingRead, EpisodeRatingReadRepository>();
+            services.AddTransient<IEpisodeRatingWrite, EpisodeRatingWriteRepository>();
             #endregion Secondary Repositories
+
+            #region Identity Repositories
+            services.AddTransient<IUserRead, UserReadRepository>();
+            #endregion Identity Repositories
         }
     }
 }

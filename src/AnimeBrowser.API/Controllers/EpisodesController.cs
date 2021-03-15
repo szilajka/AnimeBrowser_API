@@ -1,9 +1,12 @@
 ﻿using AnimeBrowser.API.Helpers;
 using AnimeBrowser.BL.Interfaces.Write.MainInterfaces;
+using AnimeBrowser.BL.Interfaces.Write.SecondaryInterfaces;
 using AnimeBrowser.Common.Exceptions;
 using AnimeBrowser.Common.Helpers;
 using AnimeBrowser.Common.Models.RequestModels.MainModels;
+using AnimeBrowser.Common.Models.RequestModels.SecondaryModels;
 using AnimeBrowser.Data.Entities;
+using AnimeBrowser.Data.Entities.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -21,12 +24,15 @@ namespace AnimeBrowser.API.Controllers
         private readonly IEpisodeCreation episodeCreationHandler;
         private readonly IEpisodeEditing episodeEditingHandler;
         private readonly IEpisodeDelete episodeDeleteHandler;
+        private readonly IEpisodeRatingCreation episodeRatingCreationHandler;
 
-        public EpisodesController(IEpisodeCreation episodeCreationHandler, IEpisodeEditing episodeEditingHandler, IEpisodeDelete episodeDeleteHandler)
+        public EpisodesController(IEpisodeCreation episodeCreationHandler, IEpisodeEditing episodeEditingHandler, IEpisodeDelete episodeDeleteHandler,
+            IEpisodeRatingCreation episodeRatingCreationHandler)
         {
             this.episodeCreationHandler = episodeCreationHandler;
             this.episodeEditingHandler = episodeEditingHandler;
             this.episodeDeleteHandler = episodeDeleteHandler;
+            this.episodeRatingCreationHandler = episodeRatingCreationHandler;
         }
 
         [HttpPost]
@@ -142,6 +148,51 @@ namespace AnimeBrowser.API.Controllers
             {
                 logger.Warning(nfoEx, $"Error in [{MethodNameHelper.GetCurrentMethodName()}]. Message: [{nfoEx.Message}].");
                 return NotFound(nfoEx.Error);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"Error in [{MethodNameHelper.GetCurrentMethodName()}]. Message: [{ex.Message}].");
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        [HttpPost("{id}/ratings")]
+        [Authorize("EpisodeAdmin")]
+        public async Task<IActionResult> CreateEpisodeRating([FromBody] EpisodeRatingCreationRequestModel episodeRatingrequestModel)
+        {
+            try
+            {
+                logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method started. {nameof(episodeRatingrequestModel)}: [{episodeRatingrequestModel}].");
+
+                var createdEpisodeRating = await episodeRatingCreationHandler.CreateEpisodeRating(episodeRatingrequestModel);
+
+                logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method finished with result: [{createdEpisodeRating}].");
+                return Created(string.Format(ControllerHelper.EPISODE_RATINGS_CONTROLLER_NAME, createdEpisodeRating.EpisodeId, createdEpisodeRating.Id), createdEpisodeRating);
+            }
+            catch (EmptyObjectException<EpisodeRatingCreationRequestModel> emptyEx)
+            {
+                logger.Warning(emptyEx, $"Empty request model [{nameof(episodeRatingrequestModel)}] in {MethodNameHelper.GetCurrentMethodName()}. Message: [{emptyEx.Message}].");
+                return BadRequest(emptyEx.Error);
+            }
+            catch (NotFoundObjectException<Episode> notFoundEx)
+            {
+                logger.Warning(notFoundEx, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{notFoundEx.Message}].");
+                return BadRequest(notFoundEx.Error);
+            }
+            catch (NotFoundObjectException<User> notFoundEx)
+            {
+                logger.Warning(notFoundEx, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{notFoundEx.Message}].");
+                return BadRequest(notFoundEx.Error);
+            }
+            catch (ValidationException valEx)
+            {
+                logger.Warning(valEx, $"Validation error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{valEx.Message}].");
+                return BadRequest(valEx.Errors);
+            }
+            catch (AlreadyExistingObjectException<EpisodeRating> alreadyExistingEx)
+            {
+                logger.Warning(alreadyExistingEx, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{alreadyExistingEx.Message}].");
+                return BadRequest(alreadyExistingEx.Error);
             }
             catch (Exception ex)
             {
