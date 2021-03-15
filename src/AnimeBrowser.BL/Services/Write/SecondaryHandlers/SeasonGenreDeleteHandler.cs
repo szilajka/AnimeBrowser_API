@@ -48,7 +48,8 @@ namespace AnimeBrowser.BL.Services.Write.SecondaryHandlers
                     throw new NotExistingIdException(error, $"The given {nameof(SeasonGenre)}'s ids are less than/equal to 0!");
                 }
 
-                var seasonGenres = seasonGenreReadRepo.GetSeasonGenresByIds(seasonGenreIds);
+                var distinctIds = seasonGenreIds.Distinct().ToList();
+                var seasonGenres = seasonGenreReadRepo.GetSeasonGenresByIds(distinctIds);
                 if (seasonGenres == null || !seasonGenres.Any())
                 {
                     var error = new ErrorModel(code: ErrorCodes.EmptyObject.GetIntValueAsString(),
