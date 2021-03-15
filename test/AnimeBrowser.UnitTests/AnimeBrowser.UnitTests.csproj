@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <None Remove="serilog.test.json" />
+    <None Remove="Write\EpisodeRatingTests\EpisodeRatingCreationTests.cs~RF5e96969.TMP" />
   </ItemGroup>
 
   <ItemGroup>
