@@ -129,8 +129,12 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeRatingTests
                 new EpisodeRating { Id = 7, Rating = 4, Message = "", EpisodeId = 1, UserId = "65F041D2-7217-4EA6-9065-9C9AB6290B35" },
                 new EpisodeRating { Id = 8, Rating = 2, Message = "", EpisodeId = 3, UserId = "5879560D-65C5-4699-9449-86CC57EF3111" },
                 new EpisodeRating { Id = 9, Rating = 5, Message = "", EpisodeId = 4, UserId = "5879560D-65C5-4699-9449-86CC57EF3111" },
-                //new EpisodeRating { Id = 912, Rating = 2, Message = "", EpisodeId = 912, UserId = "CF596B99-A0CC-463B-8090-4D156B40D433" },
-                //new EpisodeRating { Id = 913, Rating = 5, Message = "", EpisodeId = 913, UserId = "CF596B99-A0CC-463B-8090-4D156B40D433" }
+                // For some reason, when episode/season was deleted, it was not deleted and still here
+                new EpisodeRating { Id = 912, Rating = 2, Message = "", EpisodeId = 912, UserId = "5879560D-65C5-4699-9449-86CC57EF3111" },
+                new EpisodeRating { Id = 913, Rating = 5, Message = "", EpisodeId = 913, UserId = "5879560D-65C5-4699-9449-86CC57EF3111" },
+                // For some reason, when user was deleted, it was not deleted and still here
+                new EpisodeRating { Id = 916, Rating = 2, Message = "", EpisodeId = 2, UserId = "CF596B99-A0CC-463B-8090-4D156B40D433" },
+                new EpisodeRating { Id = 917, Rating = 5, Message = "", EpisodeId = 3, UserId = "CF596B99-A0CC-463B-8090-4D156B40D433" }
             };
         }
 
@@ -167,25 +171,29 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeRatingTests
             }
         }
 
-        //private static IEnumerable<object[]> GetNotExistingEpisodeData()
-        //{
-        //    var episodeIds = new long[] { 0, -1, -99, 151, 200 };
-        //    for (var i = 0; i < episodeIds.Length; i++)
-        //    {
-        //        var errm = allRequestModels[i];
-        //        yield return new object[] { errm.Id, new EpisodeRatingEditingRequestModel(id: errm.Id, rating: errm.Rating, episodeId: episodeIds[i], userId: errm.UserId, message: errm.Message) };
-        //    }
-        //}
+        private static IEnumerable<object[]> GetNotExistingEpisodeData()
+        {
+            var ids = new long[] { 912, 913 };
+            var episodeIds = new long[] { 912, 913 };
+            var userIds = new string[] { "5879560D-65C5-4699-9449-86CC57EF3111", "5879560D-65C5-4699-9449-86CC57EF3111" };
+            for (var i = 0; i < episodeIds.Length; i++)
+            {
+                var errm = allRequestModels[i];
+                yield return new object[] { ids[i], new EpisodeRatingEditingRequestModel(id: ids[i], rating: errm.Rating, episodeId: episodeIds[i], userId: userIds[i], message: errm.Message) };
+            }
+        }
 
-        //private static IEnumerable<object[]> GetNotExistingUserData()
-        //{
-        //    var userIds = new string[] { "", "asdasd", "93169C33-47D8-4C35-AD48-BCF11D4C3B0C" };
-        //    for (var i = 0; i < userIds.Length; i++)
-        //    {
-        //        var errm = allRequestModels[i];
-        //        yield return new object[] { errm.Id, new EpisodeRatingEditingRequestModel(id: errm.Id, rating: errm.Rating, episodeId: errm.EpisodeId, userId: userIds[i], message: errm.Message) };
-        //    }
-        //}
+        private static IEnumerable<object[]> GetNotExistingUserData()
+        {
+            var ids = new long[] { 916, 917 };
+            var episodeIds = new long[] { 2, 3 };
+            var userIds = new string[] { "CF596B99-A0CC-463B-8090-4D156B40D433", "CF596B99-A0CC-463B-8090-4D156B40D433" };
+            for (var i = 0; i < ids.Length; i++)
+            {
+                var errm = allRequestModels[i];
+                yield return new object[] { ids[i], new EpisodeRatingEditingRequestModel(id: ids[i], rating: errm.Rating, episodeId: episodeIds[i], userId: userIds[i], message: errm.Message) };
+            }
+        }
 
         private static IEnumerable<object[]> GetInvalidRatingData()
         {
@@ -300,63 +308,63 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeRatingTests
             await episodeRatingEditingFunc.Should().ThrowAsync<NotFoundObjectException<EpisodeRating>>();
         }
 
-        //[DataTestMethod,
-        //    DynamicData(nameof(GetNotExistingEpisodeData), DynamicDataSourceType.Method)]
-        //public async Task EditEpisodeRating_NotExistingEpisode_ThrowException(long id, EpisodeRatingEditingRequestModel requestModel)
-        //{
-        //    EpisodeRating foundEpisodeRating = null;
-        //    Episode foundEpisode = null;
-        //    var sp = SetupDI(services =>
-        //    {
-        //        var episodeRatingReadRepo = new Mock<IEpisodeRatingRead>();
-        //        var episodeReadRepo = new Mock<IEpisodeRead>();
-        //        var userReadRepo = new Mock<IUserRead>();
-        //        var episodeRatingWriteRepo = new Mock<IEpisodeRatingWrite>();
+        [DataTestMethod,
+            DynamicData(nameof(GetNotExistingEpisodeData), DynamicDataSourceType.Method)]
+        public async Task EditEpisodeRating_NotExistingEpisode_ThrowException(long id, EpisodeRatingEditingRequestModel requestModel)
+        {
+            EpisodeRating foundEpisodeRating = null;
+            Episode foundEpisode = null;
+            var sp = SetupDI(services =>
+            {
+                var episodeRatingReadRepo = new Mock<IEpisodeRatingRead>();
+                var episodeReadRepo = new Mock<IEpisodeRead>();
+                var userReadRepo = new Mock<IUserRead>();
+                var episodeRatingWriteRepo = new Mock<IEpisodeRatingWrite>();
 
-        //        episodeRatingReadRepo.Setup(err => err.GetEpisodeRatingById(It.IsAny<long>())).Callback<long>(erId => foundEpisodeRating = allEpisodeRatings.SingleOrDefault(er => er.Id == erId)).ReturnsAsync(() => foundEpisodeRating);
-        //        episodeReadRepo.Setup(er => er.GetEpisodeById(It.IsAny<long>())).Callback<long>(eId => foundEpisode = allEpisodes.SingleOrDefault(e => e.Id == eId)).ReturnsAsync(() => foundEpisode);
+                episodeRatingReadRepo.Setup(err => err.GetEpisodeRatingById(It.IsAny<long>())).Callback<long>(erId => foundEpisodeRating = allEpisodeRatings.SingleOrDefault(er => er.Id == erId)).ReturnsAsync(() => foundEpisodeRating);
+                episodeReadRepo.Setup(er => er.GetEpisodeById(It.IsAny<long>())).Callback<long>(eId => foundEpisode = allEpisodes.SingleOrDefault(e => e.Id == eId)).ReturnsAsync(() => foundEpisode);
 
-        //        services.AddTransient(factory => episodeRatingReadRepo.Object);
-        //        services.AddTransient(factory => episodeReadRepo.Object);
-        //        services.AddTransient(factory => userReadRepo.Object);
-        //        services.AddTransient(factory => episodeRatingWriteRepo.Object);
-        //        services.AddTransient<IEpisodeRatingEditing, EpisodeRatingEditingHandler>();
-        //    });
+                services.AddTransient(factory => episodeRatingReadRepo.Object);
+                services.AddTransient(factory => episodeReadRepo.Object);
+                services.AddTransient(factory => userReadRepo.Object);
+                services.AddTransient(factory => episodeRatingWriteRepo.Object);
+                services.AddTransient<IEpisodeRatingEditing, EpisodeRatingEditingHandler>();
+            });
 
-        //    var episodeRatingEditingHandler = sp.GetService<IEpisodeRatingEditing>();
-        //    Func<Task> episodeRatingEditingFunc = async () => await episodeRatingEditingHandler!.EditEpisodeRating(id, requestModel);
-        //    await episodeRatingEditingFunc.Should().ThrowAsync<NotFoundObjectException<Episode>>();
-        //}
+            var episodeRatingEditingHandler = sp.GetService<IEpisodeRatingEditing>();
+            Func<Task> episodeRatingEditingFunc = async () => await episodeRatingEditingHandler!.EditEpisodeRating(id, requestModel);
+            await episodeRatingEditingFunc.Should().ThrowAsync<NotFoundObjectException<Episode>>();
+        }
 
-        //[DataTestMethod,
-        //    DynamicData(nameof(GetNotExistingUserData), DynamicDataSourceType.Method)]
-        //public async Task EditEpisodeRating_NotExistingUser_ThrowException(long id, EpisodeRatingEditingRequestModel requestModel)
-        //{
-        //    EpisodeRating foundEpisodeRating = null;
-        //    Episode foundEpisode = null;
-        //    User foundUser = null;
-        //    var sp = SetupDI(services =>
-        //    {
-        //        var episodeRatingReadRepo = new Mock<IEpisodeRatingRead>();
-        //        var episodeReadRepo = new Mock<IEpisodeRead>();
-        //        var userReadRepo = new Mock<IUserRead>();
-        //        var episodeRatingWriteRepo = new Mock<IEpisodeRatingWrite>();
+        [DataTestMethod,
+            DynamicData(nameof(GetNotExistingUserData), DynamicDataSourceType.Method)]
+        public async Task EditEpisodeRating_NotExistingUser_ThrowException(long id, EpisodeRatingEditingRequestModel requestModel)
+        {
+            EpisodeRating foundEpisodeRating = null;
+            Episode foundEpisode = null;
+            User foundUser = null;
+            var sp = SetupDI(services =>
+            {
+                var episodeRatingReadRepo = new Mock<IEpisodeRatingRead>();
+                var episodeReadRepo = new Mock<IEpisodeRead>();
+                var userReadRepo = new Mock<IUserRead>();
+                var episodeRatingWriteRepo = new Mock<IEpisodeRatingWrite>();
 
-        //        episodeRatingReadRepo.Setup(err => err.GetEpisodeRatingById(It.IsAny<long>())).Callback<long>(erId => foundEpisodeRating = allEpisodeRatings.SingleOrDefault(er => er.Id == erId)).ReturnsAsync(() => foundEpisodeRating);
-        //        episodeReadRepo.Setup(er => er.GetEpisodeById(It.IsAny<long>())).Callback<long>(eId => foundEpisode = allEpisodes.SingleOrDefault(e => e.Id == eId)).ReturnsAsync(() => foundEpisode);
-        //        userReadRepo.Setup(ur => ur.GetUserById(It.IsAny<string>())).Callback<string>(uId => foundUser = allUsers.SingleOrDefault(u => u.Id.Equals(uId, StringComparison.OrdinalIgnoreCase))).ReturnsAsync(() => foundUser);
+                episodeRatingReadRepo.Setup(err => err.GetEpisodeRatingById(It.IsAny<long>())).Callback<long>(erId => foundEpisodeRating = allEpisodeRatings.SingleOrDefault(er => er.Id == erId)).ReturnsAsync(() => foundEpisodeRating);
+                episodeReadRepo.Setup(er => er.GetEpisodeById(It.IsAny<long>())).Callback<long>(eId => foundEpisode = allEpisodes.SingleOrDefault(e => e.Id == eId)).ReturnsAsync(() => foundEpisode);
+                userReadRepo.Setup(ur => ur.GetUserById(It.IsAny<string>())).Callback<string>(uId => foundUser = allUsers.SingleOrDefault(u => u.Id.Equals(uId, StringComparison.OrdinalIgnoreCase))).ReturnsAsync(() => foundUser);
 
-        //        services.AddTransient(factory => episodeRatingReadRepo.Object);
-        //        services.AddTransient(factory => episodeReadRepo.Object);
-        //        services.AddTransient(factory => userReadRepo.Object);
-        //        services.AddTransient(factory => episodeRatingWriteRepo.Object);
-        //        services.AddTransient<IEpisodeRatingEditing, EpisodeRatingEditingHandler>();
-        //    });
+                services.AddTransient(factory => episodeRatingReadRepo.Object);
+                services.AddTransient(factory => episodeReadRepo.Object);
+                services.AddTransient(factory => userReadRepo.Object);
+                services.AddTransient(factory => episodeRatingWriteRepo.Object);
+                services.AddTransient<IEpisodeRatingEditing, EpisodeRatingEditingHandler>();
+            });
 
-        //    var episodeRatingEditingHandler = sp.GetService<IEpisodeRatingEditing>();
-        //    Func<Task> episodeRatingEditingFunc = async () => await episodeRatingEditingHandler!.EditEpisodeRating(id, requestModel);
-        //    await episodeRatingEditingFunc.Should().ThrowAsync<NotFoundObjectException<User>>();
-        //}
+            var episodeRatingEditingHandler = sp.GetService<IEpisodeRatingEditing>();
+            Func<Task> episodeRatingEditingFunc = async () => await episodeRatingEditingHandler!.EditEpisodeRating(id, requestModel);
+            await episodeRatingEditingFunc.Should().ThrowAsync<NotFoundObjectException<User>>();
+        }
 
         [DataTestMethod,
             DynamicData(nameof(GetInvalidRatingData), DynamicDataSourceType.Method)]
