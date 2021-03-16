@@ -25,14 +25,16 @@ namespace AnimeBrowser.API.Controllers
         private readonly IEpisodeEditing episodeEditingHandler;
         private readonly IEpisodeDelete episodeDeleteHandler;
         private readonly IEpisodeRatingCreation episodeRatingCreationHandler;
+        private readonly IEpisodeRatingEditing episodeRatingEditingHandler;
 
         public EpisodesController(IEpisodeCreation episodeCreationHandler, IEpisodeEditing episodeEditingHandler, IEpisodeDelete episodeDeleteHandler,
-            IEpisodeRatingCreation episodeRatingCreationHandler)
+            IEpisodeRatingCreation episodeRatingCreationHandler, IEpisodeRatingEditing episodeRatingEditingHandler)
         {
             this.episodeCreationHandler = episodeCreationHandler;
             this.episodeEditingHandler = episodeEditingHandler;
             this.episodeDeleteHandler = episodeDeleteHandler;
             this.episodeRatingCreationHandler = episodeRatingCreationHandler;
+            this.episodeRatingEditingHandler = episodeRatingEditingHandler;
         }
 
         [HttpPost]
@@ -156,7 +158,7 @@ namespace AnimeBrowser.API.Controllers
             }
         }
 
-        [HttpPost("{id}/ratings")]
+        [HttpPost("{episodeId}/ratings")]
         [Authorize("EpisodeAdmin")]
         public async Task<IActionResult> CreateEpisodeRating([FromBody] EpisodeRatingCreationRequestModel episodeRatingrequestModel)
         {
@@ -200,5 +202,57 @@ namespace AnimeBrowser.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
+
+        [HttpPatch("{episodeId}/ratings/{id}")]
+        [Authorize("EpisodeAdmin")]
+        public async Task<IActionResult> EditEpisodeRating([FromRoute] long episodeId, [FromRoute] long id, [FromBody] EpisodeRatingEditingRequestModel episodeRatingrequestModel)
+        {
+            try
+            {
+                logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method started. {nameof(episodeRatingrequestModel)}: [{episodeRatingrequestModel}].");
+
+                var updatedEpisodeRating = await episodeRatingEditingHandler.EditEpisodeRating(id, episodeRatingrequestModel);
+
+                logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method finished with result: [{updatedEpisodeRating}].");
+                return Ok(updatedEpisodeRating);
+            }
+            catch (MismatchingIdException mismatchEx)
+            {
+                logger.Warning(mismatchEx, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{mismatchEx.Message}].");
+                return BadRequest(mismatchEx.Error);
+            }
+            catch (EmptyObjectException<EpisodeRatingEditingRequestModel> emptyEx)
+            {
+                logger.Warning(emptyEx, $"Empty request model [{nameof(episodeRatingrequestModel)}] in {MethodNameHelper.GetCurrentMethodName()}. Message: [{emptyEx.Message}].");
+                return BadRequest(emptyEx.Error);
+            }
+            catch (NotFoundObjectException<EpisodeRating> notFoundEx)
+            {
+                logger.Warning(notFoundEx, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{notFoundEx.Message}].");
+                return BadRequest(notFoundEx.Error);
+            }
+            catch (NotFoundObjectException<Episode> notFoundEx)
+            {
+                logger.Warning(notFoundEx, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{notFoundEx.Message}].");
+                return BadRequest(notFoundEx.Error);
+            }
+            catch (NotFoundObjectException<User> notFoundEx)
+            {
+                logger.Warning(notFoundEx, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{notFoundEx.Message}].");
+                return BadRequest(notFoundEx.Error);
+            }
+            catch (ValidationException valEx)
+            {
+                logger.Warning(valEx, $"Validation error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{valEx.Message}].");
+                return BadRequest(valEx.Errors);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"Error in [{MethodNameHelper.GetCurrentMethodName()}]. Message: [{ex.Message}].");
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+
     }
 }

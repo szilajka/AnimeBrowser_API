@@ -31,5 +31,16 @@ namespace AnimeBrowser.Data.Repositories.Write.SecondaryRepositories
             logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. {nameof(EpisodeRating.Id)}: [{episodeRating.Id}].");
             return episodeRating;
         }
+
+        public async Task<EpisodeRating> UpdateEpisodeRating(EpisodeRating episodeRating)
+        {
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method started. {nameof(EpisodeRating)}: [{episodeRating}].");
+
+            abContext.Update(episodeRating);
+            await abContext.SaveChangesAsync();
+
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. {nameof(EpisodeRating.Id)}: [{episodeRating.Id}].");
+            return episodeRating;
+        }
     }
 }

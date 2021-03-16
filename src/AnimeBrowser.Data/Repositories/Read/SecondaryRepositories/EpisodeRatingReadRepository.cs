@@ -29,5 +29,15 @@ namespace AnimeBrowser.Data.Repositories.Read.SecondaryRepositories
             logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. Found {nameof(episodeRating)}.{nameof(episodeRating.Id)}: [{episodeRating?.Id}].");
             return episodeRating;
         }
+
+        public async Task<EpisodeRating?> GetEpisodeRatingById(long id)
+        {
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method started. {nameof(id)}: [{id}].");
+
+            var episodeRating = await abContext.EpisodeRatings.FindAsync(id);
+
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. Found {nameof(episodeRating)}.{nameof(episodeRating.Id)}: [{episodeRating?.Id}].");
+            return episodeRating;
+        }
     }
 }

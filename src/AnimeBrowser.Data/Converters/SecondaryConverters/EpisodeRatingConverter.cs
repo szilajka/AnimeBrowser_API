@@ -24,28 +24,28 @@ namespace AnimeBrowser.Data.Converters.SecondaryConverters
             return episodeRating;
         }
 
-        //public static EpisodeRating ToAnimeInfoName(this EpisodeRatingEditingRequestModel requestModel)
-        //{
-        //    var episodeRating = new EpisodeRating
-        //    {
-        //        Id = requestModel.Id,
-        //        Rating = requestModel.Rating,
-        //        Message = requestModel.Message?.Trim(),
-        //        EpisodeId = requestModel.EpisodeId,
-        //        UserId = requestModel.UserId
-        //    };
-        //    return episodeRating;
-        //}
+        public static EpisodeRating ToEpisodeRating(this EpisodeRatingEditingRequestModel requestModel)
+        {
+            var episodeRating = new EpisodeRating
+            {
+                Id = requestModel.Id,
+                Rating = requestModel.Rating,
+                Message = requestModel.Message?.Trim(),
+                EpisodeId = requestModel.EpisodeId,
+                UserId = requestModel.UserId
+            };
+            return episodeRating;
+        }
 
 
         #endregion RequestModel
 
         #region ResponseModel
-        //public static EpisodeRatingEditingResponseModel ToEditingResponseModel(this EpisodeRating episodeRating)
-        //{
-        //    var responseModel = new EpisodeRatingEditingResponseModel(id: episodeRating.Id, rating: episodeRating.Rating, episodeId: episodeRating.EpisodeId, userId: episodeRating.UserId, message: episodeRating.Message);
-        //    return responseModel;
-        //}
+        public static EpisodeRatingEditingResponseModel ToEditingResponseModel(this EpisodeRating episodeRating)
+        {
+            var responseModel = new EpisodeRatingEditingResponseModel(id: episodeRating.Id, rating: episodeRating.Rating, episodeId: episodeRating.EpisodeId, userId: episodeRating.UserId, message: episodeRating.Message);
+            return responseModel;
+        }
 
         public static EpisodeRatingCreationResponseModel ToCreationResponseModel(this EpisodeRating episodeRating)
         {

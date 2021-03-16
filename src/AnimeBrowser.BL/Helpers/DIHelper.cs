@@ -43,6 +43,7 @@ namespace AnimeBrowser.BL.Helpers
             services.AddTransient<ISeasonGenreCreation, SeasonGenreCreationHandler>();
             services.AddTransient<ISeasonGenreDelete, SeasonGenreDeleteHandler>();
             services.AddTransient<IEpisodeRatingCreation, EpisodeRatingCreationHandler>();
+            services.AddTransient<IEpisodeRatingEditing, EpisodeRatingEditingHandler>();
             #endregion Secondary Handlers
         }
     }
