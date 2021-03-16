@@ -282,6 +282,28 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeRatingTests
             await episodeRatingEditingFunc.Should().ThrowAsync<MismatchingIdException>();
         }
 
+        [TestMethod]
+        public async Task EditEpisodeRating_EmptyObject_ThrowException()
+        {
+            var sp = SetupDI(services =>
+            {
+                var episodeRatingReadRepo = new Mock<IEpisodeRatingRead>();
+                var episodeReadRepo = new Mock<IEpisodeRead>();
+                var userReadRepo = new Mock<IUserRead>();
+                var episodeRatingWriteRepo = new Mock<IEpisodeRatingWrite>();
+
+                services.AddTransient(factory => episodeRatingReadRepo.Object);
+                services.AddTransient(factory => episodeReadRepo.Object);
+                services.AddTransient(factory => userReadRepo.Object);
+                services.AddTransient(factory => episodeRatingWriteRepo.Object);
+                services.AddTransient<IEpisodeRatingEditing, EpisodeRatingEditingHandler>();
+            });
+
+            var episodeRatingEditingHandler = sp.GetService<IEpisodeRatingEditing>();
+            Func<Task> episodeRatingEditingFunc = async () => await episodeRatingEditingHandler!.EditEpisodeRating(1, null);
+            await episodeRatingEditingFunc.Should().ThrowAsync<MismatchingIdException>();
+        }
+
         [DataTestMethod,
             DynamicData(nameof(GetNotExistingEpisodeRatingData), DynamicDataSourceType.Method)]
         public async Task EditEpisodeRating_NotExistingEpisodeRating_ThrowException(long id, EpisodeRatingEditingRequestModel requestModel)
