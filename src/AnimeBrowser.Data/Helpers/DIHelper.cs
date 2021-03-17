@@ -38,6 +38,8 @@ namespace AnimeBrowser.Data.Helpers
             services.AddTransient<ISeasonGenreWrite, SeasonGenreWriteRepository>();
             services.AddTransient<IEpisodeRatingRead, EpisodeRatingReadRepository>();
             services.AddTransient<IEpisodeRatingWrite, EpisodeRatingWriteRepository>();
+            services.AddTransient<ISeasonRatingRead, SeasonRatingReadRepository>();
+            services.AddTransient<ISeasonRatingWrite, SeasonRatingWriteRepository>();
             #endregion Secondary Repositories
 
             #region Identity Repositories
