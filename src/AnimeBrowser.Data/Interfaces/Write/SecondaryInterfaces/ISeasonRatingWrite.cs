@@ -10,5 +10,6 @@ namespace AnimeBrowser.Data.Interfaces.Write.SecondaryInterfaces
     public interface ISeasonRatingWrite
     {
         Task<SeasonRating> CreateSeasonRating(SeasonRating seasonRating);
+        Task<SeasonRating> UpdateSeasonRating(SeasonRating seasonRating);
     }
 }

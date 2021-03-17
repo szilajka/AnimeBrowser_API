@@ -20,10 +20,12 @@ namespace AnimeBrowser.API.Controllers
     {
         private readonly ILogger logger = Log.ForContext<SeasonRatingsController>();
         private readonly ISeasonRatingCreation seasonRatingCreationHandler;
+        private readonly ISeasonRatingEditing seasonRatingEditingHandler;
 
-        public SeasonRatingsController(ISeasonRatingCreation seasonRatingCreationHandler)
+        public SeasonRatingsController(ISeasonRatingCreation seasonRatingCreationHandler, ISeasonRatingEditing seasonRatingEditingHandler)
         {
             this.seasonRatingCreationHandler = seasonRatingCreationHandler;
+            this.seasonRatingEditingHandler = seasonRatingEditingHandler;
         }
 
         [HttpPost]
@@ -63,6 +65,51 @@ namespace AnimeBrowser.API.Controllers
             {
                 logger.Warning(alreadyExistingEx, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{alreadyExistingEx.Message}].");
                 return BadRequest(alreadyExistingEx.Error);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"Error in [{MethodNameHelper.GetCurrentMethodName()}]. Message: [{ex.Message}].");
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        [HttpPatch("{id}")]
+        [Authorize("SeasonAdmin")]
+        public async Task<IActionResult> EditSeasonRating([FromRoute] long id, [FromBody] SeasonRatingEditingRequestModel seasonRatingRequestModel)
+        {
+            try
+            {
+                logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method started. {nameof(seasonRatingRequestModel)}: [{seasonRatingRequestModel}].");
+
+                var updatedSeasonRating = await seasonRatingEditingHandler.EditSeasonRating(id, seasonRatingRequestModel);
+
+                logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method finished with result: [{updatedSeasonRating}].");
+                return Ok(updatedSeasonRating);
+            }
+            catch (MismatchingIdException mismatchEx)
+            {
+                logger.Warning(mismatchEx, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{mismatchEx.Message}].");
+                return BadRequest(mismatchEx.Error);
+            }
+            catch (NotFoundObjectException<SeasonRating> notFoundEx)
+            {
+                logger.Warning(notFoundEx, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{notFoundEx.Message}].");
+                return BadRequest(notFoundEx.Error);
+            }
+            catch (NotFoundObjectException<Season> notFoundEx)
+            {
+                logger.Warning(notFoundEx, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{notFoundEx.Message}].");
+                return BadRequest(notFoundEx.Error);
+            }
+            catch (NotFoundObjectException<User> notFoundEx)
+            {
+                logger.Warning(notFoundEx, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{notFoundEx.Message}].");
+                return BadRequest(notFoundEx.Error);
+            }
+            catch (ValidationException valEx)
+            {
+                logger.Warning(valEx, $"Validation error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{valEx.Message}].");
+                return BadRequest(valEx.Errors);
             }
             catch (Exception ex)
             {

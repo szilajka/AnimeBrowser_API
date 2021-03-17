@@ -24,28 +24,28 @@ namespace AnimeBrowser.Data.Converters.SecondaryConverters
             return seasonRating;
         }
 
-        //public static SeasonRating ToSeasonRating(this SeasonRatingEditingRequestModel requestModel)
-        //{
-        //    var seasonRating = new SeasonRating
-        //    {
-        //        Id = requestModel.Id,
-        //        Rating = requestModel.Rating,
-        //        Message = requestModel.Message?.Trim(),
-        //        SeasonId = requestModel.SeasonId,
-        //        UserId = requestModel.UserId
-        //    };
-        //    return seasonRating;
-        //}
+        public static SeasonRating ToSeasonRating(this SeasonRatingEditingRequestModel requestModel)
+        {
+            var seasonRating = new SeasonRating
+            {
+                Id = requestModel.Id,
+                Rating = requestModel.Rating,
+                Message = requestModel.Message?.Trim(),
+                SeasonId = requestModel.SeasonId,
+                UserId = requestModel.UserId
+            };
+            return seasonRating;
+        }
 
 
         #endregion RequestModel
 
         #region ResponseModel
-        //public static SeasonRatingEditingResponseModel ToEditingResponseModel(this SeasonRating seasonRating)
-        //{
-        //    var responseModel = new SeasonRatingEditingResponseModel(id: seasonRating.Id, rating: seasonRating.Rating, seasonId: seasonRating.SeasonId, userId: seasonRating.UserId, message: seasonRating.Message);
-        //    return responseModel;
-        //}
+        public static SeasonRatingEditingResponseModel ToEditingResponseModel(this SeasonRating seasonRating)
+        {
+            var responseModel = new SeasonRatingEditingResponseModel(id: seasonRating.Id, rating: seasonRating.Rating, seasonId: seasonRating.SeasonId, userId: seasonRating.UserId, message: seasonRating.Message);
+            return responseModel;
+        }
 
         public static SeasonRatingCreationResponseModel ToCreationResponseModel(this SeasonRating seasonRating)
         {

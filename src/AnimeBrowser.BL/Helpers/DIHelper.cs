@@ -46,6 +46,7 @@ namespace AnimeBrowser.BL.Helpers
             services.AddTransient<IEpisodeRatingEditing, EpisodeRatingEditingHandler>();
             services.AddTransient<IEpisodeRatingDelete, EpisodeRatingDeleteHandler>();
             services.AddTransient<ISeasonRatingCreation, SeasonRatingCreationHandler>();
+            services.AddTransient<ISeasonRatingEditing, SeasonRatingEditingHandler>();
             #endregion Secondary Handlers
         }
     }
