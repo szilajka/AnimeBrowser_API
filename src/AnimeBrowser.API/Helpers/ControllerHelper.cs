@@ -9,6 +9,6 @@
         public const string EPISODES_CONTROLLER_NAME = "api/v1/episodes";
         public const string ANIME_INFO_NAMES_CONTROLLER_NAME = "api/v1/animeInfoNames";
         public const string SEASON_NAMES_CONTROLLER_NAME = "api/v1/seasonNames";
-        public const string EPISODE_RATINGS_CONTROLLER_NAME = "api/v1/episodes/{0}/ratings/{1}";
+        public const string EPISODE_RATINGS_CONTROLLER_NAME = "api/v1/episodeRatings";
     }
 }

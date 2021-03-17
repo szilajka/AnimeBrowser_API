@@ -7,5 +7,6 @@ namespace AnimeBrowser.Data.Interfaces.Write.SecondaryInterfaces
     {
         Task<EpisodeRating> CreateEpisodeRating(EpisodeRating episodeRating);
         Task<EpisodeRating> UpdateEpisodeRating(EpisodeRating episodeRating);
+        Task DeleteEpisodeRating(EpisodeRating episodeRating);
     }
 }
