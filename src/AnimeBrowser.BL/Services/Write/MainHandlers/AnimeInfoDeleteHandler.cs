@@ -40,7 +40,7 @@ namespace AnimeBrowser.BL.Services.Write.MainHandlers
                 if (animeInfo == null)
                 {
                     var error = new ErrorModel(code: ErrorCodes.EmptyObject.GetIntValueAsString(),
-                         description: $"No {nameof(AnimeInfo)} object was found with the given id [{animeInfo?.Id}]!",
+                         description: $"No {nameof(AnimeInfo)} object was found with the given id [{id}]!",
                          source: nameof(id), title: ErrorCodes.EmptyObject.GetDescription()
                      );
                     throw new NotFoundObjectException<AnimeInfo>(error, $"Not found an {nameof(AnimeInfo)} entity with id: [{id}].");

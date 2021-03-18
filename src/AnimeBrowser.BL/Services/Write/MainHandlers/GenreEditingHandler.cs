@@ -32,12 +32,12 @@ namespace AnimeBrowser.BL.Services.Write.MainHandlers
         {
             try
             {
-                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method started with {nameof(genreRequestModel)}: [{genreRequestModel}].");
+                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method started with {nameof(id)}: [{id}], {nameof(genreRequestModel)}: [{genreRequestModel}].");
 
                 if (id != genreRequestModel?.Id)
                 {
                     var error = new ErrorModel(code: ErrorCodes.MismatchingProperty.GetIntValueAsString(),
-                       description: $"The parameter [{nameof(id)}] and [{nameof(genreRequestModel)}.{nameof(GenreEditingRequestModel.Id)}] properties should have the same value, but they are different!",
+                       description: $"The parameter [{nameof(id)}] and [{nameof(genreRequestModel)}.{nameof(genreRequestModel.Id)}] properties should have the same value, but they are different!",
                        source: nameof(id), title: ErrorCodes.MismatchingProperty.GetDescription());
                     var mismatchEx = new MismatchingIdException(error, "The given id and the model's id are not matching!");
                     throw mismatchEx;
@@ -48,14 +48,14 @@ namespace AnimeBrowser.BL.Services.Write.MainHandlers
                 if (!validationResult.IsValid)
                 {
                     var errorList = validationResult.Errors.ConvertToErrorModel();
-                    throw new ValidationException(errorList, $"Validation error in [{nameof(GenreEditingRequestModel)}].{Environment.NewLine}Validation errors:[{string.Join(", ", errorList)}].");
+                    throw new ValidationException(errorList, $"Validation error in [{nameof(GenreEditingRequestModel)}].{Environment.NewLine}Validation errors: [{string.Join(", ", errorList)}].");
                 }
                 var trimmedGenreRequestModel = genreRequestModel.ToGenre();
                 var isAlreadyExisting = genreReadRepo.IsExistWithSameName(id, trimmedGenreRequestModel.GenreName);
                 if (isAlreadyExisting)
                 {
-                    var error = new ErrorModel(code: ErrorCodes.NotUniqueProperty.GetIntValueAsString(), description: $"Another {nameof(Genre)} can be found with the same {nameof(Genre.GenreName)} [{genreRequestModel.GenreName}].",
-                        source: nameof(GenreEditingRequestModel.GenreName), title: ErrorCodes.NotUniqueProperty.GetDescription());
+                    var error = new ErrorModel(code: ErrorCodes.NotUniqueProperty.GetIntValueAsString(), description: $"Another {nameof(Genre)} can be found with the same {nameof(Genre.GenreName)} [{trimmedGenreRequestModel.GenreName}].",
+                        source: nameof(trimmedGenreRequestModel.GenreName), title: ErrorCodes.NotUniqueProperty.GetDescription());
                     var alreadyExistingEx = new AlreadyExistingObjectException<Genre>(error, $"There is already an {nameof(Genre)} with the same {nameof(Genre.GenreName)} value.");
                     throw alreadyExistingEx;
                 }
@@ -68,7 +68,6 @@ namespace AnimeBrowser.BL.Services.Write.MainHandlers
                         source: nameof(GenreEditingRequestModel.Id), title: ErrorCodes.EmptyObject.GetDescription()
                     );
                     var notExistingGenreEx = new NotFoundObjectException<Genre>(error, $"There is no {nameof(Genre)} with given id: [{id}].");
-                    logger.Warning(notExistingGenreEx, notExistingGenreEx.Message);
                     throw notExistingGenreEx;
                 }
 

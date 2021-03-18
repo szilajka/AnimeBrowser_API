@@ -13,7 +13,7 @@ namespace AnimeBrowser.BL.Services.Write.MainHandlers
 {
     public class GenreDeleteHandler : IGenreDelete
     {
-        private readonly ILogger logger = Log.ForContext<GenreEditingHandler>();
+        private readonly ILogger logger = Log.ForContext<GenreDeleteHandler>();
         private readonly IGenreRead genreReadRepo;
         private readonly IGenreWrite genreWriteRepo;
 

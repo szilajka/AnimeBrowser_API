@@ -31,16 +31,16 @@ namespace AnimeBrowser.BL.Services.Write.SecondaryHandlers
             this.animeInfoReadRepo = animeInfoReadRepo;
         }
 
-        public async Task<AnimeInfoNameEditingResponseModel> EditAnimeInfoName(long id, AnimeInfoNameEditingRequestModel requestModel)
+        public async Task<AnimeInfoNameEditingResponseModel> EditAnimeInfoName(long id, AnimeInfoNameEditingRequestModel animeInfoNameRequestModel)
         {
             try
             {
-                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method started with {nameof(requestModel)}: [{requestModel}].");
+                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method started with {nameof(id)}: [{id}], {nameof(animeInfoNameRequestModel)}: [{animeInfoNameRequestModel}].");
 
-                if (id != requestModel?.Id)
+                if (id != animeInfoNameRequestModel?.Id)
                 {
                     var error = new ErrorModel(code: ErrorCodes.MismatchingProperty.GetIntValueAsString(),
-                       description: $"The parameter [{nameof(id)}] and [{nameof(requestModel)}.{nameof(AnimeInfoNameEditingRequestModel.Id)}] properties should have the same value, but they are different!",
+                       description: $"The parameter [{nameof(id)}] and [{nameof(animeInfoNameRequestModel)}.{nameof(animeInfoNameRequestModel.Id)}] properties should have the same value, but they are different!",
                        source: nameof(id), title: ErrorCodes.MismatchingProperty.GetDescription());
                     var mismatchEx = new MismatchingIdException(error, "The given id and the model's id are not matching!");
                     throw mismatchEx;
@@ -51,43 +51,43 @@ namespace AnimeBrowser.BL.Services.Write.SecondaryHandlers
                 {
                     var error = new ErrorModel(code: ErrorCodes.EmptyObject.GetIntValueAsString(),
                         description: $"No {nameof(AnimeInfoName)} object was found with the given id [{id}]!",
-                        source: nameof(AnimeInfoNameEditingRequestModel.Id), title: ErrorCodes.EmptyObject.GetDescription()
+                        source: nameof(id), title: ErrorCodes.EmptyObject.GetDescription()
                     );
                     var notExistingAnimeInfoNameEx = new NotFoundObjectException<AnimeInfoName>(error, $"There is no {nameof(AnimeInfoName)} with given id: [{id}].");
                     throw notExistingAnimeInfoNameEx;
                 }
 
-                var animeInfo = await animeInfoReadRepo.GetAnimeInfoById(requestModel.AnimeInfoId);
+                var animeInfo = await animeInfoReadRepo.GetAnimeInfoById(animeInfoNameRequestModel.AnimeInfoId);
                 if (animeInfo == null)
                 {
                     var error = new ErrorModel(code: ErrorCodes.EmptyProperty.GetIntValueAsString(),
-                        description: $"The {nameof(AnimeInfo)} object is empty that is linked with the current {nameof(AnimeInfoName)} [{nameof(AnimeInfoNameEditingRequestModel.AnimeInfoId)}: {requestModel?.AnimeInfoId}]!",
-                        source: nameof(AnimeInfoNameEditingRequestModel.AnimeInfoId), title: ErrorCodes.EmptyProperty.GetDescription()
+                        description: $"The {nameof(AnimeInfo)} object is empty that is linked with the current {nameof(AnimeInfoName)} [{nameof(animeInfoNameRequestModel.AnimeInfoId)}: {animeInfoNameRequestModel.AnimeInfoId}]!",
+                        source: nameof(animeInfoNameRequestModel.AnimeInfoId), title: ErrorCodes.EmptyProperty.GetDescription()
                     );
-                    var notExistingAnimeInfoEx = new NotFoundObjectException<AnimeInfo>(error, $"There is no {nameof(AnimeInfo)} object that was given in {nameof(AnimeInfoNameEditingRequestModel.AnimeInfoId)} property.");
+                    var notExistingAnimeInfoEx = new NotFoundObjectException<AnimeInfo>(error, $"There is no {nameof(AnimeInfo)} object that was given in {nameof(animeInfoNameRequestModel.AnimeInfoId)} property.");
                     throw notExistingAnimeInfoEx;
                 }
 
                 var validator = new AnimeInfoNameEditingValidator();
-                var validationResult = await validator.ValidateAsync(requestModel);
+                var validationResult = await validator.ValidateAsync(animeInfoNameRequestModel);
                 if (!validationResult.IsValid)
                 {
                     var errorList = validationResult.Errors.ConvertToErrorModel();
-                    throw new ValidationException(errorList, $"Validation error in [{nameof(AnimeInfoNameEditingRequestModel)}].{Environment.NewLine}Validation errors:[{string.Join(", ", errorList)}].");
+                    throw new ValidationException(errorList, $"Validation error in [{nameof(AnimeInfoNameEditingRequestModel)}].{Environment.NewLine}Validation errors: [{string.Join(", ", errorList)}].");
                 }
 
-                requestModel.Title = requestModel.Title.Trim();
-                var isExistingWithSameTitle = animeInfoNameReadRepo.IsExistingWithSameTitle(requestModel.Id, requestModel.Title, requestModel.AnimeInfoId);
-                if (isExistingWithSameTitle || animeInfo.Title.Equals(requestModel.Title, StringComparison.OrdinalIgnoreCase))
+                animeInfoNameRequestModel.Title = animeInfoNameRequestModel.Title.Trim();
+                var isExistingWithSameTitle = animeInfoNameReadRepo.IsExistingWithSameTitle(animeInfoNameRequestModel.Id, animeInfoNameRequestModel.Title, animeInfoNameRequestModel.AnimeInfoId);
+                if (isExistingWithSameTitle || animeInfo.Title.Equals(animeInfoNameRequestModel.Title, StringComparison.OrdinalIgnoreCase))
                 {
-                    var error = new ErrorModel(code: ErrorCodes.NotUniqueProperty.GetIntValueAsString(), description: $"Another {nameof(AnimeInfoName)} can be found with the same {nameof(AnimeInfo)} [{requestModel.AnimeInfoId}] " +
-                       $"and the same {nameof(AnimeInfoNameEditingRequestModel.Title)} [{requestModel.Title}].",
-                       source: nameof(AnimeInfoNameEditingRequestModel.Title), title: ErrorCodes.NotUniqueProperty.GetDescription());
+                    var error = new ErrorModel(code: ErrorCodes.NotUniqueProperty.GetIntValueAsString(), description: $"Another {nameof(AnimeInfoName)} can be found with the same {nameof(AnimeInfo)} [{animeInfoNameRequestModel.AnimeInfoId}] " +
+                       $"and the same {nameof(animeInfoNameRequestModel.Title)} [{animeInfoNameRequestModel.Title}].",
+                       source: nameof(animeInfoNameRequestModel.Title), title: ErrorCodes.NotUniqueProperty.GetDescription());
                     var alreadyExistingEx = new AlreadyExistingObjectException<AnimeInfoName>(error, $"There is already a {nameof(AnimeInfoName)} with the same {nameof(AnimeInfo)} and the same {nameof(AnimeInfoName.Title)} value.");
                     throw alreadyExistingEx;
                 }
 
-                var rAnimeInfoName = requestModel.ToAnimeInfoName();
+                var rAnimeInfoName = animeInfoNameRequestModel.ToAnimeInfoName();
                 animeInfoName.Title = rAnimeInfoName.Title;
 
                 animeInfoName = await animeInfoNameWriteRepo.UpdateAnimeInfoName(animeInfoName);

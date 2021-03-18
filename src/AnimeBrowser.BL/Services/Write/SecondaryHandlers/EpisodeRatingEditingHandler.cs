@@ -44,7 +44,7 @@ namespace AnimeBrowser.BL.Services.Write.SecondaryHandlers
                 if (id != episodeRatingRequestModel?.Id)
                 {
                     var error = new ErrorModel(code: ErrorCodes.MismatchingProperty.GetIntValueAsString(),
-                       description: $"The parameter [{nameof(id)}] and [{nameof(episodeRatingRequestModel)}.{nameof(EpisodeRatingEditingRequestModel.Id)}] properties should have the same value, but they are different!",
+                       description: $"The parameter [{nameof(id)}] and [{nameof(episodeRatingRequestModel)}.{nameof(episodeRatingRequestModel.Id)}] properties should have the same value, but they are different!",
                        source: nameof(id), title: ErrorCodes.MismatchingProperty.GetDescription());
                     var mismatchEx = new MismatchingIdException(error, "The given id and the model's id are not matching!");
                     throw mismatchEx;
@@ -55,7 +55,7 @@ namespace AnimeBrowser.BL.Services.Write.SecondaryHandlers
                 {
                     var error = new ErrorModel(code: ErrorCodes.EmptyObject.GetIntValueAsString(),
                         description: $"No {nameof(EpisodeRating)} object was found with the given id [{id}]!",
-                        source: nameof(EpisodeRatingEditingRequestModel.Id), title: ErrorCodes.EmptyObject.GetDescription()
+                        source: nameof(id), title: ErrorCodes.EmptyObject.GetDescription()
                     );
                     var notExistingEpisodeRatingEx = new NotFoundObjectException<EpisodeRating>(error, $"There is no {nameof(EpisodeRating)} with given id: [{id}].");
                     throw notExistingEpisodeRatingEx;
@@ -64,7 +64,7 @@ namespace AnimeBrowser.BL.Services.Write.SecondaryHandlers
                 if (episodeRatingRequestModel.EpisodeId != episodeRating.EpisodeId)
                 {
                     var error = new ErrorModel(code: ErrorCodes.MismatchingProperty.GetIntValueAsString(),
-                      description: $"The parameter [{nameof(EpisodeRating)}.{nameof(EpisodeRating.EpisodeId)}] and [{nameof(episodeRatingRequestModel)}.{nameof(EpisodeRatingEditingRequestModel.EpisodeId)}] properties should have the same value, but they are different!",
+                      description: $"The parameter [{nameof(EpisodeRating)}.{nameof(EpisodeRating.EpisodeId)}] and [{nameof(episodeRatingRequestModel)}.{nameof(episodeRatingRequestModel.EpisodeId)}] properties should have the same value, but they are different!",
                       source: nameof(episodeRatingRequestModel.EpisodeId), title: ErrorCodes.MismatchingProperty.GetDescription());
                     var mismatchEx = new MismatchingIdException(error, "The given id and the model's id are not matching!");
                     throw mismatchEx;
@@ -72,7 +72,7 @@ namespace AnimeBrowser.BL.Services.Write.SecondaryHandlers
                 if (!episodeRatingRequestModel.UserId.Equals(episodeRating.UserId, StringComparison.OrdinalIgnoreCase))
                 {
                     var error = new ErrorModel(code: ErrorCodes.MismatchingProperty.GetIntValueAsString(),
-                      description: $"The parameter [{nameof(EpisodeRating)}.{nameof(EpisodeRating.UserId)}] and [{nameof(episodeRatingRequestModel)}.{nameof(EpisodeRatingEditingRequestModel.UserId)}] properties should have the same value, but they are different!",
+                      description: $"The parameter [{nameof(EpisodeRating)}.{nameof(EpisodeRating.UserId)}] and [{nameof(episodeRatingRequestModel)}.{nameof(episodeRatingRequestModel.UserId)}] properties should have the same value, but they are different!",
                       source: nameof(episodeRatingRequestModel.UserId), title: ErrorCodes.MismatchingProperty.GetDescription());
                     var mismatchEx = new MismatchingIdException(error, "The given id and the model's id are not matching!");
                     throw mismatchEx;
@@ -82,10 +82,10 @@ namespace AnimeBrowser.BL.Services.Write.SecondaryHandlers
                 if (episode == null)
                 {
                     var error = new ErrorModel(code: ErrorCodes.EmptyProperty.GetIntValueAsString(),
-                         description: $"No {nameof(Episode)} object was found with the {nameof(EpisodeRating)}'s {nameof(EpisodeRatingEditingRequestModel.EpisodeId)} [{episodeRatingRequestModel.EpisodeId}]!",
-                         source: nameof(EpisodeRatingEditingRequestModel.EpisodeId), title: ErrorCodes.EmptyProperty.GetDescription()
+                         description: $"No {nameof(Episode)} object was found with the {nameof(EpisodeRating)}'s {nameof(episodeRatingRequestModel.EpisodeId)} [{episodeRatingRequestModel.EpisodeId}]!",
+                         source: nameof(episodeRatingRequestModel.EpisodeId), title: ErrorCodes.EmptyProperty.GetDescription()
                      );
-                    var notExistingEpisodeEx = new NotFoundObjectException<Episode>(error, $"There is no {nameof(Episode)} object that was given in {nameof(EpisodeRatingEditingRequestModel.EpisodeId)} property.");
+                    var notExistingEpisodeEx = new NotFoundObjectException<Episode>(error, $"There is no {nameof(Episode)} object that was given in {nameof(episodeRatingRequestModel.EpisodeId)} property.");
                     throw notExistingEpisodeEx;
                 }
 
@@ -93,10 +93,10 @@ namespace AnimeBrowser.BL.Services.Write.SecondaryHandlers
                 if (user == null)
                 {
                     var error = new ErrorModel(code: ErrorCodes.EmptyProperty.GetIntValueAsString(),
-                         description: $"No {nameof(User)} object was found with the {nameof(EpisodeRating)}'s {nameof(EpisodeRatingEditingRequestModel.UserId)} [{episodeRatingRequestModel.UserId}]!",
-                         source: nameof(EpisodeRatingEditingRequestModel.UserId), title: ErrorCodes.EmptyProperty.GetDescription()
+                         description: $"No {nameof(User)} object was found with the {nameof(EpisodeRating)}'s {nameof(episodeRatingRequestModel.UserId)} [{episodeRatingRequestModel.UserId}]!",
+                         source: nameof(episodeRatingRequestModel.UserId), title: ErrorCodes.EmptyProperty.GetDescription()
                      );
-                    var notExistingUserEx = new NotFoundObjectException<User>(error, $"There is no {nameof(User)} object that was given in {nameof(EpisodeRatingEditingRequestModel.UserId)} property.");
+                    var notExistingUserEx = new NotFoundObjectException<User>(error, $"There is no {nameof(User)} object that was given in {nameof(episodeRatingRequestModel.UserId)} property.");
                     throw notExistingUserEx;
                 }
 
@@ -105,7 +105,7 @@ namespace AnimeBrowser.BL.Services.Write.SecondaryHandlers
                 if (!validationResult.IsValid)
                 {
                     var errorList = validationResult.Errors.ConvertToErrorModel();
-                    throw new ValidationException(errorList, $"Validation error in [{nameof(EpisodeRatingEditingRequestModel)}].{Environment.NewLine}Validation errors:[{string.Join(", ", errorList)}].");
+                    throw new ValidationException(errorList, $"Validation error in [{nameof(EpisodeRatingEditingRequestModel)}].{Environment.NewLine}Validation errors: [{string.Join(", ", errorList)}].");
                 }
 
                 var rEpisodeRating = episodeRatingRequestModel.ToEpisodeRating();

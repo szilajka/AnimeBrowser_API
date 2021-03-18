@@ -35,7 +35,7 @@ namespace AnimeBrowser.BL.Services.Write.SecondaryHandlers
         {
             try
             {
-                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method started with request model: [{animeInfoNameRequestModel}].");
+                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method started. {nameof(animeInfoNameRequestModel)}: [{animeInfoNameRequestModel}].");
                 if (animeInfoNameRequestModel == null)
                 {
                     var errorModel = new ErrorModel(code: ErrorCodes.EmptyObject.GetIntValueAsString(), description: $"The {nameof(AnimeInfoNameCreationRequestModel)} object is empty!",
@@ -46,10 +46,10 @@ namespace AnimeBrowser.BL.Services.Write.SecondaryHandlers
                 if (animeInfo == null)
                 {
                     var error = new ErrorModel(code: ErrorCodes.EmptyProperty.GetIntValueAsString(),
-                        description: $"No {nameof(AnimeInfo)} object was found with the {nameof(AnimeInfoName)}'s {nameof(AnimeInfoNameCreationRequestModel.AnimeInfoId)} [{animeInfoNameRequestModel.AnimeInfoId}]!",
-                        source: nameof(AnimeInfoNameCreationRequestModel.AnimeInfoId), title: ErrorCodes.EmptyProperty.GetDescription()
+                        description: $"No {nameof(AnimeInfo)} object was found with the {nameof(AnimeInfoName)}'s {nameof(animeInfoNameRequestModel.AnimeInfoId)} [{animeInfoNameRequestModel.AnimeInfoId}]!",
+                        source: nameof(animeInfoNameRequestModel.AnimeInfoId), title: ErrorCodes.EmptyProperty.GetDescription()
                     );
-                    var notExistingAnimeInfoEx = new NotFoundObjectException<AnimeInfo>(error, $"There is no {nameof(AnimeInfo)} object that was given in {nameof(AnimeInfoNameCreationRequestModel.AnimeInfoId)} property.");
+                    var notExistingAnimeInfoEx = new NotFoundObjectException<AnimeInfo>(error, $"There is no {nameof(AnimeInfo)} object that was given in {nameof(animeInfoNameRequestModel.AnimeInfoId)} property.");
                     throw notExistingAnimeInfoEx;
                 }
 
@@ -58,7 +58,7 @@ namespace AnimeBrowser.BL.Services.Write.SecondaryHandlers
                 if (!validationResult.IsValid)
                 {
                     var errorList = validationResult.Errors.ConvertToErrorModel();
-                    throw new ValidationException(errorList, $"Validation error in [{nameof(AnimeInfoNameCreationRequestModel)}].{Environment.NewLine}Validation errors:[{string.Join(", ", errorList)}].");
+                    throw new ValidationException(errorList, $"Validation error in [{nameof(AnimeInfoNameCreationRequestModel)}].{Environment.NewLine}Validation errors: [{string.Join(", ", errorList)}].");
                 }
 
                 animeInfoNameRequestModel.Title = animeInfoNameRequestModel.Title.Trim();
@@ -66,9 +66,9 @@ namespace AnimeBrowser.BL.Services.Write.SecondaryHandlers
                 if (isExistingWithSameTitle || animeInfo.Title.Equals(animeInfoNameRequestModel.Title, StringComparison.OrdinalIgnoreCase))
                 {
                     var error = new ErrorModel(code: ErrorCodes.NotUniqueProperty.GetIntValueAsString(), description: $"Another {nameof(AnimeInfoName)} can be found with the same {nameof(AnimeInfo)} [{animeInfoNameRequestModel.AnimeInfoId}] " +
-                       $"and the same {nameof(AnimeInfoNameCreationRequestModel.Title)} [{animeInfoNameRequestModel.Title}].",
-                       source: nameof(AnimeInfoNameCreationRequestModel.Title), title: ErrorCodes.NotUniqueProperty.GetDescription());
-                    var alreadyExistingEx = new AlreadyExistingObjectException<AnimeInfoName>(error, $"There is already a {nameof(AnimeInfoName)} with the same {nameof(AnimeInfo)} and the same {nameof(AnimeInfoName.Title)} value.");
+                       $"and the same {nameof(animeInfoNameRequestModel.Title)} [{animeInfoNameRequestModel.Title}].",
+                       source: nameof(animeInfoNameRequestModel.Title), title: ErrorCodes.NotUniqueProperty.GetDescription());
+                    var alreadyExistingEx = new AlreadyExistingObjectException<AnimeInfoName>(error, $"There is already an {nameof(AnimeInfoName)} with the same {nameof(AnimeInfo)} and the same {nameof(AnimeInfoName.Title)} value.");
                     throw alreadyExistingEx;
                 }
 

@@ -37,12 +37,12 @@ namespace AnimeBrowser.BL.Services.Write.MainHandlers
         {
             try
             {
-                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method started with {nameof(seasonRequestModel)}: [{seasonRequestModel}].");
+                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method started with {nameof(id)}: [{id}], {nameof(seasonRequestModel)}: [{seasonRequestModel}].");
 
                 if (id != seasonRequestModel?.Id)
                 {
                     var error = new ErrorModel(code: ErrorCodes.MismatchingProperty.GetIntValueAsString(),
-                       description: $"The parameter [{nameof(id)}] and [{nameof(seasonRequestModel)}.{nameof(SeasonEditingRequestModel.Id)}] properties should have the same value, but they are different!",
+                       description: $"The parameter [{nameof(id)}] and [{nameof(seasonRequestModel)}.{nameof(seasonRequestModel.Id)}] properties should have the same value, but they are different!",
                        source: nameof(id), title: ErrorCodes.MismatchingProperty.GetDescription());
                     var mismatchEx = new MismatchingIdException(error, "The given id and the model's id are not matching!");
                     throw mismatchEx;
@@ -53,15 +53,15 @@ namespace AnimeBrowser.BL.Services.Write.MainHandlers
                 if (!validationResult.IsValid)
                 {
                     var errorList = validationResult.Errors.ConvertToErrorModel();
-                    throw new ValidationException(errorList, $"Validation error in [{nameof(SeasonEditingRequestModel)}].{Environment.NewLine}Validation errors:[{string.Join(", ", errorList)}].");
+                    throw new ValidationException(errorList, $"Validation error in [{nameof(SeasonEditingRequestModel)}].{Environment.NewLine}Validation errors: [{string.Join(", ", errorList)}].");
                 }
 
                 var isExistingSeasonWithSameSeasonNumber = seasonReadRepo.IsExistsSeasonWithSeasonNumber(seasonId: seasonRequestModel.Id, animeInfoId: seasonRequestModel.AnimeInfoId, seasonNumber: seasonRequestModel.SeasonNumber);
                 if (isExistingSeasonWithSameSeasonNumber)
                 {
                     var error = new ErrorModel(code: ErrorCodes.NotUniqueProperty.GetIntValueAsString(), description: $"Another {nameof(Season)} can be found in the same {nameof(AnimeInfo)} [{seasonRequestModel.AnimeInfoId}] " +
-                        $"with the same {nameof(SeasonEditingRequestModel.SeasonNumber)} [{seasonRequestModel.SeasonNumber}].",
-                        source: nameof(SeasonEditingRequestModel.SeasonNumber), title: ErrorCodes.NotUniqueProperty.GetDescription());
+                        $"with the same {nameof(seasonRequestModel.SeasonNumber)} [{seasonRequestModel.SeasonNumber}].",
+                        source: nameof(seasonRequestModel.SeasonNumber), title: ErrorCodes.NotUniqueProperty.GetDescription());
                     var alreadyExistingEx = new AlreadyExistingObjectException<Season>(error, $"There is already a {nameof(Season)} in the same {nameof(AnimeInfo)} with the same {nameof(Season.SeasonNumber)} value.");
                     throw alreadyExistingEx;
                 }
@@ -71,7 +71,7 @@ namespace AnimeBrowser.BL.Services.Write.MainHandlers
                 {
                     var error = new ErrorModel(code: ErrorCodes.EmptyObject.GetIntValueAsString(),
                         description: $"No {nameof(Season)} object was found with the given id [{id}]!",
-                        source: nameof(SeasonEditingRequestModel.Id), title: ErrorCodes.EmptyObject.GetDescription()
+                        source: nameof(seasonRequestModel.Id), title: ErrorCodes.EmptyObject.GetDescription()
                     );
                     var notExistingSeasonEx = new NotFoundObjectException<Season>(error, $"There is no {nameof(Season)} with given id: [{id}].");
                     throw notExistingSeasonEx;
@@ -81,10 +81,10 @@ namespace AnimeBrowser.BL.Services.Write.MainHandlers
                 if (animeInfo == null)
                 {
                     var error = new ErrorModel(code: ErrorCodes.EmptyProperty.GetIntValueAsString(),
-                        description: $"The {nameof(AnimeInfo)} object is empty that is linked with the current {nameof(Season)} [{nameof(SeasonEditingRequestModel.AnimeInfoId)}: {seasonRequestModel?.AnimeInfoId}]!",
-                        source: nameof(SeasonEditingRequestModel.AnimeInfoId), title: ErrorCodes.EmptyProperty.GetDescription()
+                        description: $"The {nameof(AnimeInfo)} object is empty that is linked with the current {nameof(Season)} [{nameof(seasonRequestModel.AnimeInfoId)}: {seasonRequestModel.AnimeInfoId}]!",
+                        source: nameof(seasonRequestModel.AnimeInfoId), title: ErrorCodes.EmptyProperty.GetDescription()
                     );
-                    var notExistingAnimeInfoEx = new NotFoundObjectException<AnimeInfo>(error, $"There is no {nameof(AnimeInfo)} object that was given in {nameof(SeasonEditingRequestModel.AnimeInfoId)} property.");
+                    var notExistingAnimeInfoEx = new NotFoundObjectException<AnimeInfo>(error, $"There is no {nameof(AnimeInfo)} object that was given in {nameof(seasonRequestModel.AnimeInfoId)} property.");
                     throw notExistingAnimeInfoEx;
                 }
                 var rSeason = seasonRequestModel.ToSeason();

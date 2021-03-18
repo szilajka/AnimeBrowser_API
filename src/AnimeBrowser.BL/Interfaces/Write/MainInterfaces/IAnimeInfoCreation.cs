@@ -6,6 +6,6 @@ namespace AnimeBrowser.BL.Interfaces.Write.MainInterfaces
 {
     public interface IAnimeInfoCreation
     {
-        Task<AnimeInfoCreationResponseModel> CreateAnimeInfo(AnimeInfoCreationRequestModel animeInfo);
+        Task<AnimeInfoCreationResponseModel> CreateAnimeInfo(AnimeInfoCreationRequestModel animeInfoRequestModel);
     }
 }

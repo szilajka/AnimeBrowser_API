@@ -40,7 +40,7 @@ namespace AnimeBrowser.BL.Services.Write.SecondaryHandlers
                 if (seasonName == null)
                 {
                     var error = new ErrorModel(code: ErrorCodes.EmptyObject.GetIntValueAsString(),
-                         description: $"No {nameof(SeasonName)} object was found with the given id [{seasonName?.Id}]!",
+                         description: $"No {nameof(SeasonName)} object was found with the given id [{id}]!",
                          source: nameof(id), title: ErrorCodes.EmptyObject.GetDescription()
                      );
                     throw new NotFoundObjectException<SeasonName>(error, $"Not found an {nameof(SeasonName)} entity with id: [{id}].");

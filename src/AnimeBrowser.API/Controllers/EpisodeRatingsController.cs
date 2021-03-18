@@ -31,13 +31,13 @@ namespace AnimeBrowser.API.Controllers
         }
 
         [HttpPost]
-        [Authorize("EpisodeAdmin")]
+        [Authorize("RatingWrite")]
         public async Task<IActionResult> Create([FromBody] EpisodeRatingCreationRequestModel episodeRatingRequestModel)
         {
             try
             {
                 logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method started. {nameof(episodeRatingRequestModel)}: [{episodeRatingRequestModel}].");
-
+                //TODO: Check if the user is the same, as the requestor (HttpContext.UserId == rm.UserId?)
                 var createdEpisodeRating = await episodeRatingCreationHandler.CreateEpisodeRating(episodeRatingRequestModel);
 
                 logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method finished with result: [{createdEpisodeRating}].");
@@ -76,13 +76,13 @@ namespace AnimeBrowser.API.Controllers
         }
 
         [HttpPatch("{id}")]
-        [Authorize("EpisodeAdmin")]
+        [Authorize("RatingWrite")]
         public async Task<IActionResult> Edit([FromRoute] long id, [FromBody] EpisodeRatingEditingRequestModel episodeRatingRequestModel)
         {
             try
             {
                 logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method started. {nameof(episodeRatingRequestModel)}: [{episodeRatingRequestModel}].");
-
+                //TODO: Check if the user is the same, as the requestor (HttpContext.UserId == rm.UserId?)
                 var updatedEpisodeRating = await episodeRatingEditingHandler.EditEpisodeRating(id, episodeRatingRequestModel);
 
                 logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method finished with result: [{updatedEpisodeRating}].");
@@ -127,13 +127,13 @@ namespace AnimeBrowser.API.Controllers
 
 
         [HttpDelete("{id}")]
-        [Authorize("EpisodeAdmin")]
+        [Authorize("RatingWrite")]
         public async Task<IActionResult> Delete([FromRoute] long id)
         {
             try
             {
                 logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method started. {nameof(id)}: [{id}].");
-
+                //TODO: Check if the user is the same, as the requestor (HttpContext.UserId == rm.UserId?)
                 await episodeRatingDeleteHandler.DeleteEpisodeRating(id);
 
                 logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method finished.");

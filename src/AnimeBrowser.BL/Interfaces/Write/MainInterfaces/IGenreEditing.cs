@@ -6,6 +6,6 @@ namespace AnimeBrowser.BL.Interfaces.Write.MainInterfaces
 {
     public interface IGenreEditing
     {
-        Task<GenreEditingResponseModel> EditGenre(long id, GenreEditingRequestModel requestModel);
+        Task<GenreEditingResponseModel> EditGenre(long id, GenreEditingRequestModel genreRequestModel);
     }
 }

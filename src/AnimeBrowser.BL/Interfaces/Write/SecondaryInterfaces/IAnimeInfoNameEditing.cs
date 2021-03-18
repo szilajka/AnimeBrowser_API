@@ -6,6 +6,6 @@ namespace AnimeBrowser.BL.Interfaces.Write.SecondaryInterfaces
 {
     public interface IAnimeInfoNameEditing
     {
-        Task<AnimeInfoNameEditingResponseModel> EditAnimeInfoName(long id, AnimeInfoNameEditingRequestModel requestModel);
+        Task<AnimeInfoNameEditingResponseModel> EditAnimeInfoName(long id, AnimeInfoNameEditingRequestModel animeInfoNameRequestModel);
     }
 }

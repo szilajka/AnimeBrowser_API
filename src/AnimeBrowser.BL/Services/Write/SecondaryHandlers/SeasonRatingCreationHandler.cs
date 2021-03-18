@@ -39,7 +39,7 @@ namespace AnimeBrowser.BL.Services.Write.SecondaryHandlers
         {
             try
             {
-                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method started with request model: [{seasonRatingRequestModel}].");
+                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method started. {nameof(seasonRatingRequestModel)}: [{seasonRatingRequestModel}].");
                 if (seasonRatingRequestModel == null)
                 {
                     var errorModel = new ErrorModel(code: ErrorCodes.EmptyObject.GetIntValueAsString(), description: $"The {nameof(SeasonRatingCreationRequestModel)} object is empty!",
@@ -51,10 +51,10 @@ namespace AnimeBrowser.BL.Services.Write.SecondaryHandlers
                 if (season == null)
                 {
                     var error = new ErrorModel(code: ErrorCodes.EmptyProperty.GetIntValueAsString(),
-                         description: $"No {nameof(Season)} object was found with the {nameof(SeasonRating)}'s {nameof(SeasonRatingCreationRequestModel.SeasonId)} [{seasonRatingRequestModel.SeasonId}]!",
-                         source: nameof(SeasonRatingCreationRequestModel.SeasonId), title: ErrorCodes.EmptyProperty.GetDescription()
+                         description: $"No {nameof(Season)} object was found with the {nameof(SeasonRating)}'s {nameof(seasonRatingRequestModel.SeasonId)} [{seasonRatingRequestModel.SeasonId}]!",
+                         source: nameof(seasonRatingRequestModel.SeasonId), title: ErrorCodes.EmptyProperty.GetDescription()
                      );
-                    var notExistingSeasonEx = new NotFoundObjectException<Season>(error, $"There is no {nameof(Season)} object that was given in {nameof(SeasonRatingCreationRequestModel.SeasonId)} property.");
+                    var notExistingSeasonEx = new NotFoundObjectException<Season>(error, $"There is no {nameof(Season)} object that was given in {nameof(seasonRatingRequestModel.SeasonId)} property.");
                     throw notExistingSeasonEx;
                 }
 
@@ -62,10 +62,10 @@ namespace AnimeBrowser.BL.Services.Write.SecondaryHandlers
                 if (user == null)
                 {
                     var error = new ErrorModel(code: ErrorCodes.EmptyProperty.GetIntValueAsString(),
-                         description: $"No {nameof(User)} object was found with the {nameof(SeasonRating)}'s {nameof(SeasonRatingCreationRequestModel.UserId)} [{seasonRatingRequestModel.UserId}]!",
-                         source: nameof(SeasonRatingCreationRequestModel.UserId), title: ErrorCodes.EmptyProperty.GetDescription()
+                         description: $"No {nameof(User)} object was found with the {nameof(SeasonRating)}'s {nameof(seasonRatingRequestModel.UserId)} [{seasonRatingRequestModel.UserId}]!",
+                         source: nameof(seasonRatingRequestModel.UserId), title: ErrorCodes.EmptyProperty.GetDescription()
                      );
-                    var notExistingUserEx = new NotFoundObjectException<User>(error, $"There is no {nameof(User)} object that was given in {nameof(SeasonRatingCreationRequestModel.UserId)} property.");
+                    var notExistingUserEx = new NotFoundObjectException<User>(error, $"There is no {nameof(User)} object that was given in {nameof(seasonRatingRequestModel.UserId)} property.");
                     throw notExistingUserEx;
                 }
 
@@ -74,15 +74,15 @@ namespace AnimeBrowser.BL.Services.Write.SecondaryHandlers
                 if (!validationResult.IsValid)
                 {
                     var errorList = validationResult.Errors.ConvertToErrorModel();
-                    throw new ValidationException(errorList, $"Validation error in [{nameof(SeasonRatingCreationRequestModel)}].{Environment.NewLine}Validation errors:[{string.Join(", ", errorList)}].");
+                    throw new ValidationException(errorList, $"Validation error in [{nameof(SeasonRatingCreationRequestModel)}].{Environment.NewLine}Validation errors: [{string.Join(", ", errorList)}].");
                 }
 
                 var existingSeason = seasonRatingReadRepo.GetSeasonRatingBySeasonAndUserId(seasonRatingRequestModel.SeasonId, seasonRatingRequestModel.UserId);
                 if (existingSeason != null)
                 {
                     var error = new ErrorModel(code: ErrorCodes.NotUniqueProperty.GetIntValueAsString(), description: $"Another {nameof(SeasonRating)} can be found with the same {nameof(SeasonRating.SeasonId)} [{seasonRatingRequestModel.SeasonId}] " +
-                       $"and the same {nameof(SeasonRating.UserId)} [{seasonRatingRequestModel.UserId}].",
-                       source: $"[{nameof(SeasonRatingCreationRequestModel.SeasonId)}, {nameof(SeasonRatingCreationRequestModel.UserId)}]", title: ErrorCodes.NotUniqueProperty.GetDescription());
+                       $"and the same {nameof(seasonRatingRequestModel.UserId)} [{seasonRatingRequestModel.UserId}].",
+                       source: $"[{nameof(seasonRatingRequestModel.SeasonId)}, {nameof(seasonRatingRequestModel.UserId)}]", title: ErrorCodes.NotUniqueProperty.GetDescription());
                     var alreadyExistingEx = new AlreadyExistingObjectException<SeasonRating>(error, $"There is already a {nameof(SeasonRating)} with the same {nameof(Season)} and the same {nameof(User)} value.");
                     throw alreadyExistingEx;
                 }

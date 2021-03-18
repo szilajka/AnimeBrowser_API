@@ -37,12 +37,12 @@ namespace AnimeBrowser.BL.Services.Write.MainHandlers
         {
             try
             {
-                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method started with {nameof(episodeRequestModel)}: [{episodeRequestModel}].");
+                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method started with {nameof(id)}: [{id}], {nameof(episodeRequestModel)}: [{episodeRequestModel}].");
 
                 if (id != episodeRequestModel?.Id)
                 {
                     var error = new ErrorModel(code: ErrorCodes.MismatchingProperty.GetIntValueAsString(),
-                       description: $"The parameter [{nameof(id)}] and [{nameof(episodeRequestModel)}.{nameof(EpisodeEditingRequestModel.Id)}] properties should have the same value, but they are different!",
+                       description: $"The parameter [{nameof(id)}] and [{nameof(episodeRequestModel)}.{nameof(episodeRequestModel.Id)}] properties should have the same value, but they are different!",
                        source: nameof(id), title: ErrorCodes.MismatchingProperty.GetDescription());
                     var mismatchEx = new MismatchingIdException(error, "The given id and the model's id are not matching!");
                     throw mismatchEx;
@@ -53,15 +53,15 @@ namespace AnimeBrowser.BL.Services.Write.MainHandlers
                 {
                     var error = new ErrorModel(code: ErrorCodes.EmptyObject.GetIntValueAsString(),
                         description: $"No {nameof(Season)} object was found with the given id [{episodeRequestModel.SeasonId}]!",
-                        source: nameof(EpisodeEditingRequestModel.SeasonId), title: ErrorCodes.EmptyObject.GetDescription()
+                        source: nameof(episodeRequestModel.SeasonId), title: ErrorCodes.EmptyObject.GetDescription()
                     );
                     var notExistingSeasonEx = new NotFoundObjectException<Season>(error, $"There is no {nameof(Season)} with given id: [{episodeRequestModel.SeasonId}].");
                     throw notExistingSeasonEx;
                 }
-                if (season.AnimeInfoId != episodeRequestModel?.AnimeInfoId)
+                if (season.AnimeInfoId != episodeRequestModel.AnimeInfoId)
                 {
                     var error = new ErrorModel(code: ErrorCodes.MismatchingProperty.GetIntValueAsString(),
-                        description: $"The given [{nameof(EpisodeEditingRequestModel.AnimeInfoId)}] not matches the given {nameof(Season)}'s {nameof(Season.AnimeInfoId)}!",
+                        description: $"The given [{nameof(episodeRequestModel.AnimeInfoId)}] not matches the given {nameof(Season)}'s {nameof(Season.AnimeInfoId)}!",
                         source: nameof(episodeRequestModel.AnimeInfoId), title: ErrorCodes.MismatchingProperty.GetDescription());
                     var mismatchEx = new MismatchingIdException(error, error.Description);
                     throw mismatchEx;
@@ -72,7 +72,7 @@ namespace AnimeBrowser.BL.Services.Write.MainHandlers
                 if (!validationResult.IsValid)
                 {
                     var errorList = validationResult.Errors.ConvertToErrorModel();
-                    throw new ValidationException(errorList, $"Validation error in [{nameof(EpisodeEditingRequestModel)}].{Environment.NewLine}Validation errors:[{string.Join(", ", errorList)}].");
+                    throw new ValidationException(errorList, $"Validation error in [{nameof(EpisodeEditingRequestModel)}].{Environment.NewLine}Validation errors: [{string.Join(", ", errorList)}].");
                 }
 
                 var episode = await episodeReadRepo.GetEpisodeById(id);
@@ -86,23 +86,12 @@ namespace AnimeBrowser.BL.Services.Write.MainHandlers
                     throw notExistingEpisodeEx;
                 }
 
-                //var isSeasonAndAnimeInfoExists = await episodeReadRepo.IsSeasonAndAnimeInfoExistsAndReferences(seasonId: episodeRequestModel.SeasonId, animeInfoId: episodeRequestModel.AnimeInfoId);
-                //if (!isSeasonAndAnimeInfoExists)
-                //{
-                //    var error = new ErrorModel(code: ErrorCodes.MismatchingProperty.GetIntValueAsString(),
-                //        description: $"There is no {nameof(AnimeInfo)} and/or {nameof(Season)} with given ids, " +
-                //                        $"and/or the [{nameof(Season)}.{nameof(Season.AnimeInfoId)}] not matches the " +
-                //                        $"[{nameof(EpisodeEditingRequestModel)}.{nameof(EpisodeEditingRequestModel.AnimeInfoId)}] property.",
-                //        source: $"[{nameof(episodeRequestModel.SeasonId)}, {nameof(episodeRequestModel.AnimeInfoId)}]", title: ErrorCodes.MismatchingProperty.GetDescription());
-                //    var mismatchEx = new MismatchingIdException(error, error.Description);
-                //    throw mismatchEx;
-                //}
                 var isEpisodeWithSameNumberExists = episodeReadRepo.IsEpisodeWithEpisodeNumberExists(seasonId: episodeRequestModel.SeasonId, episodeNumber: episodeRequestModel.EpisodeNumber);
                 if (isEpisodeWithSameNumberExists && episodeRequestModel.EpisodeNumber != episode.EpisodeNumber)
                 {
                     var error = new ErrorModel(code: ErrorCodes.NotUniqueProperty.GetIntValueAsString(), description: $"Another {nameof(Episode)} can be found in the same {nameof(Season)} [{episodeRequestModel.SeasonId}] " +
-                        $"with the same {nameof(EpisodeEditingRequestModel.EpisodeNumber)} [{episodeRequestModel.EpisodeNumber}].",
-                        source: nameof(EpisodeEditingRequestModel.EpisodeNumber), title: ErrorCodes.NotUniqueProperty.GetDescription());
+                        $"with the same {nameof(episodeRequestModel.EpisodeNumber)} [{episodeRequestModel.EpisodeNumber}].",
+                        source: nameof(episodeRequestModel.EpisodeNumber), title: ErrorCodes.NotUniqueProperty.GetDescription());
                     var alreadyExistingEx = new AlreadyExistingObjectException<Episode>(error, $"There is already an {nameof(Episode)} in the same {nameof(Season)} with the same {nameof(Episode.EpisodeNumber)} value.");
                     throw alreadyExistingEx;
                 }

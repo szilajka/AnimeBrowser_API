@@ -42,7 +42,7 @@ namespace AnimeBrowser.BL.Services.Write.MainHandlers
                 {
                     var error = new ErrorModel(code: ErrorCodes.EmptyObject.GetIntValueAsString(), description: $"The {nameof(SeasonCreationRequestModel)} object is empty!",
                         source: nameof(seasonRequestModel), title: ErrorCodes.EmptyObject.GetDescription());
-                    throw new EmptyObjectException<SeasonCreationRequestModel>(error, $"The given [{nameof(Season)}] object is empty!");
+                    throw new EmptyObjectException<SeasonCreationRequestModel>(error, $"The given [{nameof(SeasonCreationRequestModel)}] object is empty!");
                 }
 
                 var seasonValidator = new SeasonCreationValidator(dateTimeProvider);
@@ -50,7 +50,7 @@ namespace AnimeBrowser.BL.Services.Write.MainHandlers
                 if (!validationResult.IsValid)
                 {
                     var errorList = validationResult.Errors.ConvertToErrorModel();
-                    var valEx = new ValidationException(errorList, $"Validation error in [{nameof(SeasonCreationRequestModel)}].{Environment.NewLine}Validation errors:[{string.Join(", ", errorList)}].");
+                    var valEx = new ValidationException(errorList, $"Validation error in [{nameof(SeasonCreationRequestModel)}].{Environment.NewLine}Validation errors: [{string.Join(", ", errorList)}].");
                     throw valEx;
                 }
 
@@ -58,7 +58,7 @@ namespace AnimeBrowser.BL.Services.Write.MainHandlers
                 if (isExistingSeasonWithSameSeasonNumber)
                 {
                     var error = new ErrorModel(code: ErrorCodes.NotUniqueProperty.GetIntValueAsString(), description: $"Another {nameof(Season)} can be found in the same {nameof(AnimeInfo)} [{seasonRequestModel.AnimeInfoId}] " +
-                        $"with the same {nameof(SeasonCreationRequestModel.SeasonNumber)} [{seasonRequestModel.SeasonNumber}].",
+                        $"with the same {nameof(seasonRequestModel.SeasonNumber)} [{seasonRequestModel.SeasonNumber}].",
                         source: nameof(SeasonCreationRequestModel.SeasonNumber), title: ErrorCodes.NotUniqueProperty.GetDescription());
                     var alreadyExistingEx = new AlreadyExistingObjectException<Season>(error, $"There is already a {nameof(Season)} in the same {nameof(AnimeInfo)} with the same {nameof(Season.SeasonNumber)} value.");
                     throw alreadyExistingEx;
@@ -68,10 +68,10 @@ namespace AnimeBrowser.BL.Services.Write.MainHandlers
                 if (animeInfo == null)
                 {
                     var error = new ErrorModel(code: ErrorCodes.EmptyProperty.GetIntValueAsString(),
-                        description: $"No {nameof(AnimeInfo)} object was found with the {nameof(Season)}'s {nameof(SeasonCreationRequestModel.AnimeInfoId)} [{seasonRequestModel?.AnimeInfoId}]!",
-                        source: nameof(SeasonCreationRequestModel.AnimeInfoId), title: ErrorCodes.EmptyProperty.GetDescription()
+                        description: $"No {nameof(AnimeInfo)} object was found with the {nameof(Season)}'s {nameof(seasonRequestModel.AnimeInfoId)} [{seasonRequestModel.AnimeInfoId}]!",
+                        source: nameof(seasonRequestModel.AnimeInfoId), title: ErrorCodes.EmptyProperty.GetDescription()
                     );
-                    var notExistingAnimeInfoEx = new NotFoundObjectException<AnimeInfo>(error, $"There is no {nameof(AnimeInfo)} object that was given in {nameof(SeasonCreationRequestModel.AnimeInfoId)} property.");
+                    var notExistingAnimeInfoEx = new NotFoundObjectException<AnimeInfo>(error, $"There is no {nameof(AnimeInfo)} object that was given in {nameof(seasonRequestModel.AnimeInfoId)} property.");
                     throw notExistingAnimeInfoEx;
                 }
                 var createdSeason = await seasonWriteRepo.CreateSeason(seasonRequestModel.ToSeason());

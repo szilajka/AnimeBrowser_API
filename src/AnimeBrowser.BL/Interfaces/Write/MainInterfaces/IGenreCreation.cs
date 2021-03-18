@@ -6,6 +6,6 @@ namespace AnimeBrowser.BL.Interfaces.Write.MainInterfaces
 {
     public interface IGenreCreation
     {
-        Task<GenreCreationResponseModel> CreateGenre(GenreCreationRequestModel requestModel);
+        Task<GenreCreationResponseModel> CreateGenre(GenreCreationRequestModel genreRequestModel);
     }
 }

@@ -44,7 +44,7 @@ namespace AnimeBrowser.BL.Services.Write.SecondaryHandlers
                 if (id != seasonRatingRequestModel?.Id)
                 {
                     var error = new ErrorModel(code: ErrorCodes.MismatchingProperty.GetIntValueAsString(),
-                       description: $"The parameter [{nameof(id)}] and [{nameof(seasonRatingRequestModel)}.{nameof(SeasonRatingEditingRequestModel.Id)}] properties should have the same value, but they are different!",
+                       description: $"The parameter [{nameof(id)}] and [{nameof(seasonRatingRequestModel)}.{nameof(seasonRatingRequestModel.Id)}] properties should have the same value, but they are different!",
                        source: nameof(id), title: ErrorCodes.MismatchingProperty.GetDescription());
                     var mismatchEx = new MismatchingIdException(error, "The given id and the model's id are not matching!");
                     throw mismatchEx;
@@ -55,7 +55,7 @@ namespace AnimeBrowser.BL.Services.Write.SecondaryHandlers
                 {
                     var error = new ErrorModel(code: ErrorCodes.EmptyObject.GetIntValueAsString(),
                         description: $"No {nameof(SeasonRating)} object was found with the given id [{id}]!",
-                        source: nameof(SeasonRatingEditingRequestModel.Id), title: ErrorCodes.EmptyObject.GetDescription()
+                        source: nameof(id), title: ErrorCodes.EmptyObject.GetDescription()
                     );
                     var notExistingSeasonRatingEx = new NotFoundObjectException<SeasonRating>(error, $"There is no {nameof(SeasonRating)} with given id: [{id}].");
                     throw notExistingSeasonRatingEx;
@@ -64,7 +64,7 @@ namespace AnimeBrowser.BL.Services.Write.SecondaryHandlers
                 if (seasonRatingRequestModel.SeasonId != seasonRating.SeasonId)
                 {
                     var error = new ErrorModel(code: ErrorCodes.MismatchingProperty.GetIntValueAsString(),
-                      description: $"The parameter [{nameof(SeasonRating)}.{nameof(SeasonRating.SeasonId)}] and [{nameof(seasonRatingRequestModel)}.{nameof(SeasonRatingEditingRequestModel.SeasonId)}] properties should have the same value, but they are different!",
+                      description: $"The parameter [{nameof(SeasonRating)}.{nameof(SeasonRating.SeasonId)}] and [{nameof(seasonRatingRequestModel)}.{nameof(seasonRatingRequestModel.SeasonId)}] properties should have the same value, but they are different!",
                       source: nameof(seasonRatingRequestModel.SeasonId), title: ErrorCodes.MismatchingProperty.GetDescription());
                     var mismatchEx = new MismatchingIdException(error, "The given id and the model's id are not matching!");
                     throw mismatchEx;
@@ -72,7 +72,7 @@ namespace AnimeBrowser.BL.Services.Write.SecondaryHandlers
                 if (!seasonRatingRequestModel.UserId.Equals(seasonRating.UserId, StringComparison.OrdinalIgnoreCase))
                 {
                     var error = new ErrorModel(code: ErrorCodes.MismatchingProperty.GetIntValueAsString(),
-                      description: $"The parameter [{nameof(SeasonRating)}.{nameof(SeasonRating.UserId)}] and [{nameof(seasonRatingRequestModel)}.{nameof(SeasonRatingEditingRequestModel.UserId)}] properties should have the same value, but they are different!",
+                      description: $"The parameter [{nameof(SeasonRating)}.{nameof(SeasonRating.UserId)}] and [{nameof(seasonRatingRequestModel)}.{nameof(seasonRatingRequestModel.UserId)}] properties should have the same value, but they are different!",
                       source: nameof(seasonRatingRequestModel.UserId), title: ErrorCodes.MismatchingProperty.GetDescription());
                     var mismatchEx = new MismatchingIdException(error, "The given id and the model's id are not matching!");
                     throw mismatchEx;
@@ -82,10 +82,10 @@ namespace AnimeBrowser.BL.Services.Write.SecondaryHandlers
                 if (season == null)
                 {
                     var error = new ErrorModel(code: ErrorCodes.EmptyProperty.GetIntValueAsString(),
-                         description: $"No {nameof(Season)} object was found with the {nameof(SeasonRating)}'s {nameof(SeasonRatingEditingRequestModel.SeasonId)} [{seasonRatingRequestModel.SeasonId}]!",
-                         source: nameof(SeasonRatingEditingRequestModel.SeasonId), title: ErrorCodes.EmptyProperty.GetDescription()
+                         description: $"No {nameof(Season)} object was found with the {nameof(SeasonRating)}'s {nameof(seasonRatingRequestModel.SeasonId)} [{seasonRatingRequestModel.SeasonId}]!",
+                         source: nameof(seasonRatingRequestModel.SeasonId), title: ErrorCodes.EmptyProperty.GetDescription()
                      );
-                    var notExistingSeasonEx = new NotFoundObjectException<Season>(error, $"There is no {nameof(Season)} object that was given in {nameof(SeasonRatingEditingRequestModel.SeasonId)} property.");
+                    var notExistingSeasonEx = new NotFoundObjectException<Season>(error, $"There is no {nameof(Season)} object that was given in {nameof(seasonRatingRequestModel.SeasonId)} property.");
                     throw notExistingSeasonEx;
                 }
 
@@ -94,9 +94,9 @@ namespace AnimeBrowser.BL.Services.Write.SecondaryHandlers
                 {
                     var error = new ErrorModel(code: ErrorCodes.EmptyProperty.GetIntValueAsString(),
                          description: $"No {nameof(User)} object was found with the {nameof(SeasonRating)}'s {nameof(SeasonRatingEditingRequestModel.UserId)} [{seasonRatingRequestModel.UserId}]!",
-                         source: nameof(SeasonRatingEditingRequestModel.UserId), title: ErrorCodes.EmptyProperty.GetDescription()
+                         source: nameof(seasonRatingRequestModel.UserId), title: ErrorCodes.EmptyProperty.GetDescription()
                      );
-                    var notExistingUserEx = new NotFoundObjectException<User>(error, $"There is no {nameof(User)} object that was given in {nameof(SeasonRatingEditingRequestModel.UserId)} property.");
+                    var notExistingUserEx = new NotFoundObjectException<User>(error, $"There is no {nameof(User)} object that was given in {nameof(seasonRatingRequestModel.UserId)} property.");
                     throw notExistingUserEx;
                 }
 
@@ -105,7 +105,7 @@ namespace AnimeBrowser.BL.Services.Write.SecondaryHandlers
                 if (!validationResult.IsValid)
                 {
                     var errorList = validationResult.Errors.ConvertToErrorModel();
-                    throw new ValidationException(errorList, $"Validation error in [{nameof(SeasonRatingEditingRequestModel)}].{Environment.NewLine}Validation errors:[{string.Join(", ", errorList)}].");
+                    throw new ValidationException(errorList, $"Validation error in [{nameof(SeasonRatingEditingRequestModel)}].{Environment.NewLine}Validation errors: [{string.Join(", ", errorList)}].");
                 }
 
                 var rSeasonRating = seasonRatingRequestModel.ToSeasonRating();

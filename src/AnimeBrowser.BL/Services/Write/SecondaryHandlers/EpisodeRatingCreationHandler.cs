@@ -51,10 +51,10 @@ namespace AnimeBrowser.BL.Services.Write.SecondaryHandlers
                 if (episode == null)
                 {
                     var error = new ErrorModel(code: ErrorCodes.EmptyProperty.GetIntValueAsString(),
-                         description: $"No {nameof(Episode)} object was found with the {nameof(EpisodeRating)}'s {nameof(EpisodeRatingCreationRequestModel.EpisodeId)} [{episodeRatingRequestModel.EpisodeId}]!",
-                         source: nameof(EpisodeRatingCreationRequestModel.EpisodeId), title: ErrorCodes.EmptyProperty.GetDescription()
+                         description: $"No {nameof(Episode)} object was found with the {nameof(EpisodeRating)}'s {nameof(episodeRatingRequestModel.EpisodeId)} [{episodeRatingRequestModel.EpisodeId}]!",
+                         source: nameof(episodeRatingRequestModel.EpisodeId), title: ErrorCodes.EmptyProperty.GetDescription()
                      );
-                    var notExistingEpisodeEx = new NotFoundObjectException<Episode>(error, $"There is no {nameof(Episode)} object that was given in {nameof(EpisodeRatingCreationRequestModel.EpisodeId)} property.");
+                    var notExistingEpisodeEx = new NotFoundObjectException<Episode>(error, $"There is no {nameof(Episode)} object that was given in {nameof(episodeRatingRequestModel.EpisodeId)} property.");
                     throw notExistingEpisodeEx;
                 }
 
@@ -62,10 +62,10 @@ namespace AnimeBrowser.BL.Services.Write.SecondaryHandlers
                 if (user == null)
                 {
                     var error = new ErrorModel(code: ErrorCodes.EmptyProperty.GetIntValueAsString(),
-                         description: $"No {nameof(User)} object was found with the {nameof(EpisodeRating)}'s {nameof(EpisodeRatingCreationRequestModel.UserId)} [{episodeRatingRequestModel.UserId}]!",
-                         source: nameof(EpisodeRatingCreationRequestModel.UserId), title: ErrorCodes.EmptyProperty.GetDescription()
+                         description: $"No {nameof(User)} object was found with the {nameof(EpisodeRating)}'s {nameof(episodeRatingRequestModel.UserId)} [{episodeRatingRequestModel.UserId}]!",
+                         source: nameof(episodeRatingRequestModel.UserId), title: ErrorCodes.EmptyProperty.GetDescription()
                      );
-                    var notExistingUserEx = new NotFoundObjectException<User>(error, $"There is no {nameof(User)} object that was given in {nameof(EpisodeRatingCreationRequestModel.UserId)} property.");
+                    var notExistingUserEx = new NotFoundObjectException<User>(error, $"There is no {nameof(User)} object that was given in {nameof(episodeRatingRequestModel.UserId)} property.");
                     throw notExistingUserEx;
                 }
 
@@ -74,7 +74,7 @@ namespace AnimeBrowser.BL.Services.Write.SecondaryHandlers
                 if (!validationResult.IsValid)
                 {
                     var errorList = validationResult.Errors.ConvertToErrorModel();
-                    throw new ValidationException(errorList, $"Validation error in [{nameof(EpisodeRatingCreationRequestModel)}].{Environment.NewLine}Validation errors:[{string.Join(", ", errorList)}].");
+                    throw new ValidationException(errorList, $"Validation error in [{nameof(EpisodeRatingCreationRequestModel)}].{Environment.NewLine}Validation errors: [{string.Join(", ", errorList)}].");
                 }
 
                 var existingEpisodeRepo = episodeRatingReadRepo.GetEpisodeRatingByEpisodeAndUserId(episodeRatingRequestModel.EpisodeId, episodeRatingRequestModel.UserId);
@@ -82,7 +82,7 @@ namespace AnimeBrowser.BL.Services.Write.SecondaryHandlers
                 {
                     var error = new ErrorModel(code: ErrorCodes.NotUniqueProperty.GetIntValueAsString(), description: $"Another {nameof(EpisodeRating)} can be found with the same {nameof(EpisodeRating.EpisodeId)} [{episodeRatingRequestModel.EpisodeId}] " +
                        $"and the same {nameof(EpisodeRating.UserId)} [{episodeRatingRequestModel.UserId}].",
-                       source: $"[{nameof(EpisodeRatingCreationRequestModel.EpisodeId)}, {nameof(EpisodeRatingCreationRequestModel.UserId)}]", title: ErrorCodes.NotUniqueProperty.GetDescription());
+                       source: $"[{nameof(episodeRatingRequestModel.EpisodeId)}, {nameof(episodeRatingRequestModel.UserId)}]", title: ErrorCodes.NotUniqueProperty.GetDescription());
                     var alreadyExistingEx = new AlreadyExistingObjectException<EpisodeRating>(error, $"There is already a {nameof(EpisodeRating)} with the same {nameof(Episode)} and the same {nameof(User)} value.");
                     throw alreadyExistingEx;
                 }

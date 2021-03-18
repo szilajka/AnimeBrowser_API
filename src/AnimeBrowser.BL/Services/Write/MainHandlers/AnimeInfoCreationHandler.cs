@@ -16,8 +16,8 @@ namespace AnimeBrowser.BL.Services.Write.MainHandlers
 {
     public class AnimeInfoCreationHandler : IAnimeInfoCreation
     {
-        private readonly IAnimeInfoWrite animeInfoWriteRepo;
         private readonly ILogger logger = Log.ForContext<AnimeInfoCreationHandler>();
+        private readonly IAnimeInfoWrite animeInfoWriteRepo;
 
         public AnimeInfoCreationHandler(IAnimeInfoWrite animeInfoWriteRepo)
         {
@@ -28,7 +28,7 @@ namespace AnimeBrowser.BL.Services.Write.MainHandlers
         {
             try
             {
-                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method started with request model: [{animeInfoRequestModel}].");
+                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method started. [{nameof(animeInfoRequestModel)}]: [{animeInfoRequestModel}].");
                 if (animeInfoRequestModel == null)
                 {
                     var errorModel = new ErrorModel(code: ErrorCodes.EmptyObject.GetIntValueAsString(), description: $"The {nameof(AnimeInfoCreationRequestModel)} object is empty!",
@@ -41,7 +41,7 @@ namespace AnimeBrowser.BL.Services.Write.MainHandlers
                 if (!validationResult.IsValid)
                 {
                     var errorList = validationResult.Errors.ConvertToErrorModel();
-                    throw new ValidationException(errorList, $"Validation error in [{nameof(AnimeInfoCreationRequestModel)}].{Environment.NewLine}Validation errors:[{string.Join(", ", errorList)}].");
+                    throw new ValidationException(errorList, $"Validation error in [{nameof(AnimeInfoCreationRequestModel)}].{Environment.NewLine}Validation errors: [{string.Join(", ", errorList)}].");
                 }
 
                 var animeInfo = await animeInfoWriteRepo.CreateAnimeInfo(animeInfoRequestModel.ToAnimeInfo());
