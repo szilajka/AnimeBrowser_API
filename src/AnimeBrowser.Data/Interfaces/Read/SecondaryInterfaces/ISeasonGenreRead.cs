@@ -1,6 +1,5 @@
 ﻿using AnimeBrowser.Data.Entities;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace AnimeBrowser.Data.Interfaces.Read.SecondaryInterfaces
 {

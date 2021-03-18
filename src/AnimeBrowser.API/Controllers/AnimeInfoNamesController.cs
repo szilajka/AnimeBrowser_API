@@ -86,7 +86,7 @@ namespace AnimeBrowser.API.Controllers
             }
             catch (MismatchingIdException misEx)
             {
-                logger.Warning(misEx, $"Mismatching Id error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{misEx.Message}].");
+                logger.Warning(misEx, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{misEx.Message}].");
                 return BadRequest(misEx.Error);
             }
             catch (NotFoundObjectException<AnimeInfoName> ex)
@@ -96,8 +96,8 @@ namespace AnimeBrowser.API.Controllers
             }
             catch (NotFoundObjectException<AnimeInfo> ex)
             {
-                logger.Warning(ex, $"Not found object error in {MethodNameHelper.GetCurrentMethodName()}. Returns 404 - Not Found. Message: [{ex.Message}].");
-                return NotFound(ex.Error);
+                logger.Warning(ex, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{ex.Message}].");
+                return BadRequest(ex.Error);
             }
             catch (ValidationException valEx)
             {

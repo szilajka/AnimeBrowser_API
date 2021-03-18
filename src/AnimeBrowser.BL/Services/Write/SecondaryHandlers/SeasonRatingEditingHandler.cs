@@ -15,9 +15,6 @@ using AnimeBrowser.Data.Interfaces.Read.SecondaryInterfaces;
 using AnimeBrowser.Data.Interfaces.Write.SecondaryInterfaces;
 using Serilog;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace AnimeBrowser.BL.Services.Write.SecondaryHandlers
