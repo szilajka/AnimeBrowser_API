@@ -1,17 +1,14 @@
 ﻿using AnimeBrowser.API.Helpers;
 using AnimeBrowser.BL.Interfaces.Write.MainInterfaces;
-using AnimeBrowser.BL.Interfaces.Write.SecondaryInterfaces;
 using AnimeBrowser.Common.Exceptions;
 using AnimeBrowser.Common.Helpers;
 using AnimeBrowser.Common.Models.RequestModels.MainModels;
-using AnimeBrowser.Common.Models.RequestModels.SecondaryModels;
 using AnimeBrowser.Data.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace AnimeBrowser.API.Controllers
@@ -24,17 +21,12 @@ namespace AnimeBrowser.API.Controllers
         private readonly ISeasonCreation seasonCreationHandler;
         private readonly ISeasonEditing seasonEditingHandler;
         private readonly ISeasonDelete seasonDeleteHandler;
-        private readonly ISeasonGenreCreation seasonGenreCreationHandler;
-        private readonly ISeasonGenreDelete seasonGenreDeleteHandler;
 
-        public SeasonsController(ISeasonCreation seasonCreationHandler, ISeasonEditing seasonEditingHandler, ISeasonDelete seasonDeleteHandler,
-            ISeasonGenreCreation seasonGenreCreationHandler, ISeasonGenreDelete seasonGenreDeleteHandler)
+        public SeasonsController(ISeasonCreation seasonCreationHandler, ISeasonEditing seasonEditingHandler, ISeasonDelete seasonDeleteHandler)
         {
             this.seasonCreationHandler = seasonCreationHandler;
             this.seasonEditingHandler = seasonEditingHandler;
             this.seasonDeleteHandler = seasonDeleteHandler;
-            this.seasonGenreCreationHandler = seasonGenreCreationHandler;
-            this.seasonGenreDeleteHandler = seasonGenreDeleteHandler;
         }
 
         [HttpPost]
@@ -53,7 +45,7 @@ namespace AnimeBrowser.API.Controllers
             }
             catch (EmptyObjectException<SeasonCreationRequestModel> emptyEx)
             {
-                logger.Warning(emptyEx, $"Empty request model in {MethodNameHelper.GetCurrentMethodName()}. Message: [{emptyEx.Message}].");
+                logger.Warning(emptyEx, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{emptyEx.Message}].");
                 return BadRequest(emptyEx.Error);
             }
             catch (ValidationException valEx)
@@ -68,7 +60,7 @@ namespace AnimeBrowser.API.Controllers
             }
             catch (NotFoundObjectException<AnimeInfo> notFoundEx)
             {
-                logger.Warning(notFoundEx, $"Not found {nameof(AnimeInfo)} in database in {MethodNameHelper.GetCurrentMethodName()}. Message: [{notFoundEx.Message}].");
+                logger.Warning(notFoundEx, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{notFoundEx.Message}].");
                 return BadRequest(notFoundEx.Error);
             }
             catch (Exception ex)
@@ -94,7 +86,7 @@ namespace AnimeBrowser.API.Controllers
             }
             catch (MismatchingIdException misEx)
             {
-                logger.Warning(misEx, $"Mismatching Id error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{misEx.Message}].");
+                logger.Warning(misEx, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{misEx.Message}].");
                 return BadRequest(misEx.Error);
             }
             catch (ValidationException valEx)
@@ -109,12 +101,12 @@ namespace AnimeBrowser.API.Controllers
             }
             catch (NotFoundObjectException<Season> ex)
             {
-                logger.Warning(ex, $"Not found object error in {MethodNameHelper.GetCurrentMethodName()}. Returns 404 - Not Found. Message: [{ex.Message}].");
+                logger.Warning(ex, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{ex.Message}].");
                 return NotFound(id);
             }
             catch (NotFoundObjectException<AnimeInfo> notFoundEx)
             {
-                logger.Warning(notFoundEx, $"Not found {nameof(AnimeInfo)} in database in {MethodNameHelper.GetCurrentMethodName()}. Message: [{notFoundEx.Message}].");
+                logger.Warning(notFoundEx, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{notFoundEx.Message}].");
                 return BadRequest(notFoundEx.Error);
             }
             catch (Exception ex)
@@ -146,78 +138,6 @@ namespace AnimeBrowser.API.Controllers
             {
                 logger.Warning(nfoEx, $"Error in [{MethodNameHelper.GetCurrentMethodName()}]. Message: [{nfoEx.Message}].");
                 return NotFound(nfoEx.Error);
-            }
-            catch (Exception ex)
-            {
-                logger.Error(ex, $"Error in [{MethodNameHelper.GetCurrentMethodName()}]. Message: [{ex.Message}].");
-                return StatusCode(StatusCodes.Status500InternalServerError);
-            }
-        }
-
-        [HttpPost("genres:batchCreate")]
-        [Authorize("SeasonAdmin")]
-        public async Task<IActionResult> CreateGenreMappings([FromBody] IList<SeasonGenreCreationRequestModel> requestModel)
-        {
-            try
-            {
-                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method started. {nameof(requestModel)}: [{string.Join(", ", requestModel)}].");
-
-                var createdSeasonGenreMappings = await seasonGenreCreationHandler.CreateSeasonGenres(requestModel);
-
-                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method finished.");
-
-                return Ok(createdSeasonGenreMappings);
-            }
-            catch (EmptyObjectException<SeasonCreationRequestModel> emptyEx)
-            {
-                logger.Warning(emptyEx, $"Empty request model in {MethodNameHelper.GetCurrentMethodName()}. Message: [{emptyEx.Message}].");
-                return BadRequest(emptyEx.Error);
-            }
-            catch (NotExistingIdException notExistingEx)
-            {
-                logger.Warning(notExistingEx, $"Error in [{MethodNameHelper.GetCurrentMethodName()}]. Message: [{notExistingEx.Message}].");
-                return NotFound(notExistingEx.Error);
-            }
-            catch (NotFoundObjectException<Season> notFoundEx)
-            {
-                logger.Warning(notFoundEx, $"Not found {nameof(Season)} in database in {MethodNameHelper.GetCurrentMethodName()}. Message: [{notFoundEx.Message}].");
-                return BadRequest(notFoundEx.Error);
-            }
-            catch (NotFoundObjectException<Genre> notFoundEx)
-            {
-                logger.Warning(notFoundEx, $"Not found {nameof(Genre)} in database in {MethodNameHelper.GetCurrentMethodName()}. Message: [{notFoundEx.Message}].");
-                return BadRequest(notFoundEx.Error);
-            }
-            catch (Exception ex)
-            {
-                logger.Error(ex, $"Error in [{MethodNameHelper.GetCurrentMethodName()}]. Message: [{ex.Message}].");
-                return StatusCode(StatusCodes.Status500InternalServerError);
-            }
-        }
-
-        [HttpPost("genres:batchDelete")]
-        [Authorize("SeasonAdmin")]
-        public async Task<IActionResult> DeleteGenreMappings([FromBody] IList<long> requestModel)
-        {
-            try
-            {
-                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method started. {nameof(requestModel)}: [{string.Join(", ", requestModel)}].");
-
-                await seasonGenreDeleteHandler.DeleteSeasonGenres(requestModel);
-
-                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method finished.");
-
-                return Ok();
-            }
-            catch (NotExistingIdException notExistingEx)
-            {
-                logger.Warning(notExistingEx, $"Error in [{MethodNameHelper.GetCurrentMethodName()}]. Message: [{notExistingEx.Message}].");
-                return NotFound(notExistingEx.Error);
-            }
-            catch (NotFoundObjectException<SeasonGenre> notFoundEx)
-            {
-                logger.Warning(notFoundEx, $"Not found {nameof(Season)} in database in {MethodNameHelper.GetCurrentMethodName()}. Message: [{notFoundEx.Message}].");
-                return BadRequest(notFoundEx.Error);
             }
             catch (Exception ex)
             {

@@ -32,25 +32,25 @@ namespace AnimeBrowser.API.Controllers
 
         [HttpPost]
         [Authorize("AnimeInfoAdmin")]
-        public async Task<IActionResult> Create([FromBody] AnimeInfoNameCreationRequestModel animeInfoName)
+        public async Task<IActionResult> Create([FromBody] AnimeInfoNameCreationRequestModel animeInfoNameRequestModel)
         {
             try
             {
-                logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method started. {nameof(animeInfoName)}: [{animeInfoName}].");
+                logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method started. {nameof(animeInfoNameRequestModel)}: [{animeInfoNameRequestModel}].");
 
-                var createdAnimeInfoName = await animeInfoNameCreateHandler.CreateAnimeInfoName(animeInfoName);
+                var createdAnimeInfoName = await animeInfoNameCreateHandler.CreateAnimeInfoName(animeInfoNameRequestModel);
 
                 logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method finished with result: [{createdAnimeInfoName}].");
                 return Created($"{ControllerHelper.ANIME_INFO_NAMES_CONTROLLER_NAME}/{createdAnimeInfoName.Id}", createdAnimeInfoName);
             }
             catch (EmptyObjectException<AnimeInfoNameCreationRequestModel> emptyEx)
             {
-                logger.Warning(emptyEx, $"Empty request model [{nameof(animeInfoName)}] in {MethodNameHelper.GetCurrentMethodName()}. Message: [{emptyEx.Message}].");
+                logger.Warning(emptyEx, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{emptyEx.Message}].");
                 return BadRequest(emptyEx.Error);
             }
             catch (NotFoundObjectException<AnimeInfo> notFoundEx)
             {
-                logger.Warning(notFoundEx, $"Not found {nameof(AnimeInfo)} in database in {MethodNameHelper.GetCurrentMethodName()}. Message: [{notFoundEx.Message}].");
+                logger.Warning(notFoundEx, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{notFoundEx.Message}].");
                 return BadRequest(notFoundEx.Error);
             }
             catch (ValidationException valEx)
@@ -72,13 +72,13 @@ namespace AnimeBrowser.API.Controllers
 
         [HttpPatch("{id}")]
         [Authorize("AnimeInfoAdmin")]
-        public async Task<IActionResult> Edit([FromRoute] long id, [FromBody] AnimeInfoNameEditingRequestModel updateModel)
+        public async Task<IActionResult> Edit([FromRoute] long id, [FromBody] AnimeInfoNameEditingRequestModel animeInfoNameRequestModel)
         {
             try
             {
-                logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method started. {nameof(id)}: [{id}], {nameof(updateModel)}: [{updateModel}].");
+                logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method started. {nameof(id)}: [{id}], {nameof(animeInfoNameRequestModel)}: [{animeInfoNameRequestModel}].");
 
-                var updatedAnimeInfoName = await animeInfoNameEditingHandler.EditAnimeInfoName(id, updateModel);
+                var updatedAnimeInfoName = await animeInfoNameEditingHandler.EditAnimeInfoName(id, animeInfoNameRequestModel);
 
                 logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method finished. result: [{updatedAnimeInfoName}].");
 
@@ -91,7 +91,7 @@ namespace AnimeBrowser.API.Controllers
             }
             catch (NotFoundObjectException<AnimeInfoName> ex)
             {
-                logger.Warning(ex, $"Not found object error in {MethodNameHelper.GetCurrentMethodName()}. Returns 404 - Not Found. Message: [{ex.Message}].");
+                logger.Warning(ex, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{ex.Message}].");
                 return NotFound(ex.Error);
             }
             catch (NotFoundObjectException<AnimeInfo> ex)

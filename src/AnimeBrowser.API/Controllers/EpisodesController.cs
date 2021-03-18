@@ -39,12 +39,12 @@ namespace AnimeBrowser.API.Controllers
 
                 var createdEpisode = await episodeCreationHandler.CreateEpisode(episodeRequestModel);
 
-                logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method finished with result: [{createdEpisode }].");
+                logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method finished with result: [{createdEpisode}].");
                 return Created($"{ControllerHelper.EPISODES_CONTROLLER_NAME}/{createdEpisode.Id}", createdEpisode);
             }
             catch (EmptyObjectException<EpisodeCreationRequestModel> emptyEx)
             {
-                logger.Warning(emptyEx, $"Empty request model [{nameof(episodeRequestModel)}] in {MethodNameHelper.GetCurrentMethodName()}. Message: [{emptyEx.Message}].");
+                logger.Warning(emptyEx, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{emptyEx.Message}].");
                 return BadRequest(emptyEx.Error);
             }
             catch (NotFoundObjectException<Season> notFoundEx)
@@ -90,7 +90,7 @@ namespace AnimeBrowser.API.Controllers
             }
             catch (MismatchingIdException misEx)
             {
-                logger.Warning(misEx, $"Mismatching Id error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{misEx.Message}].");
+                logger.Warning(misEx, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{misEx.Message}].");
                 return BadRequest(misEx.Error);
             }
             catch (NotFoundObjectException<Season> notFoundEx)
@@ -105,12 +105,12 @@ namespace AnimeBrowser.API.Controllers
             }
             catch (NotFoundObjectException<Episode> ex)
             {
-                logger.Warning(ex, $"Not found object error in {MethodNameHelper.GetCurrentMethodName()}. Returns 404 - Not Found. Message: [{ex.Message}].");
+                logger.Warning(ex, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{ex.Message}].");
                 return NotFound(id);
             }
             catch (AlreadyExistingObjectException<Episode> alreadyEx)
             {
-                logger.Warning(alreadyEx, $"Already existing {nameof(Episode)} with episode number in database in {MethodNameHelper.GetCurrentMethodName()}. Message: [{alreadyEx.Message}].");
+                logger.Warning(alreadyEx, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{alreadyEx.Message}].");
                 return BadRequest(alreadyEx.Error);
             }
             catch (Exception ex)

@@ -32,20 +32,20 @@ namespace AnimeBrowser.API.Controllers
 
         [HttpPost]
         [Authorize("SeasonAdmin")]
-        public async Task<IActionResult> CreateSeasonRating([FromBody] SeasonRatingCreationRequestModel seasonRatingrequestModel)
+        public async Task<IActionResult> CreateSeasonRating([FromBody] SeasonRatingCreationRequestModel seasonRatingRequestModel)
         {
             try
             {
-                logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method started. {nameof(seasonRatingrequestModel)}: [{seasonRatingrequestModel}].");
+                logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method started. {nameof(seasonRatingRequestModel)}: [{seasonRatingRequestModel}].");
 
-                var createdSeasonRating = await seasonRatingCreationHandler.CreateSeasonRating(seasonRatingrequestModel);
+                var createdSeasonRating = await seasonRatingCreationHandler.CreateSeasonRating(seasonRatingRequestModel);
 
                 logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method finished with result: [{createdSeasonRating}].");
                 return Created($"{ControllerHelper.SEASON_RATINGS_CONTROLLER_NAME}/{createdSeasonRating.Id}", createdSeasonRating);
             }
             catch (EmptyObjectException<SeasonRatingCreationRequestModel> emptyEx)
             {
-                logger.Warning(emptyEx, $"Empty request model [{nameof(seasonRatingrequestModel)}] in {MethodNameHelper.GetCurrentMethodName()}. Message: [{emptyEx.Message}].");
+                logger.Warning(emptyEx, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{emptyEx.Message}].");
                 return BadRequest(emptyEx.Error);
             }
             catch (NotFoundObjectException<Season> notFoundEx)

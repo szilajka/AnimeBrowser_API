@@ -29,35 +29,23 @@ namespace AnimeBrowser.API.Controllers
             this.animeInfoDeleteHandler = animeInfoDeleteHandler;
         }
 
-        //[HttpGet]
-        //public async Task<IActionResult> Get(Dictionary<string, string> filter, int size = 20, int page = 0)
-        //{
-
-        //}
-
-        //[HttpGet("{id}")]
-        //public async Task<IActionResult> Get(long id)
-        //{
-
-        //}
-
 
         [HttpPost]
         [Authorize("AnimeInfoAdmin")]
-        public async Task<IActionResult> Create([FromBody] AnimeInfoCreationRequestModel animeInfo)
+        public async Task<IActionResult> Create([FromBody] AnimeInfoCreationRequestModel animeInfoRequestModel)
         {
             try
             {
-                logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method started. {nameof(animeInfo)}: [{animeInfo}].");
+                logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method started. {nameof(animeInfoRequestModel)}: [{animeInfoRequestModel}].");
 
-                var createdAnimeInfo = await animeInfoCreateHandler.CreateAnimeInfo(animeInfo);
+                var createdAnimeInfo = await animeInfoCreateHandler.CreateAnimeInfo(animeInfoRequestModel);
 
                 logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method finished with result: [{createdAnimeInfo}].");
                 return Created($"{ControllerHelper.ANIME_INFOS_CONTROLLER_NAME}/{createdAnimeInfo.Id}", createdAnimeInfo);
             }
             catch (EmptyObjectException<AnimeInfoCreationRequestModel> emptyEx)
             {
-                logger.Warning(emptyEx, $"Empty request model [{nameof(animeInfo)}] in {MethodNameHelper.GetCurrentMethodName()}. Message: [{emptyEx.Message}].");
+                logger.Warning(emptyEx, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{emptyEx.Message}].");
                 return BadRequest(emptyEx.Error);
             }
             catch (ValidationException valEx)
@@ -74,13 +62,13 @@ namespace AnimeBrowser.API.Controllers
 
         [HttpPatch("{id}")]
         [Authorize("AnimeInfoAdmin")]
-        public async Task<IActionResult> Edit([FromRoute] long id, [FromBody] AnimeInfoEditingRequestModel updateModel)
+        public async Task<IActionResult> Edit([FromRoute] long id, [FromBody] AnimeInfoEditingRequestModel animeInfoRequestModel)
         {
             try
             {
-                logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method started. {nameof(id)}: [{id}], {nameof(updateModel)}: [{updateModel}].");
+                logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method started. {nameof(id)}: [{id}], {nameof(animeInfoRequestModel)}: [{animeInfoRequestModel}].");
 
-                var updatedAnimeInfo = await animeInfoEditorHandler.EditAnimeInfo(id, updateModel);
+                var updatedAnimeInfo = await animeInfoEditorHandler.EditAnimeInfo(id, animeInfoRequestModel);
 
                 logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method finished. result: [{updatedAnimeInfo}].");
 
@@ -88,7 +76,7 @@ namespace AnimeBrowser.API.Controllers
             }
             catch (MismatchingIdException misEx)
             {
-                logger.Warning(misEx, $"Mismatching Id error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{misEx.Message}].");
+                logger.Warning(misEx, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{misEx.Message}].");
                 return BadRequest(misEx.Error);
             }
             catch (ValidationException valEx)
@@ -98,7 +86,7 @@ namespace AnimeBrowser.API.Controllers
             }
             catch (NotFoundObjectException<AnimeInfo> ex)
             {
-                logger.Warning(ex, $"Not found object error in {MethodNameHelper.GetCurrentMethodName()}. Returns 404 - Not Found. Message: [{ex.Message}].");
+                logger.Warning(ex, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{ex.Message}].");
                 return NotFound(ex.Error);
             }
             catch (Exception ex)

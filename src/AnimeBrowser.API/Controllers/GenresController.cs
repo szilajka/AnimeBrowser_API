@@ -45,7 +45,7 @@ namespace AnimeBrowser.API.Controllers
             }
             catch (EmptyObjectException<GenreCreationRequestModel> emptyEx)
             {
-                logger.Warning(emptyEx, $"Empty request model in {MethodNameHelper.GetCurrentMethodName()}. Message: [{emptyEx.Message}].");
+                logger.Warning(emptyEx, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{emptyEx.Message}].");
                 return BadRequest(emptyEx.Error);
             }
             catch (ValidationException valEx)
@@ -75,13 +75,13 @@ namespace AnimeBrowser.API.Controllers
 
                 var updatedGenre = await genreEditingHandler.EditGenre(id, genreRequestModel);
 
-                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. {nameof(updatedGenre)}.{nameof(updatedGenre.Id)}: [{updatedGenre?.Id}].");
+                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. {nameof(updatedGenre)}.{nameof(updatedGenre.Id)}: [{updatedGenre.Id}].");
 
                 return Ok(updatedGenre);
             }
             catch (MismatchingIdException misEx)
             {
-                logger.Warning(misEx, $"Mismatching Id error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{misEx.Message}].");
+                logger.Warning(misEx, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{misEx.Message}].");
                 return BadRequest(misEx.Error);
             }
             catch (ValidationException valEx)
@@ -96,7 +96,7 @@ namespace AnimeBrowser.API.Controllers
             }
             catch (NotFoundObjectException<Genre> ex)
             {
-                logger.Warning(ex, $"Not found object error in {MethodNameHelper.GetCurrentMethodName()}. Returns 404 - Not Found. Message: [{ex.Message}].");
+                logger.Warning(ex, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{ex.Message}].");
                 return NotFound(ex.Error);
             }
             catch (Exception ex)

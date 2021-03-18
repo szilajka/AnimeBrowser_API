@@ -32,20 +32,20 @@ namespace AnimeBrowser.API.Controllers
 
         [HttpPost]
         [Authorize("EpisodeAdmin")]
-        public async Task<IActionResult> CreateEpisodeRating([FromBody] EpisodeRatingCreationRequestModel episodeRatingrequestModel)
+        public async Task<IActionResult> Create([FromBody] EpisodeRatingCreationRequestModel episodeRatingRequestModel)
         {
             try
             {
-                logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method started. {nameof(episodeRatingrequestModel)}: [{episodeRatingrequestModel}].");
+                logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method started. {nameof(episodeRatingRequestModel)}: [{episodeRatingRequestModel}].");
 
-                var createdEpisodeRating = await episodeRatingCreationHandler.CreateEpisodeRating(episodeRatingrequestModel);
+                var createdEpisodeRating = await episodeRatingCreationHandler.CreateEpisodeRating(episodeRatingRequestModel);
 
                 logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method finished with result: [{createdEpisodeRating}].");
                 return Created($"{ControllerHelper.EPISODE_RATINGS_CONTROLLER_NAME}/{createdEpisodeRating.Id}", createdEpisodeRating);
             }
             catch (EmptyObjectException<EpisodeRatingCreationRequestModel> emptyEx)
             {
-                logger.Warning(emptyEx, $"Empty request model [{nameof(episodeRatingrequestModel)}] in {MethodNameHelper.GetCurrentMethodName()}. Message: [{emptyEx.Message}].");
+                logger.Warning(emptyEx, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{emptyEx.Message}].");
                 return BadRequest(emptyEx.Error);
             }
             catch (NotFoundObjectException<Episode> notFoundEx)
@@ -77,13 +77,13 @@ namespace AnimeBrowser.API.Controllers
 
         [HttpPatch("{id}")]
         [Authorize("EpisodeAdmin")]
-        public async Task<IActionResult> EditEpisodeRating([FromRoute] long id, [FromBody] EpisodeRatingEditingRequestModel episodeRatingrequestModel)
+        public async Task<IActionResult> Edit([FromRoute] long id, [FromBody] EpisodeRatingEditingRequestModel episodeRatingRequestModel)
         {
             try
             {
-                logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method started. {nameof(episodeRatingrequestModel)}: [{episodeRatingrequestModel}].");
+                logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method started. {nameof(episodeRatingRequestModel)}: [{episodeRatingRequestModel}].");
 
-                var updatedEpisodeRating = await episodeRatingEditingHandler.EditEpisodeRating(id, episodeRatingrequestModel);
+                var updatedEpisodeRating = await episodeRatingEditingHandler.EditEpisodeRating(id, episodeRatingRequestModel);
 
                 logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method finished with result: [{updatedEpisodeRating}].");
                 return Ok(updatedEpisodeRating);
@@ -95,13 +95,13 @@ namespace AnimeBrowser.API.Controllers
             }
             catch (EmptyObjectException<EpisodeRatingEditingRequestModel> emptyEx)
             {
-                logger.Warning(emptyEx, $"Empty request model [{nameof(episodeRatingrequestModel)}] in {MethodNameHelper.GetCurrentMethodName()}. Message: [{emptyEx.Message}].");
+                logger.Warning(emptyEx, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{emptyEx.Message}].");
                 return BadRequest(emptyEx.Error);
             }
             catch (NotFoundObjectException<EpisodeRating> notFoundEx)
             {
                 logger.Warning(notFoundEx, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{notFoundEx.Message}].");
-                return BadRequest(notFoundEx.Error);
+                return NotFound(notFoundEx.Error);
             }
             catch (NotFoundObjectException<Episode> notFoundEx)
             {
@@ -128,7 +128,7 @@ namespace AnimeBrowser.API.Controllers
 
         [HttpDelete("{id}")]
         [Authorize("EpisodeAdmin")]
-        public async Task<IActionResult> DeleteEpisodeRating([FromRoute] long id)
+        public async Task<IActionResult> Delete([FromRoute] long id)
         {
             try
             {
