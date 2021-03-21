@@ -42,7 +42,7 @@ namespace AnimeBrowser.BL.Validators.MainValidators
                 Transform(x => x.Description, x => x.Trim()).MaximumLength(30000)
                     .WithErrorCode(ErrorCodes.TooLongProperty.GetIntValueAsString());
             });
-            When(x => x.AirStatus == AirStatusEnum.Airing, () =>
+            When(x => x.AirStatus == AirStatuses.Airing, () =>
             {
                 RuleFor(x => x.AirDate).NotEmpty()
                     .WithErrorCode(ErrorCodes.EmptyProperty.GetIntValueAsString());
@@ -54,7 +54,7 @@ namespace AnimeBrowser.BL.Validators.MainValidators
                 });
             });
 
-            When(x => x.AirStatus == AirStatusEnum.Aired, () =>
+            When(x => x.AirStatus == AirStatuses.Aired, () =>
             {
                 RuleFor(x => x.AirDate).NotEmpty()
                     .WithErrorCode(ErrorCodes.EmptyProperty.GetIntValueAsString());
@@ -65,7 +65,7 @@ namespace AnimeBrowser.BL.Validators.MainValidators
                         .WithErrorCode(ErrorCodes.OutOfRangeProperty.GetIntValueAsString());
                 });
             });
-            When(x => x.AirDate.HasValue && x.AirStatus != AirStatusEnum.Airing && x.AirStatus != AirStatusEnum.Aired, () =>
+            When(x => x.AirDate.HasValue && x.AirStatus != AirStatuses.Airing && x.AirStatus != AirStatuses.Aired, () =>
             {
                 Transform(x => x.AirDate, x => dateTimeProvider.FromDateUtc(x!.Value)).InclusiveBetween(startDate, endDate)
                         .WithErrorCode(ErrorCodes.OutOfRangeProperty.GetIntValueAsString());

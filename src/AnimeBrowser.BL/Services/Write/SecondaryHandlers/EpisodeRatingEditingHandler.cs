@@ -15,6 +15,9 @@ using AnimeBrowser.Data.Interfaces.Read.SecondaryInterfaces;
 using AnimeBrowser.Data.Interfaces.Write.SecondaryInterfaces;
 using Serilog;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace AnimeBrowser.BL.Services.Write.SecondaryHandlers
@@ -35,7 +38,7 @@ namespace AnimeBrowser.BL.Services.Write.SecondaryHandlers
             this.episodeRatingWriteRepo = episodeRatingWriteRepo;
         }
 
-        public async Task<EpisodeRatingEditingResponseModel> EditEpisodeRating(long id, EpisodeRatingEditingRequestModel episodeRatingRequestModel)
+        public async Task<EpisodeRatingEditingResponseModel> EditEpisodeRating(long id, EpisodeRatingEditingRequestModel episodeRatingRequestModel, IEnumerable<Claim>? claims)
         {
             try
             {
@@ -59,6 +62,12 @@ namespace AnimeBrowser.BL.Services.Write.SecondaryHandlers
                     );
                     var notExistingEpisodeRatingEx = new NotFoundObjectException<EpisodeRating>(error, $"There is no {nameof(EpisodeRating)} with given id: [{id}].");
                     throw notExistingEpisodeRatingEx;
+                }
+
+                var userId = claims?.SingleOrDefault(c => c.Type.Equals(ClaimTypes.NameIdentifier, StringComparison.OrdinalIgnoreCase));
+                if (userId == null || !episodeRatingRequestModel.UserId.Equals(userId.Value, StringComparison.OrdinalIgnoreCase) || !episodeRating.UserId.Equals(userId.Value, StringComparison.OrdinalIgnoreCase))
+                {
+                    throw new UnauthorizedAccessException("Given model's and token's user id are not matching!");
                 }
 
                 if (episodeRatingRequestModel.EpisodeId != episodeRating.EpisodeId)
@@ -126,6 +135,11 @@ namespace AnimeBrowser.BL.Services.Write.SecondaryHandlers
                 throw;
             }
             catch (NotFoundObjectException<EpisodeRating> ex)
+            {
+                logger.Warning(ex, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{ex.Message}].");
+                throw;
+            }
+            catch (UnauthorizedAccessException ex)
             {
                 logger.Warning(ex, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{ex.Message}].");
                 throw;

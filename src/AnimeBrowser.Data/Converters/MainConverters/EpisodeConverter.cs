@@ -49,7 +49,7 @@ namespace AnimeBrowser.Data.Converters.MainConverters
         #region ResponseModel
         public static EpisodeEditingResponseModel ToEditingResponseModel(this Episode episode)
         {
-            var responseModel = new EpisodeEditingResponseModel(id: episode.Id, episodeNumber: episode.EpisodeNumber, airStatus: (AirStatusEnum)episode.AirStatus,
+            var responseModel = new EpisodeEditingResponseModel(id: episode.Id, episodeNumber: episode.EpisodeNumber, airStatus: (AirStatuses)episode.AirStatus,
                 title: episode.Title, description: episode.Description, airDate: episode.AirDate,
                 cover: episode.Cover, seasonId: episode.SeasonId, animeInfoId: episode.AnimeInfoId);
             return responseModel;
@@ -57,7 +57,7 @@ namespace AnimeBrowser.Data.Converters.MainConverters
 
         public static EpisodeCreationResponseModel ToCreationResponseModel(this Episode episode)
         {
-            var responseModel = new EpisodeCreationResponseModel(id: episode.Id, episodeNumber: episode.EpisodeNumber, airStatus: (AirStatusEnum)episode.AirStatus,
+            var responseModel = new EpisodeCreationResponseModel(id: episode.Id, episodeNumber: episode.EpisodeNumber, airStatus: (AirStatuses)episode.AirStatus,
                 title: episode.Title, description: episode.Description, airDate: episode.AirDate,
                 cover: episode.Cover, seasonId: episode.SeasonId, animeInfoId: episode.AnimeInfoId);
             return responseModel;

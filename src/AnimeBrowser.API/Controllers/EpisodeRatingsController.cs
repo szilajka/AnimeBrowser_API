@@ -37,8 +37,8 @@ namespace AnimeBrowser.API.Controllers
             try
             {
                 logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method started. {nameof(episodeRatingRequestModel)}: [{episodeRatingRequestModel}].");
-                //TODO: Check if the user is the same, as the requestor (HttpContext.UserId == rm.UserId?)
-                var createdEpisodeRating = await episodeRatingCreationHandler.CreateEpisodeRating(episodeRatingRequestModel);
+
+                var createdEpisodeRating = await episodeRatingCreationHandler.CreateEpisodeRating(episodeRatingRequestModel, HttpContext.User?.Claims);
 
                 logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method finished with result: [{createdEpisodeRating}].");
                 return Created($"{ControllerHelper.EPISODE_RATINGS_CONTROLLER_NAME}/{createdEpisodeRating.Id}", createdEpisodeRating);
@@ -47,6 +47,11 @@ namespace AnimeBrowser.API.Controllers
             {
                 logger.Warning(emptyEx, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{emptyEx.Message}].");
                 return BadRequest(emptyEx.Error);
+            }
+            catch (UnauthorizedAccessException unEx)
+            {
+                logger.Warning(unEx, $"Error in [{MethodNameHelper.GetCurrentMethodName()}]. Message: [{unEx.Message}].");
+                return Forbid();
             }
             catch (NotFoundObjectException<Episode> notFoundEx)
             {
@@ -82,8 +87,8 @@ namespace AnimeBrowser.API.Controllers
             try
             {
                 logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method started. {nameof(episodeRatingRequestModel)}: [{episodeRatingRequestModel}].");
-                //TODO: Check if the user is the same, as the requestor (HttpContext.UserId == rm.UserId?)
-                var updatedEpisodeRating = await episodeRatingEditingHandler.EditEpisodeRating(id, episodeRatingRequestModel);
+
+                var updatedEpisodeRating = await episodeRatingEditingHandler.EditEpisodeRating(id, episodeRatingRequestModel, HttpContext.User?.Claims);
 
                 logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method finished with result: [{updatedEpisodeRating}].");
                 return Ok(updatedEpisodeRating);
@@ -102,6 +107,11 @@ namespace AnimeBrowser.API.Controllers
             {
                 logger.Warning(notFoundEx, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{notFoundEx.Message}].");
                 return NotFound(notFoundEx.Error);
+            }
+            catch (UnauthorizedAccessException unEx)
+            {
+                logger.Warning(unEx, $"Error in [{MethodNameHelper.GetCurrentMethodName()}]. Message: [{unEx.Message}].");
+                return Forbid();
             }
             catch (NotFoundObjectException<Episode> notFoundEx)
             {
@@ -133,8 +143,8 @@ namespace AnimeBrowser.API.Controllers
             try
             {
                 logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method started. {nameof(id)}: [{id}].");
-                //TODO: Check if the user is the same, as the requestor (HttpContext.UserId == rm.UserId?)
-                await episodeRatingDeleteHandler.DeleteEpisodeRating(id);
+
+                await episodeRatingDeleteHandler.DeleteEpisodeRating(id, HttpContext.User?.Claims);
 
                 logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method finished.");
                 return Ok();
@@ -148,6 +158,11 @@ namespace AnimeBrowser.API.Controllers
             {
                 logger.Warning(nfoEx, $"Error in [{MethodNameHelper.GetCurrentMethodName()}]. Message: [{nfoEx.Message}].");
                 return NotFound(nfoEx.Error);
+            }
+            catch (UnauthorizedAccessException unEx)
+            {
+                logger.Warning(unEx, $"Error in [{MethodNameHelper.GetCurrentMethodName()}]. Message: [{unEx.Message}].");
+                return Forbid();
             }
             catch (Exception ex)
             {

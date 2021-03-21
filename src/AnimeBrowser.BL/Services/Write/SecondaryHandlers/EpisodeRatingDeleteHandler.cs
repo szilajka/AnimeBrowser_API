@@ -7,6 +7,9 @@ using AnimeBrowser.Data.Interfaces.Read.SecondaryInterfaces;
 using AnimeBrowser.Data.Interfaces.Write.SecondaryInterfaces;
 using Serilog;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace AnimeBrowser.BL.Services.Write.SecondaryHandlers
@@ -23,7 +26,7 @@ namespace AnimeBrowser.BL.Services.Write.SecondaryHandlers
             this.episodeRatingWriteRepo = episodeRatingWriteRepo;
         }
 
-        public async Task DeleteEpisodeRating(long id)
+        public async Task DeleteEpisodeRating(long id, IEnumerable<Claim>? claims)
         {
             try
             {
@@ -46,6 +49,12 @@ namespace AnimeBrowser.BL.Services.Write.SecondaryHandlers
                     throw new NotFoundObjectException<EpisodeRating>(error, $"Not found an {nameof(EpisodeRating)} entity with id: [{id}].");
                 }
 
+                var userId = claims?.SingleOrDefault(c => c.Type.Equals(ClaimTypes.NameIdentifier, StringComparison.OrdinalIgnoreCase));
+                if (userId == null || !episodeRating.UserId.Equals(userId.Value, StringComparison.OrdinalIgnoreCase))
+                {
+                    throw new UnauthorizedAccessException("Given model's and token's user id are not matching!");
+                }
+
                 await episodeRatingWriteRepo.DeleteEpisodeRating(episodeRating);
 
                 logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method finished.");
@@ -58,6 +67,11 @@ namespace AnimeBrowser.BL.Services.Write.SecondaryHandlers
             catch (NotFoundObjectException<EpisodeRating> nfoEx)
             {
                 logger.Warning(nfoEx, $"Error in [{MethodNameHelper.GetCurrentMethodName()}]. Message: [{nfoEx.Message}].");
+                throw;
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                logger.Warning(ex, $"Error in [{MethodNameHelper.GetCurrentMethodName()}]. Message: [{ex.Message}].");
                 throw;
             }
             catch (Exception ex)

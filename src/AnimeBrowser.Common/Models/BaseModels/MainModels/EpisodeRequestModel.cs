@@ -8,7 +8,7 @@ namespace AnimeBrowser.Common.Models.BaseModels.MainModels
 {
     public class EpisodeRequestModel
     {
-        public EpisodeRequestModel(int episodeNumber, AirStatusEnum airStatus, byte[] cover, DateTime? airDate, long animeInfoId, long seasonId, string title = "", string description = "")
+        public EpisodeRequestModel(int episodeNumber, AirStatuses airStatus, byte[] cover, DateTime? airDate, long animeInfoId, long seasonId, string title = "", string description = "")
         {
             this.EpisodeNumber = episodeNumber;
             this.AirStatus = airStatus;
@@ -21,7 +21,7 @@ namespace AnimeBrowser.Common.Models.BaseModels.MainModels
         }
 
         public int EpisodeNumber { get; set; }
-        public AirStatusEnum AirStatus { get; set; }
+        public AirStatuses AirStatus { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
         public byte[] Cover { get; set; }

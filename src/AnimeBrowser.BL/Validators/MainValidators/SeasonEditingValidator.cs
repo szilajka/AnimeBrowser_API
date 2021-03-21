@@ -56,7 +56,7 @@ namespace AnimeBrowser.BL.Validators.MainValidators
                 RuleFor(x => x.AirStatus).IsInEnum()
                     .WithErrorCode(ErrorCodes.OutOfRangeProperty.GetIntValueAsString());
 
-                When(x => x.AirStatus == AirStatusEnum.Airing, () =>
+                When(x => x.AirStatus == AirStatuses.Airing, () =>
                 {
                     RuleFor(x => x.StartDate).NotNull()
                         .WithErrorCode(ErrorCodes.EmptyProperty.GetIntValueAsString());
@@ -76,7 +76,7 @@ namespace AnimeBrowser.BL.Validators.MainValidators
                     });
                 });
 
-                When(x => x.AirStatus == AirStatusEnum.Aired, () =>
+                When(x => x.AirStatus == AirStatuses.Aired, () =>
                 {
                     RuleFor(x => x.StartDate).NotNull()
                         .WithErrorCode(ErrorCodes.EmptyProperty.GetIntValueAsString());
@@ -101,17 +101,17 @@ namespace AnimeBrowser.BL.Validators.MainValidators
                     });
                 });
 
-                When(x => x.StartDate.HasValue && x.AirStatus != AirStatusEnum.Airing && x.AirStatus != AirStatusEnum.Aired, () =>
+                When(x => x.StartDate.HasValue && x.AirStatus != AirStatuses.Airing && x.AirStatus != AirStatuses.Aired, () =>
                 {
                     Transform(x => x.StartDate, x => dateTimeProvider.FromDateUtc(x!.Value)).InclusiveBetween(minDate, maxDate)
                         .WithErrorCode(ErrorCodes.OutOfRangeProperty.GetIntValueAsString());
                 });
-                When(x => x.EndDate.HasValue && x.AirStatus != AirStatusEnum.Airing && x.AirStatus != AirStatusEnum.Aired, () =>
+                When(x => x.EndDate.HasValue && x.AirStatus != AirStatuses.Airing && x.AirStatus != AirStatuses.Aired, () =>
                 {
                     Transform(x => x.StartDate, sd => sd.HasValue ? dateTimeProvider.FromDateUtc(sd.Value) : sd).NotNull()
                         .WithErrorCode(ErrorCodes.EmptyProperty.GetIntValueAsString());
                 });
-                When(x => x.EndDate.HasValue && x.StartDate.HasValue && x.AirStatus != AirStatusEnum.Airing && x.AirStatus != AirStatusEnum.Aired, () =>
+                When(x => x.EndDate.HasValue && x.StartDate.HasValue && x.AirStatus != AirStatuses.Airing && x.AirStatus != AirStatuses.Aired, () =>
                 {
                     Transform(x => x.EndDate, x => dateTimeProvider.FromDateUtc(x!.Value)).GreaterThanOrEqualTo(x => dateTimeProvider.FromDateUtc(x.StartDate!.Value))
                         .WithErrorCode(ErrorCodes.OutOfRangeProperty.GetIntValueAsString())

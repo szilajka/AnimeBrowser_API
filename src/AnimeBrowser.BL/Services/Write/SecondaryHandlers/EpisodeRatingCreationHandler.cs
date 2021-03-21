@@ -15,6 +15,9 @@ using AnimeBrowser.Data.Interfaces.Read.SecondaryInterfaces;
 using AnimeBrowser.Data.Interfaces.Write.SecondaryInterfaces;
 using Serilog;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace AnimeBrowser.BL.Services.Write.SecondaryHandlers
@@ -35,7 +38,7 @@ namespace AnimeBrowser.BL.Services.Write.SecondaryHandlers
             this.episodeRatingWriteRepo = episodeRatingWriteRepo;
         }
 
-        public async Task<EpisodeRatingCreationResponseModel> CreateEpisodeRating(EpisodeRatingCreationRequestModel episodeRatingRequestModel)
+        public async Task<EpisodeRatingCreationResponseModel> CreateEpisodeRating(EpisodeRatingCreationRequestModel episodeRatingRequestModel, IEnumerable<Claim>? claims)
         {
             try
             {
@@ -45,6 +48,11 @@ namespace AnimeBrowser.BL.Services.Write.SecondaryHandlers
                     var errorModel = new ErrorModel(code: ErrorCodes.EmptyObject.GetIntValueAsString(), description: $"The {nameof(EpisodeRatingCreationRequestModel)} object is empty!",
                         source: nameof(episodeRatingRequestModel), title: ErrorCodes.EmptyObject.GetDescription());
                     throw new EmptyObjectException<EpisodeRatingCreationRequestModel>(errorModel, $"The given {nameof(EpisodeRatingCreationRequestModel)} object is empty!");
+                }
+                var userId = claims?.SingleOrDefault(c => c.Type.Equals(ClaimTypes.NameIdentifier, StringComparison.OrdinalIgnoreCase));
+                if (userId == null || !episodeRatingRequestModel.UserId.Equals(userId.Value, StringComparison.OrdinalIgnoreCase))
+                {
+                    throw new UnauthorizedAccessException("Given model's and token's user id are not matching!");
                 }
 
                 var episode = await episodeReadRepo.GetEpisodeById(episodeRatingRequestModel.EpisodeId);
@@ -95,6 +103,11 @@ namespace AnimeBrowser.BL.Services.Write.SecondaryHandlers
                 return responseModel;
             }
             catch (EmptyObjectException<EpisodeRatingCreationRequestModel> ex)
+            {
+                logger.Warning(ex, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{ex.Message}].");
+                throw;
+            }
+            catch (UnauthorizedAccessException ex)
             {
                 logger.Warning(ex, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{ex.Message}].");
                 throw;

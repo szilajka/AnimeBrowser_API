@@ -48,32 +48,32 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
             {
                 new Season{Id = 1, SeasonNumber = 1, Title = "Phantom Blood", Description = "In this season we know the story of Jonathan, Dio and Speedwagon, then Joseph and the Pillarmen's story",
                     StartDate = new DateTime(2012, 1, 1, 0 ,0 ,0, DateTimeKind.Utc), EndDate = new DateTime(2012, 3, 5, 0 ,0 ,0, DateTimeKind.Utc),
-                    AirStatus = (int)AirStatusEnum.Aired, NumberOfEpisodes = 24, AnimeInfoId = 1,
+                    AirStatus = (int)AirStatuses.Aired, NumberOfEpisodes = 24, AnimeInfoId = 1,
                     CoverCarousel = Encoding.UTF8.GetBytes("JoJoCarousel"), Cover = Encoding.UTF8.GetBytes("JoJoCover"),
                 },
                 new Season{Id = 2, SeasonNumber = 2, Title = "Stardust Crusaders", Description = "In this season we know the story of old Joseph and young Jotaro Kujo's story while they trying to get into Egypt.",
                     StartDate = new DateTime(2014, 3, 1, 0 ,0 ,0, DateTimeKind.Utc), EndDate = new DateTime(2014, 7, 10, 0 ,0 ,0, DateTimeKind.Utc),
-                    AirStatus = (int)AirStatusEnum.Aired, NumberOfEpisodes = 24, AnimeInfoId = 1,
+                    AirStatus = (int)AirStatuses.Aired, NumberOfEpisodes = 24, AnimeInfoId = 1,
                     CoverCarousel = Encoding.UTF8.GetBytes("JoJoCarousel"), Cover = Encoding.UTF8.GetBytes("JoJoCover"),
                 },
                 new Season{Id = 3, SeasonNumber = 1, Title = "Season 1", Description = "I don't know this anime. Maybe they are just fighting. Who knows? I'm sure not.",
                     StartDate = new DateTime(2013, 1, 1, 0 ,0 ,0, DateTimeKind.Utc), EndDate = new DateTime(2014, 2, 10, 0 ,0 ,0, DateTimeKind.Utc),
-                    AirStatus = (int)AirStatusEnum.Aired, NumberOfEpisodes = 40, AnimeInfoId = 2,
+                    AirStatus = (int)AirStatuses.Aired, NumberOfEpisodes = 40, AnimeInfoId = 2,
                     CoverCarousel = Encoding.UTF8.GetBytes("BnHACarousel"), Cover = Encoding.UTF8.GetBytes("BnHACover"),
                 },
                 new Season{Id = 10, SeasonNumber = 1, Title = "Season 1", Description = "Kayman and Nikkaido's story. Kayman is a man, but has a lizard body, well, some magician did it to him, but who?",
                     StartDate = new DateTime(2020, 9, 1, 0 ,0 ,0, DateTimeKind.Utc), EndDate = new DateTime(2020, 12, 20, 0 ,0 ,0, DateTimeKind.Utc),
-                    AirStatus = (int)AirStatusEnum.Aired, NumberOfEpisodes = 10, AnimeInfoId = 10,
+                    AirStatus = (int)AirStatuses.Aired, NumberOfEpisodes = 10, AnimeInfoId = 10,
                     CoverCarousel = Encoding.UTF8.GetBytes("DorohedoroCarousel"), Cover = Encoding.UTF8.GetBytes("DorohedoroCover"),
                 },
                 new Season{Id = 20, SeasonNumber = 1, Title = "Season 4", Description = "I don't know this anime. Maybe they are just fighting. Who knows? I'm sure not.",
                     StartDate = new DateTime(2020, 11, 1, 0 ,0 ,0, DateTimeKind.Utc), EndDate = new DateTime(2021, 4, 10, 0 ,0 ,0, DateTimeKind.Utc),
-                    AirStatus = (int)AirStatusEnum.Airing, NumberOfEpisodes = 24, AnimeInfoId = 15,
+                    AirStatus = (int)AirStatuses.Airing, NumberOfEpisodes = 24, AnimeInfoId = 15,
                     CoverCarousel = Encoding.UTF8.GetBytes("SnKCarousel"), Cover = Encoding.UTF8.GetBytes("SnKCover"),
                 },
                 new Season{Id = 22, SeasonNumber = 1, Title = "Season 2", Description = "I don't know this anime. But there will be a second season. That's for sure!",
                     StartDate = null, EndDate = null,
-                    AirStatus = (int)AirStatusEnum.NotAired, NumberOfEpisodes = 20, AnimeInfoId = 201,
+                    AirStatus = (int)AirStatuses.NotAired, NumberOfEpisodes = 20, AnimeInfoId = 201,
                     CoverCarousel = Encoding.UTF8.GetBytes("YnKCarousel"), Cover = Encoding.UTF8.GetBytes("YnKCover"),
                 }
             };
@@ -116,16 +116,16 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
                 // ------------------------
                 null, today.AddYears(10), today.AddMonths(10).AddDays(21), today.AddYears(2).AddMonths(6), today.AddYears(8).AddDays(30), today.AddYears(6).AddDays(-10)
             };
-            var airStatuses = new AirStatusEnum[]
+            var airStatuses = new AirStatuses[]
             {
-                AirStatusEnum.UNKNOWN,
-                AirStatusEnum.NotAired,
-                AirStatusEnum.Airing,
-                AirStatusEnum.Aired,
-                AirStatusEnum.NotAired,
-                AirStatusEnum.Aired,
+                AirStatuses.UNKNOWN,
+                AirStatuses.NotAired,
+                AirStatuses.Airing,
+                AirStatuses.Aired,
+                AirStatuses.NotAired,
+                AirStatuses.Aired,
                 // ------------------------
-                AirStatusEnum.UNKNOWN, AirStatusEnum.UNKNOWN, AirStatusEnum.UNKNOWN, AirStatusEnum.UNKNOWN, AirStatusEnum.UNKNOWN, AirStatusEnum.UNKNOWN
+                AirStatuses.UNKNOWN, AirStatuses.UNKNOWN, AirStatuses.UNKNOWN, AirStatuses.UNKNOWN, AirStatuses.UNKNOWN, AirStatuses.UNKNOWN
             };
 
             var numberOfEpisodes = new int?[] { 10, 20, 30, 15, 25, 35,
@@ -207,7 +207,7 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
                 null,
                 DateTime.Now.AddDays(877)
             };
-            var airStatuses = new AirStatusEnum[] { AirStatusEnum.UNKNOWN, AirStatusEnum.NotAired, AirStatusEnum.Airing, AirStatusEnum.NotAired, AirStatusEnum.NotAired };
+            var airStatuses = new AirStatuses[] { AirStatuses.UNKNOWN, AirStatuses.NotAired, AirStatuses.Airing, AirStatuses.NotAired, AirStatuses.NotAired };
             var propertyName = nameof(SeasonCreationRequestModel.StartDate);
             for (var i = 0; i < startDates.Length; i++)
             {
@@ -233,7 +233,7 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
                 DateTime.Now.AddDays(877),
                 DateTime.Now.AddYears(10).AddDays(1)
             };
-            var airStatuses = new AirStatusEnum[] { AirStatusEnum.UNKNOWN, AirStatusEnum.NotAired, AirStatusEnum.Airing, AirStatusEnum.Aired, AirStatusEnum.NotAired };
+            var airStatuses = new AirStatuses[] { AirStatuses.UNKNOWN, AirStatuses.NotAired, AirStatuses.Airing, AirStatuses.Aired, AirStatuses.NotAired };
             var propertyName = nameof(SeasonCreationRequestModel.EndDate);
             for (var i = 0; i < endDates.Length; i++)
             {
@@ -261,12 +261,12 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
                 DateTime.Now.AddYears(10),
                 DateTime.Now.AddYears(12)
             };
-            var airStatuses = new AirStatusEnum[] {
-                (AirStatusEnum)(-1),
-                (AirStatusEnum)(-10),
-                AirStatusEnum.Airing,
-                AirStatusEnum.Airing,
-                AirStatusEnum.Aired
+            var airStatuses = new AirStatuses[] {
+                (AirStatuses)(-1),
+                (AirStatuses)(-10),
+                AirStatuses.Airing,
+                AirStatuses.Airing,
+                AirStatuses.Aired
             };
             for (var i = 0; i < airStatuses.Length; i++)
             {
@@ -331,7 +331,7 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
             var descriptions = new string[] { null, "", "A", new string('D', 29999), new string('D', 30000) };
             var startDates = new DateTime?[] { null, new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc), new DateTime(2020, 12, 22, 0, 0, 0, DateTimeKind.Utc), DateTime.Now.AddYears(10), DateTime.Now.AddDays(876) };
             var endDates = new DateTime?[] { null, new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc), new DateTime(2020, 12, 23, 0, 0, 0, DateTimeKind.Utc), DateTime.Now.AddYears(10), DateTime.Now.AddDays(877) };
-            var airStatuses = new AirStatusEnum[] { AirStatusEnum.UNKNOWN, AirStatusEnum.NotAired, AirStatusEnum.Airing, AirStatusEnum.Aired, AirStatusEnum.NotAired };
+            var airStatuses = new AirStatuses[] { AirStatuses.UNKNOWN, AirStatuses.NotAired, AirStatuses.Airing, AirStatuses.Aired, AirStatuses.NotAired };
             var numOfEpisodes = new int?[] { null, 1, 123, 400, 675 };
             var coverCarousels = new byte[]?[] { null, Encoding.UTF8.GetBytes("C"), Encoding.UTF8.GetBytes("ASD"), Encoding.UTF8.GetBytes("421ASD"), Encoding.UTF8.GetBytes("asdFDSF3412") };
             var covers = new byte[]?[] { null, Encoding.UTF8.GetBytes("C"), Encoding.UTF8.GetBytes("ASD"), Encoding.UTF8.GetBytes("421ASD"), Encoding.UTF8.GetBytes("asdFDSF3412") };

@@ -1,6 +1,6 @@
 ﻿namespace AnimeBrowser.Common.Models.Enums
 {
-    public enum AirStatusEnum : int
+    public enum AirStatuses : int
     {
         UNKNOWN = 0,
         NotAired = 10,

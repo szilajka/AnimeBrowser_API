@@ -9,7 +9,7 @@ namespace AnimeBrowser.Common.Models.BaseModels.MainModels
     public class SeasonRequestModel
     {
         public SeasonRequestModel(int seasonNumber, string title, string description, DateTime? startDate, DateTime? endDate,
-                                    AirStatusEnum airStatus, int? numberOfEpisodes, byte[] coverCarousel, byte[] cover, long animeInfoId)
+                                    AirStatuses airStatus, int? numberOfEpisodes, byte[] coverCarousel, byte[] cover, long animeInfoId)
         {
             this.SeasonNumber = seasonNumber;
             this.Title = title;
@@ -33,7 +33,7 @@ namespace AnimeBrowser.Common.Models.BaseModels.MainModels
 
         public DateTime? EndDate { get; set; }
 
-        public AirStatusEnum AirStatus { get; set; }
+        public AirStatuses AirStatus { get; set; }
 
         public int? NumberOfEpisodes { get; set; }
 
