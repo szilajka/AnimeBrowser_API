@@ -14,9 +14,12 @@ namespace AnimeBrowser.Data.Entities
         public string Message { get; set; }
         public long SeasonId { get; set; }
         public string UserId { get; set; }
+        public bool? IsSeasonActive { get; set; }
+        public bool? IsAnimeInfoActive { get; set; }
 
         public virtual Season Season { get; set; }
         public virtual User User { get; set; }
+
 
         [ExcludeFromCodeCoverage]
         public override string ToString() => JsonSerializer.Serialize(this, new JsonSerializerOptions

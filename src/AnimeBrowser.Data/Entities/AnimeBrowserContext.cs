@@ -1,12 +1,10 @@
 ﻿using AnimeBrowser.Data.Entities.Identity;
 using Microsoft.EntityFrameworkCore;
-using System.Diagnostics.CodeAnalysis;
 
 #nullable disable
 
 namespace AnimeBrowser.Data.Entities
 {
-    [ExcludeFromCodeCoverage]
     public partial class AnimeBrowserContext : DbContext
     {
         public AnimeBrowserContext()
@@ -59,6 +57,11 @@ namespace AnimeBrowser.Data.Entities
                     .HasColumnType("character varying")
                     .HasColumnName("description");
 
+                entity.Property(e => e.IsActive)
+                    .IsRequired()
+                    .HasColumnName("is_active")
+                    .HasDefaultValueSql("true");
+
                 entity.Property(e => e.IsNsfw).HasColumnName("is_nsfw");
 
                 entity.Property(e => e.Title)
@@ -108,6 +111,21 @@ namespace AnimeBrowser.Data.Entities
                     .HasColumnName("description");
 
                 entity.Property(e => e.EpisodeNumber).HasColumnName("episode_number");
+
+                entity.Property(e => e.IsActive)
+                    .IsRequired()
+                    .HasColumnName("is_active")
+                    .HasDefaultValueSql("true");
+
+                entity.Property(e => e.IsAnimeInfoActive)
+                    .IsRequired()
+                    .HasColumnName("is_anime_info_active")
+                    .HasDefaultValueSql("true");
+
+                entity.Property(e => e.IsSeasonActive)
+                    .IsRequired()
+                    .HasColumnName("is_season_active")
+                    .HasDefaultValueSql("true");
 
                 entity.Property(e => e.Rating)
                     .HasPrecision(3, 2)
@@ -162,6 +180,21 @@ namespace AnimeBrowser.Data.Entities
                 entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.EpisodeId).HasColumnName("episode_id");
+
+                entity.Property(e => e.IsAnimeInfoActive)
+                    .IsRequired()
+                    .HasColumnName("is_anime_info_active")
+                    .HasDefaultValueSql("true");
+
+                entity.Property(e => e.IsEpisodeActive)
+                    .IsRequired()
+                    .HasColumnName("is_episode_active")
+                    .HasDefaultValueSql("true");
+
+                entity.Property(e => e.IsSeasonActive)
+                    .IsRequired()
+                    .HasColumnName("is_season_active")
+                    .HasDefaultValueSql("true");
 
                 entity.Property(e => e.Message)
                     .HasMaxLength(30000)
@@ -275,6 +308,16 @@ namespace AnimeBrowser.Data.Entities
                     .HasColumnType("date")
                     .HasColumnName("end_date");
 
+                entity.Property(e => e.IsActive)
+                    .IsRequired()
+                    .HasColumnName("is_active")
+                    .HasDefaultValueSql("true");
+
+                entity.Property(e => e.IsAnimeInfoActive)
+                    .IsRequired()
+                    .HasColumnName("is_anime_info_active")
+                    .HasDefaultValueSql("true");
+
                 entity.Property(e => e.NumberOfEpisodes).HasColumnName("number_of_episodes");
 
                 entity.Property(e => e.Rating)
@@ -370,6 +413,16 @@ namespace AnimeBrowser.Data.Entities
                 entity.ToTable("season_rating");
 
                 entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.IsAnimeInfoActive)
+                    .IsRequired()
+                    .HasColumnName("is_anime_info_active")
+                    .HasDefaultValueSql("true");
+
+                entity.Property(e => e.IsSeasonActive)
+                    .IsRequired()
+                    .HasColumnName("is_season_active")
+                    .HasDefaultValueSql("true");
 
                 entity.Property(e => e.Message)
                     .HasMaxLength(30000)

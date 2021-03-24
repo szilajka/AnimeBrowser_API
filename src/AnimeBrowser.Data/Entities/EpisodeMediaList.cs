@@ -1,7 +1,8 @@
-﻿#nullable disable
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Text.Encodings.Web;
 using System.Text.Json;
+
+#nullable disable
 
 namespace AnimeBrowser.Data.Entities
 {

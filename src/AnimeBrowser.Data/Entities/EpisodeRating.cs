@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Encodings.Web;
 using System.Text.Json;
+
 #nullable disable
 
 namespace AnimeBrowser.Data.Entities
@@ -13,6 +14,9 @@ namespace AnimeBrowser.Data.Entities
         public string Message { get; set; }
         public long EpisodeId { get; set; }
         public string UserId { get; set; }
+        public bool? IsEpisodeActive { get; set; }
+        public bool? IsSeasonActive { get; set; }
+        public bool? IsAnimeInfoActive { get; set; }
 
         public virtual Episode Episode { get; set; }
         public virtual User User { get; set; }

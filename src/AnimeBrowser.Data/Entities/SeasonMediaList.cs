@@ -1,8 +1,8 @@
-﻿#nullable disable
-
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Text.Encodings.Web;
 using System.Text.Json;
+
+#nullable disable
 
 namespace AnimeBrowser.Data.Entities
 {
@@ -14,6 +14,7 @@ namespace AnimeBrowser.Data.Entities
 
         public virtual MediaList List { get; set; }
         public virtual Season Season { get; set; }
+
 
         [ExcludeFromCodeCoverage]
         public override string ToString() => JsonSerializer.Serialize(this, new JsonSerializerOptions

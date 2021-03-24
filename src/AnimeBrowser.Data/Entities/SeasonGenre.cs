@@ -4,7 +4,6 @@ using System.Text.Json;
 
 #nullable disable
 
-
 namespace AnimeBrowser.Data.Entities
 {
     public partial class SeasonGenre
@@ -15,6 +14,7 @@ namespace AnimeBrowser.Data.Entities
 
         public virtual Genre Genre { get; set; }
         public virtual Season Season { get; set; }
+
 
         [ExcludeFromCodeCoverage]
         public override string ToString() => JsonSerializer.Serialize(this, new JsonSerializerOptions

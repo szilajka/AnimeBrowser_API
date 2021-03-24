@@ -21,7 +21,7 @@ $$;
 ALTER FUNCTION public.create_user_list() OWNER TO ab_user;
 
 --
--- TOC entry 3044 (class 2620 OID 42451)
+-- TOC entry 3055 (class 2620 OID 42451)
 -- Name: Users tg_create_user_list; Type: TRIGGER; Schema: identity; Owner: ab_user
 --
 

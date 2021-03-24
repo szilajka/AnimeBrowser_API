@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Encodings.Web;
 using System.Text.Json;
@@ -18,21 +17,15 @@ namespace AnimeBrowser.Data.Entities
         }
 
         public long Id { get; set; }
-
-        [Required]
-        [MinLength(1)]
-        [MaxLength(255)]
         public string Title { get; set; }
-
-        [MaxLength(30000)]
         public string Description { get; set; }
-
-        [Required]
         public bool IsNsfw { get; set; }
+        public bool? IsActive { get; set; }
 
         public virtual ICollection<AnimeInfoName> AnimeInfoNames { get; set; }
         public virtual ICollection<Episode> Episodes { get; set; }
         public virtual ICollection<Season> Seasons { get; set; }
+
 
         [ExcludeFromCodeCoverage]
         public override string ToString() => JsonSerializer.Serialize(this, new JsonSerializerOptions
