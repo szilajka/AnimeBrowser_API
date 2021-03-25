@@ -20,6 +20,7 @@ namespace AnimeBrowser.UnitTests.Write.AnimeInfoTests
     [TestClass]
     public class AnimeInfoCreationTests : TestBase
     {
+        private IList<AnimeInfo> allAnimeInfos;
         private static IList<AnimeInfoCreationRequestModel> allRequestModels;
 
         [ClassInitialize]
@@ -48,21 +49,30 @@ namespace AnimeBrowser.UnitTests.Write.AnimeInfoTests
                 $"{new string(' ', 30000)}MC wanan be the next Pirate King.{new string(' ', 134)}"
             };
             var isNsfws = new bool[] { false, false, false, false, true, true, true, true };
+            var isActives = new bool[] { true, true, true, true, false, false, false, false };
             for (var i = 0; i < titles.Length; i++)
             {
-                allRequestModels.Add(new AnimeInfoCreationRequestModel(title: titles[i], description: descriptions[i], isNsfw: isNsfws[i]));
+                allRequestModels.Add(new AnimeInfoCreationRequestModel(title: titles[i], description: descriptions[i], isNsfw: isNsfws[i], isActive: isActives[i]));
             }
         }
 
-        private static IEnumerable<object[]> GetShouldWorkData()
+        [TestInitialize]
+        public void InitDb()
+        {
+            allAnimeInfos = new List<AnimeInfo> {
+                new AnimeInfo { Id = 10, Title = "JoJo's Bizarre Adventure", Description = string.Empty, IsNsfw = false, IsActive = true },
+                new AnimeInfo { Id = 20, Title = "Kuroku no Basketball", Description = string.Empty, IsNsfw = false, IsActive = true }
+            };
+        }
+
+        private static IEnumerable<object[]> GetBasicData()
         {
             for (var i = 0; i < allRequestModels.Count; i++)
             {
                 var airm = allRequestModels[i];
-                yield return new object[] { new AnimeInfoCreationRequestModel(title: airm.Title, description: airm.Description, isNsfw: airm.IsNsfw) };
+                yield return new object[] { new AnimeInfoCreationRequestModel(title: airm.Title, description: airm.Description, isNsfw: airm.IsNsfw, isActive: airm.IsActive) };
             }
         }
-
 
         private static IEnumerable<object[]> GetInvalidTitleData()
         {
@@ -73,43 +83,59 @@ namespace AnimeBrowser.UnitTests.Write.AnimeInfoTests
                 new string(' ', 300)
             };
             var errorCodes = new ErrorCodes[] { ErrorCodes.EmptyProperty, ErrorCodes.TooLongProperty, ErrorCodes.EmptyProperty, ErrorCodes.EmptyProperty };
+            string propertyName = nameof(AnimeInfoCreationRequestModel.Title);
             for (var i = 0; i < titles.Length; i++)
             {
                 var airm = allRequestModels[i];
-                yield return new object[] { new AnimeInfoCreationRequestModel(title: titles[i], description: airm.Description, isNsfw: airm.IsNsfw), errorCodes[i] };
+                yield return new object[] { new AnimeInfoCreationRequestModel(title: titles[i], description: airm.Description, isNsfw: airm.IsNsfw, isActive: airm.IsActive), errorCodes[i], propertyName };
             }
         }
 
+        private static IEnumerable<object[]> GetInvalidDescriptionData()
+        {
+            var descriptions = new string[] { new string('D', 30001), new string('D', 35000), new string('D', 90000) };
+            var errorCodes = new ErrorCodes[] { ErrorCodes.TooLongProperty, ErrorCodes.TooLongProperty, ErrorCodes.TooLongProperty };
+            string propertyName = nameof(AnimeInfoCreationRequestModel.Description);
+            for (var i = 0; i < descriptions.Length; i++)
+            {
+                var airm = allRequestModels[i];
+                yield return new object[] { new AnimeInfoCreationRequestModel(title: airm.Title, description: descriptions[i], isNsfw: airm.IsNsfw, isActive: airm.IsActive), errorCodes[i], propertyName };
+            }
+        }
+
+
         [DataTestMethod,
-        DynamicData(nameof(GetShouldWorkData), DynamicDataSourceType.Method)]
+        DynamicData(nameof(GetBasicData), DynamicDataSourceType.Method)]
         public async Task CreateAnimeInfo_ShouldWork(AnimeInfoCreationRequestModel animeInfoRequestModel)
         {
-            AnimeInfo animeInfo = null;
-            var responseModel = animeInfoRequestModel.ToAnimeInfo().ToCreationResponseModel();
-            responseModel.Id = 1;
-
+            AnimeInfo savedAnimeInfo = null;
             var sp = SetupDI((services) =>
             {
                 var animeInfoRepo = new Mock<IAnimeInfoWrite>();
 
-                animeInfoRepo.Setup(ai => ai.CreateAnimeInfo(It.IsAny<AnimeInfo>())).Callback<AnimeInfo>(ai => { animeInfo = ai; animeInfo.Id = 1; }).ReturnsAsync(() => animeInfo!);
+                animeInfoRepo.Setup(ai => ai.CreateAnimeInfo(It.IsAny<AnimeInfo>())).Callback<AnimeInfo>(ai => { savedAnimeInfo = ai; savedAnimeInfo.Id = 1; allAnimeInfos.Add(savedAnimeInfo); }).ReturnsAsync(() => savedAnimeInfo!);
 
                 services.AddTransient(_ => animeInfoRepo.Object);
                 services.AddTransient<IAnimeInfoCreation, AnimeInfoCreationHandler>();
             });
+
+            var animeInfo = animeInfoRequestModel.ToAnimeInfo();
+            animeInfo.Id = 1;
+            var responseModel = animeInfo.ToCreationResponseModel();
 
             var animeInfoHandler = sp.GetService<IAnimeInfoCreation>();
             var result = await animeInfoHandler!.CreateAnimeInfo(animeInfoRequestModel);
 
             result.Should().NotBeNull();
             result.Should().BeEquivalentTo(responseModel);
+            allAnimeInfos.Should().ContainEquivalentOf(animeInfo);
         }
 
         [DataTestMethod,
            DynamicData(nameof(GetInvalidTitleData), DynamicDataSourceType.Method)]
-        public async Task CreateAnimeInfo_InvalidTitle_ExceptionThrown(AnimeInfoCreationRequestModel animeInfoRequestModel, ErrorCodes errCode)
+        public async Task CreateAnimeInfo_InvalidTitle_ExceptionThrown(AnimeInfoCreationRequestModel animeInfoRequestModel, ErrorCodes errorCode, string propertyName)
         {
-            var errors = CreateErrorList(errCode, nameof(AnimeInfoCreationRequestModel.Title));
+            var errors = CreateErrorList(errorCode, propertyName);
             var sp = SetupDI((services) =>
             {
                 var animeInfoRepo = new Mock<IAnimeInfoWrite>();
@@ -118,18 +144,16 @@ namespace AnimeBrowser.UnitTests.Write.AnimeInfoTests
             });
 
             var animeInfoHandler = sp.GetService<IAnimeInfoCreation>();
-            Func<Task> act = async () => await animeInfoHandler.CreateAnimeInfo(animeInfoRequestModel);
-            var valEx = await act.Should().ThrowAsync<ValidationException>();
+            Func<Task> createAnimeInfoFunc = async () => await animeInfoHandler!.CreateAnimeInfo(animeInfoRequestModel);
+            var valEx = await createAnimeInfoFunc.Should().ThrowAsync<ValidationException>();
             valEx.And.Errors.Should().BeEquivalentTo(errors, options => options.Excluding(o => o.Description));
         }
 
-        [TestMethod]
-        public async Task CreateAnimeInfo_TooLongDescription_ExceptionThrown()
+        [DataTestMethod,
+            DynamicData(nameof(GetInvalidDescriptionData), DynamicDataSourceType.Method)]
+        public async Task CreateAnimeInfo_InvalidDescription_ExceptionThrown(AnimeInfoCreationRequestModel animeInfoRequestModel, ErrorCodes errorCode, string propertyName)
         {
-            var errors = CreateErrorList(ErrorCodes.TooLongProperty, nameof(AnimeInfoCreationRequestModel.Description));
-            var description = new string('A', 30001);
-            var requestModel = new AnimeInfoCreationRequestModel { Title = "asd", Description = description, IsNsfw = false };
-
+            var errors = CreateErrorList(errorCode, propertyName);
             var sp = SetupDI((services) =>
             {
                 var animeInfoRepo = new Mock<IAnimeInfoWrite>();
@@ -138,8 +162,8 @@ namespace AnimeBrowser.UnitTests.Write.AnimeInfoTests
             });
 
             var animeInfoHandler = sp.GetService<IAnimeInfoCreation>();
-            Func<Task> act = async () => await animeInfoHandler.CreateAnimeInfo(requestModel);
-            var valEx = await act.Should().ThrowAsync<ValidationException>();
+            Func<Task> createAnimeInfoFunc = async () => await animeInfoHandler!.CreateAnimeInfo(animeInfoRequestModel);
+            var valEx = await createAnimeInfoFunc.Should().ThrowAsync<ValidationException>();
             valEx.And.Errors.Should().BeEquivalentTo(errors, options => options.Excluding(o => o.Description));
         }
 
@@ -154,15 +178,14 @@ namespace AnimeBrowser.UnitTests.Write.AnimeInfoTests
             });
 
             var animeInfoHandler = sp.GetService<IAnimeInfoCreation>();
-            Func<Task> act = async () => await animeInfoHandler.CreateAnimeInfo(null);
-            await act.Should().ThrowAsync<EmptyObjectException<AnimeInfoCreationRequestModel>>();
+            Func<Task> createAnimeInfoFunc = async () => await animeInfoHandler!.CreateAnimeInfo(null!);
+            await createAnimeInfoFunc.Should().ThrowAsync<EmptyObjectException<AnimeInfoCreationRequestModel>>();
         }
 
-        [TestMethod]
-        public async Task CreateAnimeInfo_RepositoryException_ExceptionThrown()
+        [DataTestMethod,
+             DynamicData(nameof(GetBasicData), DynamicDataSourceType.Method)]
+        public async Task CreateAnimeInfo_RepositoryException_ExceptionThrown(AnimeInfoCreationRequestModel animeInfoRequestModel)
         {
-            var requestModel = new AnimeInfoCreationRequestModel { Title = "asd", Description = "", IsNsfw = false };
-
             var sp = SetupDI((services) =>
             {
                 var animeInfoRepo = new Mock<IAnimeInfoWrite>();
@@ -172,8 +195,16 @@ namespace AnimeBrowser.UnitTests.Write.AnimeInfoTests
             });
 
             var animeInfoHandler = sp.GetService<IAnimeInfoCreation>();
-            Func<Task> act = async () => await animeInfoHandler.CreateAnimeInfo(requestModel);
-            await act.Should().ThrowAsync<InvalidOperationException>();
+            Func<Task> createAnimeInfoFunc = async () => await animeInfoHandler!.CreateAnimeInfo(animeInfoRequestModel);
+            await createAnimeInfoFunc.Should().ThrowAsync<InvalidOperationException>();
+        }
+
+
+        [TestCleanup]
+        public void CleanDb()
+        {
+            allAnimeInfos.Clear();
+            allAnimeInfos = null;
         }
 
         [ClassCleanup]
