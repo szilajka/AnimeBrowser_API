@@ -74,7 +74,11 @@ namespace AnimeBrowser.BL.Services.Write.MainHandlers
                     var notExistingAnimeInfoEx = new NotFoundObjectException<AnimeInfo>(error, $"There is no {nameof(AnimeInfo)} object that was given in {nameof(seasonRequestModel.AnimeInfoId)} property.");
                     throw notExistingAnimeInfoEx;
                 }
-                var createdSeason = await seasonWriteRepo.CreateSeason(seasonRequestModel.ToSeason());
+
+                var season = seasonRequestModel.ToSeason();
+                season.IsAnimeInfoActive = animeInfo.IsActive;
+
+                var createdSeason = await seasonWriteRepo.CreateSeason(season);
 
                 var responseModel = createdSeason.ToCreationResponseModel();
 

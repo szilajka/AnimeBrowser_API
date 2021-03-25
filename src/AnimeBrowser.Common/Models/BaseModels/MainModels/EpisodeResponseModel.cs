@@ -8,7 +8,8 @@ namespace AnimeBrowser.Common.Models.BaseModels.MainModels
 {
     public class EpisodeResponseModel
     {
-        public EpisodeResponseModel(long id, int episodeNumber, AirStatuses airStatus, byte[] cover, DateTime? airDate, long animeInfoId, long seasonId, string title = "", string description = "")
+        public EpisodeResponseModel(long id, int episodeNumber, AirStatuses airStatus, byte[] cover, DateTime? airDate, long animeInfoId, long seasonId, bool isSeasonActive, bool isAnimeInfoActive,
+            string title = "", string description = "", bool isActive = true)
         {
             this.Id = id;
             this.EpisodeNumber = episodeNumber;
@@ -19,6 +20,9 @@ namespace AnimeBrowser.Common.Models.BaseModels.MainModels
             this.AirDate = airDate;
             this.AnimeInfoId = animeInfoId;
             this.SeasonId = seasonId;
+            this.IsActive = isActive;
+            this.IsSeasonActive = isSeasonActive;
+            this.IsAnimeInfoActive = isAnimeInfoActive;
         }
 
         public long Id { get; set; }
@@ -30,6 +34,10 @@ namespace AnimeBrowser.Common.Models.BaseModels.MainModels
         public DateTime? AirDate { get; set; }
         public long AnimeInfoId { get; set; }
         public long SeasonId { get; set; }
+        public bool IsActive { get; set; }
+        public bool IsSeasonActive { get; set; }
+        public bool IsAnimeInfoActive { get; set; }
+
 
         [ExcludeFromCodeCoverage]
         public override string ToString() => JsonSerializer.Serialize(this, new JsonSerializerOptions

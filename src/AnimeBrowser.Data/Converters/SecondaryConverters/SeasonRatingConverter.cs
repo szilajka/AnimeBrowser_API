@@ -38,13 +38,15 @@ namespace AnimeBrowser.Data.Converters.SecondaryConverters
         #region ResponseModel
         public static SeasonRatingEditingResponseModel ToEditingResponseModel(this SeasonRating seasonRating)
         {
-            var responseModel = new SeasonRatingEditingResponseModel(id: seasonRating.Id, rating: seasonRating.Rating, seasonId: seasonRating.SeasonId, userId: seasonRating.UserId, message: seasonRating.Message);
+            var responseModel = new SeasonRatingEditingResponseModel(id: seasonRating.Id, rating: seasonRating.Rating, seasonId: seasonRating.SeasonId, userId: seasonRating.UserId, message: seasonRating.Message,
+                isAnimeInfoActive: seasonRating.IsAnimeInfoActive.Value, isSeasonActive: seasonRating.IsSeasonActive.Value);
             return responseModel;
         }
 
         public static SeasonRatingCreationResponseModel ToCreationResponseModel(this SeasonRating seasonRating)
         {
-            var responseModel = new SeasonRatingCreationResponseModel(id: seasonRating.Id, rating: seasonRating.Rating, seasonId: seasonRating.SeasonId, userId: seasonRating.UserId, message: seasonRating.Message);
+            var responseModel = new SeasonRatingCreationResponseModel(id: seasonRating.Id, rating: seasonRating.Rating, seasonId: seasonRating.SeasonId, userId: seasonRating.UserId, message: seasonRating.Message,
+                isAnimeInfoActive: seasonRating.IsAnimeInfoActive.Value, isSeasonActive: seasonRating.IsSeasonActive.Value);
             return responseModel;
         }
 

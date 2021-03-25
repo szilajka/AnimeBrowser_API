@@ -6,13 +6,15 @@ namespace AnimeBrowser.Common.Models.BaseModels.SecondaryModels
 {
     public class SeasonRatingResponseModel
     {
-        public SeasonRatingResponseModel(long id, int rating, long seasonId, string userId, string message = "")
+        public SeasonRatingResponseModel(long id, int rating, long seasonId, string userId, bool isAnimeInfoActive, bool isSeasonActive, string message = "")
         {
             this.Id = id;
             this.Rating = rating;
             this.Message = message;
             this.SeasonId = seasonId;
             this.UserId = userId;
+            this.IsAnimeInfoActive = isAnimeInfoActive;
+            this.IsSeasonActive = isSeasonActive;
         }
 
         public long Id { get; set; }
@@ -20,6 +22,8 @@ namespace AnimeBrowser.Common.Models.BaseModels.SecondaryModels
         public string Message { get; set; }
         public long SeasonId { get; set; }
         public string UserId { get; set; }
+        public bool IsAnimeInfoActive { get; set; }
+        public bool IsSeasonActive { get; set; }
 
 
         [ExcludeFromCodeCoverage]

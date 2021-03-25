@@ -6,9 +6,11 @@ namespace AnimeBrowser.Common.Models.ResponseModels.MainModels
     public class SeasonCreationResponseModel : SeasonResponseModel
     {
         public SeasonCreationResponseModel(long id, int seasonNumber, string title, string description, DateTime? startDate, DateTime? endDate,
-                                            int airStatus, int? numberOfEpisodes, byte[] coverCarousel, byte[] cover, long animeInfoId) :
+                                            int airStatus, int? numberOfEpisodes, byte[] coverCarousel, byte[] cover, long animeInfoId,
+                                            bool isAnimeInfoActive, bool isActive = true) :
             base(id: id, seasonNumber: seasonNumber, title: title, description: description, startDate: startDate, endDate: endDate,
-                                            airStatus: airStatus, numberOfEpisodes: numberOfEpisodes, coverCarousel: coverCarousel, cover: cover, animeInfoId: animeInfoId)
+                                            airStatus: airStatus, numberOfEpisodes: numberOfEpisodes, coverCarousel: coverCarousel, cover: cover, animeInfoId: animeInfoId,
+                                            isActive: isActive, isAnimeInfoActive: isAnimeInfoActive)
         {
         }
     }

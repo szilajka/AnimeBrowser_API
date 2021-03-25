@@ -19,8 +19,8 @@ namespace AnimeBrowser.Data.Converters.MainConverters
                 AirDate = requestModel.AirDate,
                 Cover = requestModel.Cover,
                 SeasonId = requestModel.SeasonId,
-                AnimeInfoId = requestModel.AnimeInfoId
-
+                AnimeInfoId = requestModel.AnimeInfoId,
+                IsActive = requestModel.IsActive
             };
             return episode;
         }
@@ -38,7 +38,6 @@ namespace AnimeBrowser.Data.Converters.MainConverters
                 Cover = requestModel.Cover,
                 SeasonId = requestModel.SeasonId,
                 AnimeInfoId = requestModel.AnimeInfoId
-
             };
             return episode;
         }
@@ -51,7 +50,8 @@ namespace AnimeBrowser.Data.Converters.MainConverters
         {
             var responseModel = new EpisodeEditingResponseModel(id: episode.Id, episodeNumber: episode.EpisodeNumber, airStatus: (AirStatuses)episode.AirStatus,
                 title: episode.Title, description: episode.Description, airDate: episode.AirDate,
-                cover: episode.Cover, seasonId: episode.SeasonId, animeInfoId: episode.AnimeInfoId);
+                cover: episode.Cover, seasonId: episode.SeasonId, animeInfoId: episode.AnimeInfoId,
+                isActive: episode.IsActive.Value, isSeasonActive: episode.IsSeasonActive.Value, isAnimeInfoActive: episode.IsAnimeInfoActive.Value);
             return responseModel;
         }
 
@@ -59,7 +59,8 @@ namespace AnimeBrowser.Data.Converters.MainConverters
         {
             var responseModel = new EpisodeCreationResponseModel(id: episode.Id, episodeNumber: episode.EpisodeNumber, airStatus: (AirStatuses)episode.AirStatus,
                 title: episode.Title, description: episode.Description, airDate: episode.AirDate,
-                cover: episode.Cover, seasonId: episode.SeasonId, animeInfoId: episode.AnimeInfoId);
+                cover: episode.Cover, seasonId: episode.SeasonId, animeInfoId: episode.AnimeInfoId,
+                isActive: episode.IsActive.Value, isSeasonActive: episode.IsSeasonActive.Value, isAnimeInfoActive: episode.IsAnimeInfoActive.Value);
             return responseModel;
         }
 

@@ -96,6 +96,10 @@ namespace AnimeBrowser.BL.Services.Write.SecondaryHandlers
                 }
 
                 var episodeRating = episodeRatingRequestModel.ToEpisodeRating();
+                episodeRating.IsAnimeInfoActive = episode.IsAnimeInfoActive;
+                episodeRating.IsSeasonActive = episode.IsSeasonActive;
+                episodeRating.IsEpisodeActive = episode.IsActive;
+
                 var createdEpisodeRating = await episodeRatingWriteRepo.CreateEpisodeRating(episodeRating);
                 var responseModel = createdEpisodeRating.ToCreationResponseModel();
 

@@ -83,7 +83,11 @@ namespace AnimeBrowser.BL.Services.Write.MainHandlers
                     throw alreadyExistingEx;
                 }
 
-                var episode = await episodeWriteRepo.CreateEpisode(episodeRequestModel.ToEpisode());
+                var episode = episodeRequestModel.ToEpisode();
+                episode.IsSeasonActive = season.IsActive;
+                episode.IsAnimeInfoActive = season.IsAnimeInfoActive;
+
+                episode = await episodeWriteRepo.CreateEpisode(episode);
                 var responseModel = episode.ToCreationResponseModel();
 
                 logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. {nameof(EpisodeCreationResponseModel)}.{nameof(EpisodeCreationResponseModel.Id)}: [{responseModel.Id}].");

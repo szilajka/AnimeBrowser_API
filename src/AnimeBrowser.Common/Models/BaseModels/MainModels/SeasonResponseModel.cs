@@ -8,7 +8,8 @@ namespace AnimeBrowser.Common.Models.BaseModels.MainModels
     public class SeasonResponseModel
     {
         public SeasonResponseModel(long id, int seasonNumber, string title, string description, DateTime? startDate, DateTime? endDate,
-                                    int airStatus, int? numberOfEpisodes, byte[] coverCarousel, byte[] cover, long animeInfoId)
+                                    int airStatus, int? numberOfEpisodes, byte[] coverCarousel, byte[] cover, long animeInfoId,
+                                    bool isAnimeInfoActive, bool isActive = true)
         {
             this.Id = id;
             this.SeasonNumber = seasonNumber;
@@ -21,6 +22,8 @@ namespace AnimeBrowser.Common.Models.BaseModels.MainModels
             this.CoverCarousel = coverCarousel;
             this.Cover = cover;
             this.AnimeInfoId = animeInfoId;
+            this.IsActive = isActive;
+            this.IsAnimeInfoActive = isAnimeInfoActive;
         }
 
         public long Id { get; set; }
@@ -44,6 +47,10 @@ namespace AnimeBrowser.Common.Models.BaseModels.MainModels
         public byte[] Cover { get; set; }
 
         public long AnimeInfoId { get; set; }
+
+        public bool IsActive { get; set; }
+
+        public bool IsAnimeInfoActive { get; set; }
 
 
         [ExcludeFromCodeCoverage]

@@ -21,7 +21,8 @@ namespace AnimeBrowser.Data.Converters.MainConverters
                 NumberOfEpisodes = requestModel.NumberOfEpisodes,
                 CoverCarousel = requestModel.CoverCarousel,
                 Cover = requestModel.Cover,
-                AnimeInfoId = requestModel.AnimeInfoId
+                AnimeInfoId = requestModel.AnimeInfoId,
+                IsActive = requestModel.IsActive
             };
 
             return season;
@@ -55,7 +56,8 @@ namespace AnimeBrowser.Data.Converters.MainConverters
         {
             var responseModel = new SeasonCreationResponseModel(id: season.Id, seasonNumber: season.SeasonNumber, title: season.Title, description: season.Description,
                 startDate: season.StartDate, endDate: season.EndDate, airStatus: season.AirStatus, numberOfEpisodes: season.NumberOfEpisodes,
-                coverCarousel: season.CoverCarousel, cover: season.Cover, animeInfoId: season.AnimeInfoId);
+                coverCarousel: season.CoverCarousel, cover: season.Cover, animeInfoId: season.AnimeInfoId,
+                isActive: season.IsActive.Value, isAnimeInfoActive: season.IsAnimeInfoActive.Value);
             return responseModel;
         }
 
@@ -63,7 +65,8 @@ namespace AnimeBrowser.Data.Converters.MainConverters
         {
             var responseModel = new SeasonEditingResponseModel(id: season.Id, seasonNumber: season.SeasonNumber, title: season.Title, description: season.Description,
                 startDate: season.StartDate, endDate: season.EndDate, airStatus: season.AirStatus, numberOfEpisodes: season.NumberOfEpisodes,
-                coverCarousel: season.CoverCarousel, cover: season.Cover, animeInfoId: season.AnimeInfoId);
+                coverCarousel: season.CoverCarousel, cover: season.Cover, animeInfoId: season.AnimeInfoId,
+                isActive: season.IsActive.Value, isAnimeInfoActive: season.IsAnimeInfoActive.Value);
             return responseModel;
         }
 
