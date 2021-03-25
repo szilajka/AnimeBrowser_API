@@ -1,4 +1,5 @@
 ﻿using AnimeBrowser.Data.Entities;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace AnimeBrowser.Data.Interfaces.Write.MainInterfaces
@@ -7,6 +8,6 @@ namespace AnimeBrowser.Data.Interfaces.Write.MainInterfaces
     {
         Task<Episode> CreateEpisode(Episode episode);
         Task<Episode> UpdateEpisode(Episode episode);
-        Task DeleteEpisode(Episode episode);
+        Task DeleteEpisode(Episode episode, IEnumerable<EpisodeRating>? episodeRatings = null);
     }
 }

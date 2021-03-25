@@ -57,5 +57,15 @@ namespace AnimeBrowser.Data.Repositories.Read.MainRepositories
             logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. {nameof(result)}: [{result}].");
             return result;
         }
+
+        public IEnumerable<Season>? GetSeasonsByAnimeInfoId(long animeInfoId)
+        {
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method started. {nameof(animeInfoId)}: [{animeInfoId}].");
+
+            var foundSeasons = abContext.Seasons.ToList().Where(s => s.AnimeInfoId == animeInfoId);
+
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. {nameof(foundSeasons)}.Count: [{foundSeasons?.Count()}].");
+            return foundSeasons;
+        }
     }
 }

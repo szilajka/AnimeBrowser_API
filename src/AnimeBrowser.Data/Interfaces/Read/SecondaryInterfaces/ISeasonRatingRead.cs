@@ -1,4 +1,5 @@
 ﻿using AnimeBrowser.Data.Entities;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace AnimeBrowser.Data.Interfaces.Read.SecondaryInterfaces
@@ -7,5 +8,7 @@ namespace AnimeBrowser.Data.Interfaces.Read.SecondaryInterfaces
     {
         Task<SeasonRating?> GetSeasonRatingById(long id);
         SeasonRating? GetSeasonRatingBySeasonAndUserId(long seasonId, string userId);
+        IEnumerable<SeasonRating>? GetSeasonRatingsBySeasonId(long seasonId);
+        IEnumerable<SeasonRating>? GetSeasonRatingsBySeasonIds(IEnumerable<long> seasonIds);
     }
 }

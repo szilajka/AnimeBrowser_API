@@ -4,9 +4,12 @@ using AnimeBrowser.Common.Helpers;
 using AnimeBrowser.Common.Models.ErrorModels;
 using AnimeBrowser.Data.Entities;
 using AnimeBrowser.Data.Interfaces.Read.MainInterfaces;
+using AnimeBrowser.Data.Interfaces.Read.SecondaryInterfaces;
 using AnimeBrowser.Data.Interfaces.Write.MainInterfaces;
 using Serilog;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace AnimeBrowser.BL.Services.Write.MainHandlers
@@ -15,11 +18,20 @@ namespace AnimeBrowser.BL.Services.Write.MainHandlers
     {
         private readonly ILogger logger = Log.ForContext<AnimeInfoDeleteHandler>();
         private readonly IAnimeInfoRead animeInfoReadRepo;
+        private readonly ISeasonRead seasonReadRepo;
+        private readonly IEpisodeRead episodeReadRepo;
+        private readonly ISeasonRatingRead seasonRatingReadRepo;
+        private readonly IEpisodeRatingRead episodeRatingReadRepo;
         private readonly IAnimeInfoWrite animeInfoWriteRepo;
 
-        public AnimeInfoDeleteHandler(IAnimeInfoRead animeInfoReadRepo, IAnimeInfoWrite animeInfoWriteRepo)
+        public AnimeInfoDeleteHandler(IAnimeInfoRead animeInfoReadRepo, ISeasonRead seasonReadRepo, IEpisodeRead episodeReadRepo,
+            ISeasonRatingRead seasonRatingReadRepo, IEpisodeRatingRead episodeRatingReadRepo, IAnimeInfoWrite animeInfoWriteRepo)
         {
             this.animeInfoReadRepo = animeInfoReadRepo;
+            this.seasonReadRepo = seasonReadRepo;
+            this.episodeReadRepo = episodeReadRepo;
+            this.seasonRatingReadRepo = seasonRatingReadRepo;
+            this.episodeRatingReadRepo = episodeRatingReadRepo;
             this.animeInfoWriteRepo = animeInfoWriteRepo;
         }
 
@@ -46,7 +58,23 @@ namespace AnimeBrowser.BL.Services.Write.MainHandlers
                     throw new NotFoundObjectException<AnimeInfo>(error, $"Not found an {nameof(AnimeInfo)} entity with id: [{id}].");
                 }
 
-                await animeInfoWriteRepo.DeleteAnimeInfo(animeInfo);
+                var seasons = seasonReadRepo.GetSeasonsByAnimeInfoId(id);
+                var seasonIds = seasons?.Select(s => s.Id).Distinct();
+                IEnumerable<Episode>? episodes = null;
+                IEnumerable<SeasonRating>? seasonRatings = null;
+                IEnumerable<EpisodeRating>? episodeRatings = null;
+                if (seasonIds?.Any() == true)
+                {
+                    episodes = episodeReadRepo.GetEpisodesBySeasonIds(seasonIds);
+                    var episodeIds = episodes?.Select(e => e.Id)?.Distinct();
+                    if (episodeIds?.Any() == true)
+                    {
+                        episodeRatings = episodeRatingReadRepo.GetEpisodeRatingsByEpisodeIds(episodeIds);
+                    }
+                    seasonRatings = seasonRatingReadRepo.GetSeasonRatingsBySeasonIds(seasonIds);
+                }
+
+                await animeInfoWriteRepo.DeleteAnimeInfo(animeInfo, seasons, episodes, seasonRatings, episodeRatings);
 
                 logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method finished.");
             }

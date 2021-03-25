@@ -10,5 +10,6 @@ namespace AnimeBrowser.Data.Interfaces.Read.MainInterfaces
         IList<Season> GetSeasonsByIds(IEnumerable<long> seasonIds);
         bool IsExistsSeasonWithSeasonNumber(long animeInfoId, int seasonNumber);
         bool IsExistsSeasonWithSeasonNumber(long seasonId, long animeInfoId, int seasonNumber);
+        IEnumerable<Season>? GetSeasonsByAnimeInfoId(long animeInfoId);
     }
 }

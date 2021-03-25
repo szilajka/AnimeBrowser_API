@@ -4,6 +4,7 @@ using AnimeBrowser.Common.Helpers;
 using AnimeBrowser.Common.Models.ErrorModels;
 using AnimeBrowser.Data.Entities;
 using AnimeBrowser.Data.Interfaces.Read.MainInterfaces;
+using AnimeBrowser.Data.Interfaces.Read.SecondaryInterfaces;
 using AnimeBrowser.Data.Interfaces.Write.MainInterfaces;
 using Serilog;
 using System;
@@ -15,11 +16,13 @@ namespace AnimeBrowser.BL.Services.Write.MainHandlers
     {
         private readonly ILogger logger = Log.ForContext<EpisodeDeleteHandler>();
         private readonly IEpisodeRead episodeReadRepo;
+        private readonly IEpisodeRatingRead episodeRatingReadRepo;
         private readonly IEpisodeWrite episodeWriteRepo;
 
-        public EpisodeDeleteHandler(IEpisodeRead episodeReadRepo, IEpisodeWrite episodeWriteRepo)
+        public EpisodeDeleteHandler(IEpisodeRead episodeReadRepo, IEpisodeRatingRead episodeRatingReadRepo, IEpisodeWrite episodeWriteRepo)
         {
             this.episodeReadRepo = episodeReadRepo;
+            this.episodeRatingReadRepo = episodeRatingReadRepo;
             this.episodeWriteRepo = episodeWriteRepo;
         }
 
@@ -46,7 +49,8 @@ namespace AnimeBrowser.BL.Services.Write.MainHandlers
                     throw new NotFoundObjectException<Episode>(error, $"Not found an {nameof(Episode)} entity with id: [{episodeId}].");
                 }
 
-                await episodeWriteRepo.DeleteEpisode(episode);
+                var episodeRatings = episodeRatingReadRepo.GetEpisodeRatingsByEpisodeId(episodeId);
+                await episodeWriteRepo.DeleteEpisode(episode, episodeRatings);
 
                 logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method finished.");
             }

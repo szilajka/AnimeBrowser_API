@@ -4,9 +4,12 @@ using AnimeBrowser.Common.Helpers;
 using AnimeBrowser.Common.Models.ErrorModels;
 using AnimeBrowser.Data.Entities;
 using AnimeBrowser.Data.Interfaces.Read.MainInterfaces;
+using AnimeBrowser.Data.Interfaces.Read.SecondaryInterfaces;
 using AnimeBrowser.Data.Interfaces.Write.MainInterfaces;
 using Serilog;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace AnimeBrowser.BL.Services.Write.MainHandlers
@@ -15,11 +18,17 @@ namespace AnimeBrowser.BL.Services.Write.MainHandlers
     {
         private readonly ILogger logger = Log.ForContext<SeasonDeleteHandler>();
         private readonly ISeasonWrite seasonWriteRepo;
+        private readonly IEpisodeRead episodeReadRepo;
+        private readonly ISeasonRatingRead seasonRatingReadRepo;
+        private readonly IEpisodeRatingRead episodeRatingReadRepo;
         private readonly ISeasonRead seasonReadRepo;
 
-        public SeasonDeleteHandler(ISeasonWrite seasonWriteRepo, ISeasonRead seasonReadRepo)
+        public SeasonDeleteHandler(ISeasonWrite seasonWriteRepo, IEpisodeRead episodeReadRepo, ISeasonRatingRead seasonRatingReadRepo, IEpisodeRatingRead episodeRatingReadRepo, ISeasonRead seasonReadRepo)
         {
             this.seasonWriteRepo = seasonWriteRepo;
+            this.episodeReadRepo = episodeReadRepo;
+            this.seasonRatingReadRepo = seasonRatingReadRepo;
+            this.episodeRatingReadRepo = episodeRatingReadRepo;
             this.seasonReadRepo = seasonReadRepo;
         }
 
@@ -46,7 +55,18 @@ namespace AnimeBrowser.BL.Services.Write.MainHandlers
                     throw new NotFoundObjectException<Season>(error, $"Not found a {nameof(Season)} entity with id: [{seasonId}].");
                 }
 
-                await seasonWriteRepo.DeleteSeason(season);
+                var episodes = episodeReadRepo.GetEpisodesBySeasonId(seasonId);
+                var seasonRatings = seasonRatingReadRepo.GetSeasonRatingsBySeasonId(seasonId);
+                IEnumerable<EpisodeRating>? episodeRatings = null;
+                if (episodes?.Any() == true)
+                {
+                    var episodeIds = episodes.Select(e => e.Id)?.Distinct();
+                    if (episodeIds?.Any() == true)
+                    {
+                        episodeRatings = episodeRatingReadRepo.GetEpisodeRatingsByEpisodeIds(episodeIds);
+                    }
+                }
+                await seasonWriteRepo.DeleteSeason(season, episodes, seasonRatings, episodeRatings);
 
                 logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method finished.");
             }

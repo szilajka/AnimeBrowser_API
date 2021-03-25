@@ -2,6 +2,7 @@
 using AnimeBrowser.Data.Entities;
 using AnimeBrowser.Data.Interfaces.Read.MainInterfaces;
 using Serilog;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -47,6 +48,26 @@ namespace AnimeBrowser.Data.Repositories.Read.MainRepositories
             result = true;
             logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. {nameof(result)}: [{result}].");
             return result;
+        }
+
+        public IEnumerable<Episode>? GetEpisodesBySeasonId(long seasonId)
+        {
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method started. {nameof(seasonId)}: [{seasonId}].");
+
+            var episodes = abContext.Episodes.ToList().Where(e => e.SeasonId == seasonId);
+
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. {nameof(episodes)}.Count: [{episodes?.Count()}].");
+            return episodes;
+        }
+
+        public IEnumerable<Episode>? GetEpisodesBySeasonIds(IEnumerable<long> seasonIds)
+        {
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method started. {nameof(seasonIds)}: [{string.Join(", ", seasonIds)}].");
+
+            var episodes = abContext.Episodes.ToList().Where(e => seasonIds.Contains(e.SeasonId));
+
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. {nameof(episodes)}.Count: [{episodes?.Count()}].");
+            return episodes;
         }
     }
 }

@@ -3,6 +3,7 @@ using AnimeBrowser.Data.Entities;
 using AnimeBrowser.Data.Interfaces.Read.SecondaryInterfaces;
 using Serilog;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -36,6 +37,26 @@ namespace AnimeBrowser.Data.Repositories.Read.SecondaryRepositories
 
             logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. Found {nameof(seasonRating)}.{nameof(seasonRating.Id)}: [{seasonRating?.Id}].");
             return seasonRating;
+        }
+
+        public IEnumerable<SeasonRating>? GetSeasonRatingsBySeasonId(long seasonId)
+        {
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method started. {nameof(seasonId)}: [{seasonId}].");
+
+            var seasonRatings = abContext.SeasonRatings.ToList().Where(sr => sr.SeasonId == seasonId);
+
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. {nameof(seasonRatings)}.Count: [{seasonRatings?.Count()}].");
+            return seasonRatings;
+        }
+
+        public IEnumerable<SeasonRating>? GetSeasonRatingsBySeasonIds(IEnumerable<long> seasonIds)
+        {
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method started. {nameof(seasonIds)}: [{string.Join(", ", seasonIds)}].");
+
+            var seasonRatings = abContext.SeasonRatings.ToList().Where(sr => seasonIds.Contains(sr.SeasonId));
+
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. {nameof(seasonRatings)}.Count: [{seasonRatings?.Count()}].");
+            return seasonRatings;
         }
     }
 }

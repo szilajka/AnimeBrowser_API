@@ -2,6 +2,8 @@
 using AnimeBrowser.Data.Entities;
 using AnimeBrowser.Data.Interfaces.Write.MainInterfaces;
 using Serilog;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace AnimeBrowser.Data.Repositories.Write.MainRepositories
@@ -38,10 +40,22 @@ namespace AnimeBrowser.Data.Repositories.Write.MainRepositories
             return season;
         }
 
-        public async Task DeleteSeason(Season season)
+        public async Task DeleteSeason(Season season, IEnumerable<Episode>? episodes = null, IEnumerable<SeasonRating>? seasonRatings = null, IEnumerable<EpisodeRating>? episodeRatings = null)
         {
             logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method started. {nameof(Season)}: [{season}].");
 
+            if (episodeRatings?.Any() == true)
+            {
+                abContext.RemoveRange(episodeRatings);
+            }
+            if (episodes?.Any() == true)
+            {
+                abContext.RemoveRange(episodes);
+            }
+            if (seasonRatings?.Any() == true)
+            {
+                abContext.RemoveRange(seasonRatings);
+            }
             abContext.Remove(season);
             await abContext.SaveChangesAsync();
 
