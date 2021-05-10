@@ -74,8 +74,8 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeRatingTests
             };
 
             allAnimeInfos = new List<AnimeInfo> {
-                new AnimeInfo { Id = 1, Title = "JoJo's Bizarre Adventure", Description = string.Empty, IsNsfw = false },
-                new AnimeInfo { Id = 2, Title = "Kuroku no Basketball", Description = string.Empty, IsNsfw = false }
+                new AnimeInfo { Id = 1, Title = "JoJo's Bizarre Adventure", Description = string.Empty, IsNsfw = false, IsActive = true },
+                new AnimeInfo { Id = 2, Title = "Kuroku no Basketball", Description = string.Empty, IsNsfw = false, IsActive = true }
             };
 
             allSeasons = new List<Season>
@@ -84,39 +84,48 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeRatingTests
                     StartDate = new DateTime(2012, 1, 1, 0 ,0 ,0, DateTimeKind.Utc), EndDate = new DateTime(2012, 3, 5, 0 ,0 ,0, DateTimeKind.Utc),
                     AirStatus = (int)AirStatuses.Aired, NumberOfEpisodes = 24, AnimeInfoId = 1,
                     CoverCarousel = Encoding.UTF8.GetBytes("JoJoCarousel"), Cover = Encoding.UTF8.GetBytes("JoJoCover"),
+                    IsAnimeInfoActive = true, IsActive = true
                 },
-                new Season{ Id = 2, SeasonNumber = 1, Title = "Stardust Crusaders", Description = "In this season we know the story of old Joseph and young Jotaro Kujo's story while they trying to get into Egypt.",
+                new Season{ Id = 2, SeasonNumber = 2, Title = "Stardust Crusaders", Description = "In this season we know the story of old Joseph and young Jotaro Kujo's story while they trying to get into Egypt.",
                     StartDate = new DateTime(2014, 3, 1, 0 ,0 ,0, DateTimeKind.Utc), EndDate = new DateTime(2014, 7, 10, 0 ,0 ,0, DateTimeKind.Utc),
                     AirStatus = (int)AirStatuses.Aired, NumberOfEpisodes = 24, AnimeInfoId = 1,
                     CoverCarousel = Encoding.UTF8.GetBytes("JoJoCarousel"), Cover = Encoding.UTF8.GetBytes("JoJoCover"),
+                    IsAnimeInfoActive = true, IsActive = true
                 },
-                new Season{ Id = 5401, SeasonNumber = 1, Title = "The Pillarmen's revenge", Description = "In this season the pillarmen are taking revenge for their death.",
+                new Season{ Id = 5401, SeasonNumber = 3, Title = "The Pillarmen's revenge", Description = "In this season the pillarmen are taking revenge for their death.",
                     StartDate = new DateTime(2014, 3, 1, 0 ,0 ,0, DateTimeKind.Utc), EndDate = new DateTime(2014, 7, 10, 0 ,0 ,0, DateTimeKind.Utc),
                     AirStatus = (int)AirStatuses.Aired, NumberOfEpisodes = 24, AnimeInfoId = 2,
                     CoverCarousel = Encoding.UTF8.GetBytes("JoJoCarousel"), Cover = Encoding.UTF8.GetBytes("JoJoCover"),
+                    IsAnimeInfoActive = true, IsActive = true
                 },
                 new Season{ Id = 5405, SeasonNumber = 1, Title = "Life is basketball", Description = "We know the MC, who wants to get his revenge for kicking her out of the basketball team by making a new team.",
                     StartDate = today.AddYears(-10).AddMonths(-3), EndDate = today.AddYears(-9),
                     AirStatus = (int)AirStatuses.Aired, NumberOfEpisodes = 24, AnimeInfoId = 2,
                     CoverCarousel = Encoding.UTF8.GetBytes("Basketball Carousel"), Cover = Encoding.UTF8.GetBytes("Basketball Cover"),
+                    IsAnimeInfoActive = true, IsActive = true
                 },
-                  new Season{ Id = 6001, SeasonNumber = 1, Title = "Monochrome", Description = "Mc sees everything in monochrome. Due to his illness, demons attack him.",
+                  new Season{ Id = 6001, SeasonNumber = 2, Title = "Monochrome", Description = "Mc sees everything in monochrome. Due to his illness, demons attack him.",
                     StartDate = null, EndDate = null,
                     AirStatus = (int)AirStatuses.NotAired, NumberOfEpisodes = 10, AnimeInfoId = 2,
                     CoverCarousel = Encoding.UTF8.GetBytes("Basketball Carousel"), Cover = Encoding.UTF8.GetBytes("Basketball Cover"),
+                    IsAnimeInfoActive = true, IsActive = true
                 }
             };
 
             allEpisodes = new List<Episode>
             {
                 new Episode { Id = 1, EpisodeNumber = 1, AirStatus = (int)AirStatuses.Aired, Title = "Prologue", Description = "This episode tells the backstory of Jonathan and Dio and their fights",
-                    AirDate =  new DateTime(2012, 1, 1, 0, 0, 0, DateTimeKind.Utc), Cover = Encoding.UTF8.GetBytes("S1Ep1Cover"), SeasonId = 1, AnimeInfoId = 1},
+                    AirDate =  new DateTime(2012, 1, 1, 0, 0, 0, DateTimeKind.Utc), Cover = Encoding.UTF8.GetBytes("S1Ep1Cover"), SeasonId = 1, AnimeInfoId = 1,
+                    IsAnimeInfoActive = true, IsSeasonActive = true, IsActive = true },
                 new Episode { Id = 2, EpisodeNumber = 2, AirStatus = (int)AirStatuses.Aired, Title = "Beginning of something new", Description = "More fighting for the family.",
-                    AirDate =  new DateTime(2012, 1, 8, 0, 0, 0, DateTimeKind.Utc), Cover = Encoding.UTF8.GetBytes("S1Ep2Cover"), SeasonId = 1, AnimeInfoId = 1},
+                    AirDate =  new DateTime(2012, 1, 8, 0, 0, 0, DateTimeKind.Utc), Cover = Encoding.UTF8.GetBytes("S1Ep2Cover"), SeasonId = 1, AnimeInfoId = 1,
+                    IsAnimeInfoActive = true, IsSeasonActive = true, IsActive = true },
                 new Episode { Id = 3, EpisodeNumber = 1, AirStatus = (int)AirStatuses.Aired, Title = "Family relations", Description = "Jotaro is in prison and we will know who is Jotaro and the old man.",
-                    AirDate =  new DateTime(2014, 3, 1, 0, 0, 0, DateTimeKind.Utc), Cover = Encoding.UTF8.GetBytes("S2Ep1Cover"), SeasonId = 2, AnimeInfoId = 1},
+                    AirDate =  new DateTime(2014, 3, 1, 0, 0, 0, DateTimeKind.Utc), Cover = Encoding.UTF8.GetBytes("S2Ep1Cover"), SeasonId = 2, AnimeInfoId = 1,
+                    IsAnimeInfoActive = true, IsSeasonActive = true, IsActive = true },
                 new Episode { Id = 4, EpisodeNumber = 2, AirStatus = (int)AirStatuses.NotAired, Title = "Parasites", Description = "No one knows what it's like...",
-                    AirDate =  null, Cover = Encoding.UTF8.GetBytes("S2Ep2Cover"), SeasonId = 2, AnimeInfoId = 6001}
+                    AirDate =  null, Cover = Encoding.UTF8.GetBytes("S2Ep2Cover"), SeasonId = 2, AnimeInfoId = 6001,
+                    IsAnimeInfoActive = true, IsSeasonActive = true, IsActive = true }
             };
 
             allEpisodeRatings = new List<EpisodeRating>
@@ -160,14 +169,13 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeRatingTests
 
         private static IEnumerable<object[]> GetMismatchingIdData()
         {
-            var ids = new long[] { 10, 30, -1, 4, 5, 1, 6 };
-            var episodeIds = new long[] { 1, 2, 3, 1, 2, 1, 2 };
-            var userIds = new string[] { "", "", "", "65F041D2-7217-4EA6-9065-9C9AB6290B35", "65F041D2-7217-4EA6-9065-9C9AB6290B35", "15A6B54C-98D0-4396-90E7-C94761DBA977", "65F041D2-7217-4EA6-9065-9C9AB6290B35" };
+            var ids = new long[] { 10, 30, -1, 4, 5 };
+            var episodeIds = new long[] { 1, 2, 3, 1, 2 };
             for (var i = 0; i < ids.Length; i++)
             {
                 var errm = allRequestModels[i];
                 yield return new object[] { ids[i], new EpisodeRatingEditingRequestModel(id: errm.Id, rating: errm.Rating, episodeId: episodeIds[i], userId: errm.UserId, message: errm.Message),
-                    new List<Claim>{new Claim(ClaimTypes.NameIdentifier, userIds[i])} };
+                    new List<Claim>{new Claim(ClaimTypes.NameIdentifier, errm.UserId)} };
             }
         }
 
@@ -280,6 +288,9 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeRatingTests
             });
 
             var episodeRating = requestModel.ToEpisodeRating();
+            episodeRating.IsAnimeInfoActive = true;
+            episodeRating.IsSeasonActive = true;
+            episodeRating.IsEpisodeActive = true;
             var responseModel = episodeRating.ToEditingResponseModel();
             var episodeRatingEditingHandler = sp.GetService<IEpisodeRatingEditing>();
             var updatedEpisodeRatingResponseModel = await episodeRatingEditingHandler!.EditEpisodeRating(id, requestModel, claims);

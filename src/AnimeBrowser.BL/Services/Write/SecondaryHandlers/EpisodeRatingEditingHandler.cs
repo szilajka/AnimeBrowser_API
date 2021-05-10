@@ -113,6 +113,9 @@ namespace AnimeBrowser.BL.Services.Write.SecondaryHandlers
 
                 episodeRating.Rating = rEpisodeRating.Rating;
                 episodeRating.Message = rEpisodeRating.Message;
+                episodeRating.IsAnimeInfoActive = episode.IsAnimeInfoActive;
+                episodeRating.IsSeasonActive = episode.IsSeasonActive;
+                episodeRating.IsEpisodeActive = episode.IsActive;
 
                 episodeRating = await episodeRatingWriteRepo.UpdateEpisodeRating(episodeRating);
                 EpisodeRatingEditingResponseModel responseModel = episodeRating.ToEditingResponseModel();

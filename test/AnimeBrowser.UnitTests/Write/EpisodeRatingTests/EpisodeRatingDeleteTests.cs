@@ -243,7 +243,7 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeRatingTests
 
         [DataTestMethod,
             DynamicData(nameof(GetBasicData), DynamicDataSourceType.Method)]
-        public async Task DeleteEpisodeRating_ThrowException(long id)
+        public async Task DeleteEpisodeRating_ThrowException(long id, IEnumerable<Claim> claims)
         {
             var sp = SetupDI(services =>
             {
@@ -258,7 +258,7 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeRatingTests
             });
 
             var episodeRatingDeleteHandler = sp.GetService<IEpisodeRatingDelete>();
-            Func<Task> deleteEpisodeRatingFunc = async () => await episodeRatingDeleteHandler!.DeleteEpisodeRating(id, Enumerable.Empty<Claim>());
+            Func<Task> deleteEpisodeRatingFunc = async () => await episodeRatingDeleteHandler!.DeleteEpisodeRating(id, claims);
             await deleteEpisodeRatingFunc.Should().ThrowAsync<InvalidOperationException>();
         }
 
