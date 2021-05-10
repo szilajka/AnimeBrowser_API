@@ -185,33 +185,33 @@ namespace AnimeBrowser.UnitTests.Write.AnimeInfoTests
                 episodeReadRepo.Setup(er => er.GetEpisodesBySeasonIds(It.IsAny<IEnumerable<long>>())).Callback<IEnumerable<long>>(sIds => foundEpisodes = allEpisodes.Where(e => sIds.Contains(e.SeasonId))).Returns(() => foundEpisodes);
                 episodeRatingReadRepo.Setup(err => err.GetEpisodeRatingsByEpisodeIds(It.IsAny<IEnumerable<long>>())).Callback<IEnumerable<long>>(eIds => foundEpisodeRatings = allEpisodeRatings.Where(er => eIds.Contains(er.EpisodeId))).Returns(() => foundEpisodeRatings);
                 seasonRatingReadRepo.Setup(srr => srr.GetSeasonRatingsBySeasonIds(It.IsAny<IEnumerable<long>>())).Callback<IEnumerable<long>>(sIds => foundSeasonRatings = allSeasonRatings.Where(sr => sIds.Contains(sr.SeasonId))).Returns(() => foundSeasonRatings);
-                animeInfoWriteRepo.Setup(aiw => aiw.DeleteAnimeInfo(It.IsAny<AnimeInfo>(), It.IsAny<IEnumerable<Season>?>(), It.IsAny<IEnumerable<Episode>?>(), It.IsAny<IEnumerable<SeasonRating>?>(), It.IsAny<IEnumerable<EpisodeRating>?>()))
-                    .Callback<AnimeInfo, IEnumerable<Season>?, IEnumerable<Episode>?, IEnumerable<SeasonRating>?, IEnumerable<EpisodeRating>?>((ai, seasons, episodes, srs, ers) =>
+                animeInfoWriteRepo.Setup(aiw => aiw.DeleteAnimeInfo(It.IsAny<AnimeInfo>(), It.IsAny<IEnumerable<Season>>(), It.IsAny<IEnumerable<Episode>>(), It.IsAny<IEnumerable<SeasonRating>>(), It.IsAny<IEnumerable<EpisodeRating>>()))
+                    .Callback<AnimeInfo, IEnumerable<Season>, IEnumerable<Episode>, IEnumerable<SeasonRating>, IEnumerable<EpisodeRating>>((ai, seasons, episodes, srs, ers) =>
                     {
                         if (ers?.Any() == true)
                         {
-                            foreach (var er in ers)
+                            foreach (var er in ers.ToList())
                             {
                                 allEpisodeRatings.Remove(er);
                             }
                         }
                         if (srs?.Any() == true)
                         {
-                            foreach (var sr in srs)
+                            foreach (var sr in srs.ToList())
                             {
                                 allSeasonRatings.Remove(sr);
                             }
                         }
                         if (episodes?.Any() == true)
                         {
-                            foreach (var ep in episodes)
+                            foreach (var ep in episodes.ToList())
                             {
                                 allEpisodes.Remove(ep);
                             }
                         }
                         if (seasons?.Any() == true)
                         {
-                            foreach (var s in seasons)
+                            foreach (var s in seasons.ToList())
                             {
                                 allSeasons.Remove(s);
                             }

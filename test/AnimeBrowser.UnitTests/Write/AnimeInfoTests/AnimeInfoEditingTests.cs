@@ -235,7 +235,7 @@ namespace AnimeBrowser.UnitTests.Write.AnimeInfoTests
             var updatedAnimeInfo = await animeInfoEditor!.EditAnimeInfo(animeInfoId, requestModel);
 
             updatedAnimeInfo.Should().NotBeNull();
-            updatedAnimeInfo.Should().BeEquivalentTo(animeInfo, options => options.ExcludingMissingMembers());
+            updatedAnimeInfo.Should().BeEquivalentTo(animeInfo, options => options.ExcludingMissingMembers().Excluding(x => x.IsActive));
         }
 
         [DataTestMethod,
