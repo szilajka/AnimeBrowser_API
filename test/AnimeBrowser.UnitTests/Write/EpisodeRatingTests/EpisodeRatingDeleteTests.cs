@@ -14,6 +14,7 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -108,9 +109,14 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeRatingTests
         private static IEnumerable<object[]> GetBasicData()
         {
             var ids = new long[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+            var userIds = new string[] {
+                "15A6B54C-98D0-4396-90E7-C94761DBA977", "15A6B54C-98D0-4396-90E7-C94761DBA977", "15A6B54C-98D0-4396-90E7-C94761DBA977",
+                "65F041D2-7217-4EA6-9065-9C9AB6290B35", "65F041D2-7217-4EA6-9065-9C9AB6290B35", "65F041D2-7217-4EA6-9065-9C9AB6290B35", "65F041D2-7217-4EA6-9065-9C9AB6290B35",
+                "5879560D-65C5-4699-9449-86CC57EF3111", "5879560D-65C5-4699-9449-86CC57EF3111"
+            };
             for (var i = 0; i < ids.Length; i++)
             {
-                yield return new object[] { ids[i] };
+                yield return new object[] { ids[i], new List<Claim> { new Claim(ClaimTypes.NameIdentifier, userIds[i]) } };
             }
         }
 
@@ -132,10 +138,24 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeRatingTests
             }
         }
 
+        private static IEnumerable<object[]> GetUnauthorizedData()
+        {
+            var ids = new long[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+            var userIds = new string[] {
+                "5879560D-65C5-4699-9449-86CC57EF3111", "65F041D2-7217-4EA6-9065-9C9AB6290B35","027AAEC6-ED12-420B-9467-1984D4396971",
+                "5879560D-65C5-4699-9449-86CC57EF3111", "027AAEC6-ED12-420B-9467-1984D4396971", "15A6B54C-98D0-4396-90E7-C94761DBA977", "D7623518-D2C2-4E71-9A9B-C825CE9A44B9",
+                "15A6B54C-98D0-4396-90E7-C94761DBA977", "65F041D2-7217-4EA6-9065-9C9AB6290B35"
+            };
+            for (var i = 0; i < ids.Length; i++)
+            {
+                yield return new object[] { ids[i], new List<Claim> { new Claim(ClaimTypes.NameIdentifier, userIds[i]) } };
+            }
+        }
+
 
         [DataTestMethod,
             DynamicData(nameof(GetBasicData), DynamicDataSourceType.Method)]
-        public async Task DeleteEpisodeRating_ShouldWork(long id)
+        public async Task DeleteEpisodeRating_ShouldWork(long id, IEnumerable<Claim> claims)
         {
             EpisodeRating foundEpisodeRating = null;
             var sp = SetupDI(services =>
@@ -153,7 +173,7 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeRatingTests
 
             var beforeCount = allEpisodeRatings.Count;
             var episodeRatingDeleteHandler = sp.GetService<IEpisodeRatingDelete>();
-            await episodeRatingDeleteHandler!.DeleteEpisodeRating(id);
+            await episodeRatingDeleteHandler!.DeleteEpisodeRating(id, claims);
             allEpisodeRatings.Count.Should().BeLessThan(beforeCount);
             allEpisodeRatings.Should().NotContain(foundEpisodeRating);
         }
@@ -172,7 +192,7 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeRatingTests
             });
 
             var episodeRatingDeleteHandler = sp.GetService<IEpisodeRatingDelete>();
-            Func<Task> deleteEpisodeRatingFunc = async () => await episodeRatingDeleteHandler!.DeleteEpisodeRating(id);
+            Func<Task> deleteEpisodeRatingFunc = async () => await episodeRatingDeleteHandler!.DeleteEpisodeRating(id, Enumerable.Empty<Claim>());
             await deleteEpisodeRatingFunc.Should().ThrowAsync<NotExistingIdException>();
         }
 
@@ -194,8 +214,31 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeRatingTests
             });
 
             var episodeRatingDeleteHandler = sp.GetService<IEpisodeRatingDelete>();
-            Func<Task> deleteEpisodeRatingFunc = async () => await episodeRatingDeleteHandler!.DeleteEpisodeRating(id);
+            Func<Task> deleteEpisodeRatingFunc = async () => await episodeRatingDeleteHandler!.DeleteEpisodeRating(id, Enumerable.Empty<Claim>());
             await deleteEpisodeRatingFunc.Should().ThrowAsync<NotFoundObjectException<EpisodeRating>>();
+        }
+
+        [DataTestMethod,
+            DynamicData(nameof(GetUnauthorizedData), DynamicDataSourceType.Method)]
+        public async Task DeleteEpisodeRating_Unauthorized_ThrowException(long id, IEnumerable<Claim> claims)
+        {
+            EpisodeRating foundEpisodeRating = null;
+            var sp = SetupDI(services =>
+            {
+                var episodeRatingReadRepo = new Mock<IEpisodeRatingRead>();
+                var episodeRatingWriteRepo = new Mock<IEpisodeRatingWrite>();
+
+                episodeRatingReadRepo.Setup(err => err.GetEpisodeRatingById(It.IsAny<long>())).Callback<long>(erId => foundEpisodeRating = allEpisodeRatings.SingleOrDefault(er => er.Id == erId)).ReturnsAsync(() => foundEpisodeRating);
+                episodeRatingWriteRepo.Setup(erw => erw.DeleteEpisodeRating(It.IsAny<EpisodeRating>())).Callback<EpisodeRating>(er => allEpisodeRatings.Remove(er));
+
+                services.AddTransient(factory => episodeRatingReadRepo.Object);
+                services.AddTransient(factory => episodeRatingWriteRepo.Object);
+                services.AddTransient<IEpisodeRatingDelete, EpisodeRatingDeleteHandler>();
+            });
+
+            var episodeRatingDeleteHandler = sp.GetService<IEpisodeRatingDelete>();
+            Func<Task> deleteEpisodeRatingFunc = async () => await episodeRatingDeleteHandler!.DeleteEpisodeRating(id, claims);
+            await deleteEpisodeRatingFunc.Should().ThrowAsync<UnauthorizedAccessException>();
         }
 
         [DataTestMethod,
@@ -215,9 +258,10 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeRatingTests
             });
 
             var episodeRatingDeleteHandler = sp.GetService<IEpisodeRatingDelete>();
-            Func<Task> deleteEpisodeRatingFunc = async () => await episodeRatingDeleteHandler!.DeleteEpisodeRating(id);
+            Func<Task> deleteEpisodeRatingFunc = async () => await episodeRatingDeleteHandler!.DeleteEpisodeRating(id, Enumerable.Empty<Claim>());
             await deleteEpisodeRatingFunc.Should().ThrowAsync<InvalidOperationException>();
         }
+
 
 
         [TestCleanup]

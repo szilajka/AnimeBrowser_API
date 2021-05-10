@@ -78,14 +78,6 @@ namespace AnimeBrowser.BL.Services.Write.SecondaryHandlers
                     var mismatchEx = new MismatchingIdException(error, "The given id and the model's id are not matching!");
                     throw mismatchEx;
                 }
-                if (!episodeRatingRequestModel.UserId.Equals(episodeRating.UserId, StringComparison.OrdinalIgnoreCase))
-                {
-                    var error = new ErrorModel(code: ErrorCodes.MismatchingProperty.GetIntValueAsString(),
-                      description: $"The parameter [{nameof(EpisodeRating)}.{nameof(EpisodeRating.UserId)}] and [{nameof(episodeRatingRequestModel)}.{nameof(episodeRatingRequestModel.UserId)}] properties should have the same value, but they are different!",
-                      source: nameof(episodeRatingRequestModel.UserId), title: ErrorCodes.MismatchingProperty.GetDescription());
-                    var mismatchEx = new MismatchingIdException(error, "The given id and the model's id are not matching!");
-                    throw mismatchEx;
-                }
 
                 var episode = await episodeReadRepo.GetEpisodeById(episodeRatingRequestModel.EpisodeId);
                 if (episode == null)

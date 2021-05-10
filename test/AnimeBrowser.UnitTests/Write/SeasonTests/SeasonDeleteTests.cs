@@ -3,6 +3,7 @@ using AnimeBrowser.BL.Services.Write.MainHandlers;
 using AnimeBrowser.Common.Exceptions;
 using AnimeBrowser.Common.Models.Enums;
 using AnimeBrowser.Data.Entities;
+using AnimeBrowser.Data.Entities.Identity;
 using AnimeBrowser.Data.Interfaces.Read.MainInterfaces;
 using AnimeBrowser.Data.Interfaces.Write.MainInterfaces;
 using AnimeBrowser.UnitTests.Helpers;
@@ -21,12 +22,27 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
     [TestClass]
     public class SeasonDeleteTests : TestBase
     {
-        public IList<AnimeInfo> allAnimeInfos;
-        public IList<Season> allSeasons;
+        private IList<User> allUsers;
+        private IList<AnimeInfo> allAnimeInfos;
+        private IList<Season> allSeasons;
+        private IList<Episode> allEpisodes;
+        private IList<SeasonRating> allSeasonRatings;
+        private IList<EpisodeRating> allEpisodeRatings;
 
         [TestInitialize]
         public void InitDb()
         {
+            allUsers = new List<User> {
+                new User { Id = "15A6B54C-98D0-4396-90E7-C94761DBA977" },
+                new User { Id = "65F041D2-7217-4EA6-9065-9C9AB6290B35" },
+                new User { Id = "5879560D-65C5-4699-9449-86CC57EF3111" },
+                new User { Id = "817AB8E7-CE92-4D45-A93E-31A5D17430A9" },
+                new User { Id = "F6560F7D-08B5-402D-90EC-C701952A0CF2" },
+                new User { Id = "D7623518-D2C2-4E71-9A9B-C825CE9A44B9" },
+                new User { Id = "60697390-85E4-451E-82F6-CB3C13B32B18" },
+                new User { Id = "027AAEC6-ED12-420B-9467-1984D4396971" }
+            };
+
             allAnimeInfos = new List<AnimeInfo>
             {
                 new AnimeInfo {Id = 1, Title = "JoJo's Bizarre Adventure", Description = string.Empty, IsNsfw = false },
@@ -69,6 +85,46 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
                     CoverCarousel = Encoding.UTF8.GetBytes("YnKCarousel"), Cover = Encoding.UTF8.GetBytes("YnKCover"),
                 }
             };
+
+            allSeasonRatings = new List<SeasonRating>
+            {
+                new SeasonRating { Id = 1, Rating = 4, Message = "", SeasonId = 1, UserId = "15A6B54C-98D0-4396-90E7-C94761DBA977" },
+                new SeasonRating { Id = 2, Rating = 3, Message = "Not bad.", SeasonId = 2, UserId = "15A6B54C-98D0-4396-90E7-C94761DBA977" },
+                new SeasonRating { Id = 3, Rating = 5, Message = "Cool anime!", SeasonId = 3, UserId = "15A6B54C-98D0-4396-90E7-C94761DBA977" },
+                new SeasonRating { Id = 4, Rating = 1, Message = "Very very bad....", SeasonId = 1, UserId = "65F041D2-7217-4EA6-9065-9C9AB6290B35" },
+                new SeasonRating { Id = 5, Rating = 2, Message = "", SeasonId = 10, UserId = "65F041D2-7217-4EA6-9065-9C9AB6290B35" },
+                new SeasonRating { Id = 6, Rating = 3, Message = "", SeasonId = 20, UserId = "65F041D2-7217-4EA6-9065-9C9AB6290B35" },
+                new SeasonRating { Id = 7, Rating = 4, Message = "", SeasonId = 22, UserId = "65F041D2-7217-4EA6-9065-9C9AB6290B35" },
+                new SeasonRating { Id = 8, Rating = 2, Message = "", SeasonId = 2, UserId = "5879560D-65C5-4699-9449-86CC57EF3111" },
+                new SeasonRating { Id = 9, Rating = 5, Message = "", SeasonId = 3, UserId = "5879560D-65C5-4699-9449-86CC57EF3111" },
+            };
+
+            allEpisodes = new List<Episode> {
+                new Episode { Id = 1, EpisodeNumber = 1, AirStatus = (int)AirStatuses.Aired, Title = "Prologue", Description = "This episode tells the backstory of Jonathan and Dio and their fights",
+                    AirDate =  new DateTime(2012, 1, 1, 0, 0, 0, DateTimeKind.Utc), Cover = Encoding.UTF8.GetBytes("S1Ep1Cover"), SeasonId = 1, AnimeInfoId = 1},
+                new Episode { Id = 2, EpisodeNumber = 2, AirStatus = (int)AirStatuses.Aired, Title = "Beginning of something new", Description = "More fighting for the family.",
+                    AirDate =  new DateTime(2012, 1, 8, 0, 0, 0, DateTimeKind.Utc), Cover = Encoding.UTF8.GetBytes("S1Ep2Cover"), SeasonId = 1, AnimeInfoId = 1},
+                new Episode { Id = 3, EpisodeNumber = 1, AirStatus = (int)AirStatuses.Aired, Title = "Family relations", Description = "Jotaro is in prison and we will know who is Jotaro and the old man.",
+                    AirDate =  new DateTime(2014, 3, 1, 0, 0, 0, DateTimeKind.Utc), Cover = Encoding.UTF8.GetBytes("S2Ep1Cover"), SeasonId = 2, AnimeInfoId = 1},
+                new Episode { Id = 4, EpisodeNumber = 2, AirStatus = (int)AirStatuses.Aired, Title = "S2 Episode 2", Description = "This episode tells the backstory of Jonathan and Dio and their fights",
+                    AirDate =  new DateTime(2014, 3, 8, 0, 0, 0, DateTimeKind.Utc), Cover = Encoding.UTF8.GetBytes("S1Ep1Cover"), SeasonId = 2, AnimeInfoId = 1},
+                new Episode { Id = 5, EpisodeNumber = 3, AirStatus = (int)AirStatuses.Aired, Title = "S2 Episode 3", Description = "More fighting for the family.",
+                    AirDate =  new DateTime(2014, 3, 15, 0, 0, 0, DateTimeKind.Utc), Cover = Encoding.UTF8.GetBytes("S1Ep2Cover"), SeasonId = 2, AnimeInfoId = 1},
+                new Episode { Id = 6, EpisodeNumber = 4, AirStatus = (int)AirStatuses.Aired, Title = "S2 Episode 4", Description = "Jotaro is in prison and we will know who is Jotaro and the old man.",
+                    AirDate =  new DateTime(2014, 3, 21, 0, 0, 0, DateTimeKind.Utc), Cover = Encoding.UTF8.GetBytes("S2Ep1Cover"), SeasonId = 2, AnimeInfoId = 1},
+                new Episode { Id = 7, EpisodeNumber = 5, AirStatus = (int)AirStatuses.Aired, Title = "S2 Episode 5", Description = "More fighting for the family.",
+                    AirDate =  new DateTime(2014, 3, 28, 0, 0, 0, DateTimeKind.Utc), Cover = Encoding.UTF8.GetBytes("S1Ep2Cover"), SeasonId = 2, AnimeInfoId = 1},
+                new Episode { Id = 8, EpisodeNumber = 6, AirStatus = (int)AirStatuses.Aired, Title = "S2 Episode 6", Description = "Jotaro is in prison and we will know who is Jotaro and the old man.",
+                    AirDate =  new DateTime(2014, 4, 5, 0, 0, 0, DateTimeKind.Utc), Cover = Encoding.UTF8.GetBytes("S2Ep1Cover"), SeasonId = 2, AnimeInfoId = 1}
+            };
+
+            allEpisodeRatings = new List<EpisodeRating> {
+                new EpisodeRating { Id = 1, Rating = 4, Message = "", EpisodeId = 1, UserId = "15A6B54C-98D0-4396-90E7-C94761DBA977" },
+                new EpisodeRating { Id = 2, Rating = 3, Message = "Not bad.", EpisodeId = 2, UserId = "15A6B54C-98D0-4396-90E7-C94761DBA977" },
+                new EpisodeRating { Id = 3, Rating = 5, Message = "Cool anime!", EpisodeId = 3, UserId = "15A6B54C-98D0-4396-90E7-C94761DBA977" },
+                new EpisodeRating { Id = 4, Rating = 1, Message = "Very very bad....", EpisodeId = 4, UserId = "65F041D2-7217-4EA6-9065-9C9AB6290B35" }
+            };
+
         }
 
         [DataTestMethod,
@@ -81,7 +137,32 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
                 var seasonReadRepo = new Mock<ISeasonRead>();
                 var seasonWriteRepo = new Mock<ISeasonWrite>();
                 seasonReadRepo.Setup(sr => sr.GetSeasonById(It.IsAny<long>())).Callback<long>(sId => foundSeason = allSeasons.SingleOrDefault(s => s.Id == sId)).ReturnsAsync(() => foundSeason);
-                seasonWriteRepo.Setup(sw => sw.DeleteSeason(It.IsAny<Season>())).Callback<Season>(s => allSeasons.Remove(s));
+                seasonWriteRepo.Setup(sw => sw.DeleteSeason(It.IsAny<Season>(), It.IsAny<IEnumerable<Episode>>(), It.IsAny<IEnumerable<SeasonRating>>(), It.IsAny<IEnumerable<EpisodeRating>>()))
+                    .Callback<Season, IEnumerable<Episode>, IEnumerable<SeasonRating>, IEnumerable<EpisodeRating>>((s, e, sr, er) =>
+                    {
+                        if (er?.Any() == true)
+                        {
+                            foreach (var epRating in er)
+                            {
+                                allEpisodeRatings.Remove(epRating);
+                            }
+                        }
+                        if (e?.Any() == true)
+                        {
+                            foreach (var ep in e)
+                            {
+                                allEpisodes.Remove(ep);
+                            }
+                        }
+                        if (sr?.Any() == true)
+                        {
+                            foreach (var sRating in sr)
+                            {
+                                allSeasonRatings.Remove(sRating);
+                            }
+                        }
+                        allSeasons.Remove(s);
+                    });
                 services.AddTransient(factory => seasonReadRepo.Object);
                 services.AddTransient(factory => seasonWriteRepo.Object);
                 services.AddTransient<ISeasonDelete, SeasonDeleteHandler>();
@@ -89,7 +170,7 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
 
             var beforeSeasonsCount = allSeasons.Count;
             var seasonDeleteHandler = sp.GetService<ISeasonDelete>();
-            await seasonDeleteHandler.DeleteSeason(seasonId);
+            await seasonDeleteHandler!.DeleteSeason(seasonId);
 
             allSeasons.Count.Should().Be(beforeSeasonsCount - 1);
         }
@@ -111,7 +192,7 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
             });
 
             var seasonDeleteHandler = sp.GetService<ISeasonDelete>();
-            Func<Task> deleteSeasonFunc = async () => await seasonDeleteHandler.DeleteSeason(seasonId);
+            Func<Task> deleteSeasonFunc = async () => await seasonDeleteHandler!.DeleteSeason(seasonId);
 
             await deleteSeasonFunc.Should().ThrowAsync<NotFoundObjectException<Season>>();
         }
@@ -130,7 +211,7 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
             });
 
             var seasonDeleteHandler = sp.GetService<ISeasonDelete>();
-            Func<Task> deleteSeasonFunc = async () => await seasonDeleteHandler.DeleteSeason(seasonId);
+            Func<Task> deleteSeasonFunc = async () => await seasonDeleteHandler!.DeleteSeason(seasonId);
 
             await deleteSeasonFunc.Should().ThrowAsync<NotExistingIdException>();
         }
@@ -151,7 +232,7 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
             });
 
             var seasonDeleteHandler = sp.GetService<ISeasonDelete>();
-            Func<Task> deleteSeasonFunc = async () => await seasonDeleteHandler.DeleteSeason(seasonId);
+            Func<Task> deleteSeasonFunc = async () => await seasonDeleteHandler!.DeleteSeason(seasonId);
 
             await deleteSeasonFunc.Should().ThrowAsync<InvalidOperationException>();
         }
@@ -161,9 +242,18 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
         public void CleanDb()
         {
             allAnimeInfos.Clear();
+            allEpisodeRatings.Clear();
+            allEpisodes.Clear();
+            allSeasonRatings.Clear();
             allSeasons.Clear();
+            allUsers.Clear();
+
             allAnimeInfos = null;
+            allEpisodeRatings = null;
+            allEpisodes = null;
+            allSeasonRatings = null;
             allSeasons = null;
+            allUsers = null;
         }
     }
 }

@@ -19,6 +19,7 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -141,10 +142,19 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeRatingTests
 
         private static IEnumerable<object[]> GetBasicData()
         {
+            var userIds = new string[] {
+                "15A6B54C-98D0-4396-90E7-C94761DBA977", "15A6B54C-98D0-4396-90E7-C94761DBA977", "15A6B54C-98D0-4396-90E7-C94761DBA977",
+                "65F041D2-7217-4EA6-9065-9C9AB6290B35", "65F041D2-7217-4EA6-9065-9C9AB6290B35",
+                "15A6B54C-98D0-4396-90E7-C94761DBA977",
+                "65F041D2-7217-4EA6-9065-9C9AB6290B35", "65F041D2-7217-4EA6-9065-9C9AB6290B35",
+                "5879560D-65C5-4699-9449-86CC57EF3111", "5879560D-65C5-4699-9449-86CC57EF3111"
+            };
+
             for (var i = 0; i < allRequestModels.Count; i++)
             {
                 var errm = allRequestModels[i];
-                yield return new object[] { errm.Id, new EpisodeRatingEditingRequestModel(id: errm.Id, rating: errm.Rating, episodeId: errm.EpisodeId, userId: errm.UserId, message: errm.Message) };
+                yield return new object[] { errm.Id, new EpisodeRatingEditingRequestModel(id: errm.Id, rating: errm.Rating, episodeId: errm.EpisodeId, userId: errm.UserId, message: errm.Message),
+                    new List<Claim> { new Claim(ClaimTypes.NameIdentifier, userIds[i]) } };
             }
         }
 
@@ -152,12 +162,12 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeRatingTests
         {
             var ids = new long[] { 10, 30, -1, 4, 5, 1, 6 };
             var episodeIds = new long[] { 1, 2, 3, 1, 2, 1, 2 };
-            var userIds = new string[] { "15A6B54C-98D0-4396-90E7-C94761DBA977", "15A6B54C-98D0-4396-90E7-C94761DBA977", "15A6B54C-98D0-4396-90E7-C94761DBA977", "65F041D2-7217-4EA6-9065-9C9AB6290B35", "65F041D2-7217-4EA6-9065-9C9AB6290B35",
-                "5879560D-65C5-4699-9449-86CC57EF3111", "5879560D-65C5-4699-9449-86CC57EF3111" };
+            var userIds = new string[] { "", "", "", "65F041D2-7217-4EA6-9065-9C9AB6290B35", "65F041D2-7217-4EA6-9065-9C9AB6290B35", "15A6B54C-98D0-4396-90E7-C94761DBA977", "65F041D2-7217-4EA6-9065-9C9AB6290B35" };
             for (var i = 0; i < ids.Length; i++)
             {
                 var errm = allRequestModels[i];
-                yield return new object[] { ids[i], new EpisodeRatingEditingRequestModel(id: errm.Id, rating: errm.Rating, episodeId: episodeIds[i], userId: userIds[i], message: errm.Message) };
+                yield return new object[] { ids[i], new EpisodeRatingEditingRequestModel(id: errm.Id, rating: errm.Rating, episodeId: episodeIds[i], userId: errm.UserId, message: errm.Message),
+                    new List<Claim>{new Claim(ClaimTypes.NameIdentifier, userIds[i])} };
             }
         }
 
@@ -179,7 +189,8 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeRatingTests
             for (var i = 0; i < episodeIds.Length; i++)
             {
                 var errm = allRequestModels[i];
-                yield return new object[] { ids[i], new EpisodeRatingEditingRequestModel(id: ids[i], rating: errm.Rating, episodeId: episodeIds[i], userId: userIds[i], message: errm.Message) };
+                yield return new object[] { ids[i], new EpisodeRatingEditingRequestModel(id: ids[i], rating: errm.Rating, episodeId: episodeIds[i], userId: userIds[i], message: errm.Message),
+                    new List<Claim> { new Claim(ClaimTypes.NameIdentifier, userIds[i]) } };
             }
         }
 
@@ -191,7 +202,8 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeRatingTests
             for (var i = 0; i < ids.Length; i++)
             {
                 var errm = allRequestModels[i];
-                yield return new object[] { ids[i], new EpisodeRatingEditingRequestModel(id: ids[i], rating: errm.Rating, episodeId: episodeIds[i], userId: userIds[i], message: errm.Message) };
+                yield return new object[] { ids[i], new EpisodeRatingEditingRequestModel(id: ids[i], rating: errm.Rating, episodeId: episodeIds[i], userId: userIds[i], message: errm.Message),
+                    new List<Claim> { new Claim(ClaimTypes.NameIdentifier, userIds[i]) } };
             }
         }
 
@@ -203,7 +215,8 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeRatingTests
             for (var i = 0; i < ratings.Length; i++)
             {
                 var errm = allRequestModels[i];
-                yield return new object[] { errm.Id, new EpisodeRatingEditingRequestModel(id: errm.Id, rating: ratings[i], episodeId: errm.EpisodeId, userId: errm.UserId, message: errm.Message), errorCodes[i], propertyName };
+                yield return new object[] { errm.Id, new EpisodeRatingEditingRequestModel(id: errm.Id, rating: ratings[i], episodeId: errm.EpisodeId, userId: errm.UserId, message: errm.Message), errorCodes[i], propertyName,
+                    new List<Claim> { new Claim(ClaimTypes.NameIdentifier, errm.UserId) } };
             }
         }
 
@@ -215,14 +228,33 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeRatingTests
             for (var i = 0; i < messages.Length; i++)
             {
                 var errm = allRequestModels[i];
-                yield return new object[] { errm.Id, new EpisodeRatingEditingRequestModel(id: errm.Id, rating: errm.Rating, episodeId: errm.EpisodeId, userId: errm.UserId, message: messages[i]), errorCodes[i], propertyName };
+                yield return new object[] { errm.Id, new EpisodeRatingEditingRequestModel(id: errm.Id, rating: errm.Rating, episodeId: errm.EpisodeId, userId: errm.UserId, message: messages[i]), errorCodes[i], propertyName,
+                    new List<Claim> { new Claim(ClaimTypes.NameIdentifier, errm.UserId) } };
+            }
+        }
+
+        private static IEnumerable<object[]> GetUnauthorizedData()
+        {
+            var userIds = new string[] {
+                "65F041D2-7217-4EA6-9065-9C9AB6290B35", "027AAEC6-ED12-420B-9467-1984D4396971", "F6560F7D-08B5-402D-90EC-C701952A0CF2",
+                "D7623518-D2C2-4E71-9A9B-C825CE9A44B9", "817AB8E7-CE92-4D45-A93E-31A5D17430A9",
+                "5879560D-65C5-4699-9449-86CC57EF3111",
+                "15A6B54C-98D0-4396-90E7-C94761DBA977", "D7623518-D2C2-4E71-9A9B-C825CE9A44B9",
+                "F6560F7D-08B5-402D-90EC-C701952A0CF2", "027AAEC6-ED12-420B-9467-1984D4396971"
+            };
+
+            for (var i = 0; i < allRequestModels.Count; i++)
+            {
+                var errm = allRequestModels[i];
+                yield return new object[] { errm.Id, new EpisodeRatingEditingRequestModel(id: errm.Id, rating: errm.Rating, episodeId: errm.EpisodeId, userId: errm.UserId, message: errm.Message),
+                    new List<Claim> { new Claim(ClaimTypes.NameIdentifier, userIds[i]) } };
             }
         }
 
 
         [DataTestMethod,
             DynamicData(nameof(GetBasicData), DynamicDataSourceType.Method)]
-        public async Task EditEpisodeRating_ShouldWork(long id, EpisodeRatingEditingRequestModel requestModel)
+        public async Task EditEpisodeRating_ShouldWork(long id, EpisodeRatingEditingRequestModel requestModel, IEnumerable<Claim> claims)
         {
             EpisodeRating foundEpisodeRating = null;
             Episode foundEpisode = null;
@@ -250,7 +282,7 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeRatingTests
             var episodeRating = requestModel.ToEpisodeRating();
             var responseModel = episodeRating.ToEditingResponseModel();
             var episodeRatingEditingHandler = sp.GetService<IEpisodeRatingEditing>();
-            var updatedEpisodeRatingResponseModel = await episodeRatingEditingHandler!.EditEpisodeRating(id, requestModel);
+            var updatedEpisodeRatingResponseModel = await episodeRatingEditingHandler!.EditEpisodeRating(id, requestModel, claims);
             updatedEpisodeRatingResponseModel.Should().NotBeNull();
             updatedEpisodeRatingResponseModel.Should().BeEquivalentTo(responseModel);
             allEpisodeRatings.Should().ContainEquivalentOf(savedEpisodeRating);
@@ -258,7 +290,7 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeRatingTests
 
         [DataTestMethod,
             DynamicData(nameof(GetMismatchingIdData), DynamicDataSourceType.Method)]
-        public async Task EditEpisodeRating_MismhatchingId_ThrowException(long id, EpisodeRatingEditingRequestModel requestModel)
+        public async Task EditEpisodeRating_MismhatchingId_ThrowException(long id, EpisodeRatingEditingRequestModel requestModel, IEnumerable<Claim> claims)
         {
             EpisodeRating foundEpisodeRating = null;
             var sp = SetupDI(services =>
@@ -278,7 +310,7 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeRatingTests
             });
 
             var episodeRatingEditingHandler = sp.GetService<IEpisodeRatingEditing>();
-            Func<Task> episodeRatingEditingFunc = async () => await episodeRatingEditingHandler!.EditEpisodeRating(id, requestModel);
+            Func<Task> episodeRatingEditingFunc = async () => await episodeRatingEditingHandler!.EditEpisodeRating(id, requestModel, claims);
             await episodeRatingEditingFunc.Should().ThrowAsync<MismatchingIdException>();
         }
 
@@ -300,7 +332,7 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeRatingTests
             });
 
             var episodeRatingEditingHandler = sp.GetService<IEpisodeRatingEditing>();
-            Func<Task> episodeRatingEditingFunc = async () => await episodeRatingEditingHandler!.EditEpisodeRating(1, null);
+            Func<Task> episodeRatingEditingFunc = async () => await episodeRatingEditingHandler!.EditEpisodeRating(1, null!, Enumerable.Empty<Claim>());
             await episodeRatingEditingFunc.Should().ThrowAsync<MismatchingIdException>();
         }
 
@@ -326,13 +358,13 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeRatingTests
             });
 
             var episodeRatingEditingHandler = sp.GetService<IEpisodeRatingEditing>();
-            Func<Task> episodeRatingEditingFunc = async () => await episodeRatingEditingHandler!.EditEpisodeRating(id, requestModel);
+            Func<Task> episodeRatingEditingFunc = async () => await episodeRatingEditingHandler!.EditEpisodeRating(id, requestModel, Enumerable.Empty<Claim>());
             await episodeRatingEditingFunc.Should().ThrowAsync<NotFoundObjectException<EpisodeRating>>();
         }
 
         [DataTestMethod,
             DynamicData(nameof(GetNotExistingEpisodeData), DynamicDataSourceType.Method)]
-        public async Task EditEpisodeRating_NotExistingEpisode_ThrowException(long id, EpisodeRatingEditingRequestModel requestModel)
+        public async Task EditEpisodeRating_NotExistingEpisode_ThrowException(long id, EpisodeRatingEditingRequestModel requestModel, IEnumerable<Claim> claims)
         {
             EpisodeRating foundEpisodeRating = null;
             Episode foundEpisode = null;
@@ -354,13 +386,13 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeRatingTests
             });
 
             var episodeRatingEditingHandler = sp.GetService<IEpisodeRatingEditing>();
-            Func<Task> episodeRatingEditingFunc = async () => await episodeRatingEditingHandler!.EditEpisodeRating(id, requestModel);
+            Func<Task> episodeRatingEditingFunc = async () => await episodeRatingEditingHandler!.EditEpisodeRating(id, requestModel, claims);
             await episodeRatingEditingFunc.Should().ThrowAsync<NotFoundObjectException<Episode>>();
         }
 
         [DataTestMethod,
             DynamicData(nameof(GetNotExistingUserData), DynamicDataSourceType.Method)]
-        public async Task EditEpisodeRating_NotExistingUser_ThrowException(long id, EpisodeRatingEditingRequestModel requestModel)
+        public async Task EditEpisodeRating_NotExistingUser_ThrowException(long id, EpisodeRatingEditingRequestModel requestModel, IEnumerable<Claim> claims)
         {
             EpisodeRating foundEpisodeRating = null;
             Episode foundEpisode = null;
@@ -384,13 +416,13 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeRatingTests
             });
 
             var episodeRatingEditingHandler = sp.GetService<IEpisodeRatingEditing>();
-            Func<Task> episodeRatingEditingFunc = async () => await episodeRatingEditingHandler!.EditEpisodeRating(id, requestModel);
+            Func<Task> episodeRatingEditingFunc = async () => await episodeRatingEditingHandler!.EditEpisodeRating(id, requestModel, claims);
             await episodeRatingEditingFunc.Should().ThrowAsync<NotFoundObjectException<User>>();
         }
 
         [DataTestMethod,
             DynamicData(nameof(GetInvalidRatingData), DynamicDataSourceType.Method)]
-        public async Task EditEpisodeRating_InvalidRating_ThrowException(long id, EpisodeRatingEditingRequestModel requestModel, ErrorCodes errorCode, string propertyName)
+        public async Task EditEpisodeRating_InvalidRating_ThrowException(long id, EpisodeRatingEditingRequestModel requestModel, ErrorCodes errorCode, string propertyName, IEnumerable<Claim> claims)
         {
             var errors = CreateErrorList(errorCode, propertyName);
             EpisodeRating foundEpisodeRating = null;
@@ -415,14 +447,14 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeRatingTests
             });
 
             var episodeRatingEditingHandler = sp.GetService<IEpisodeRatingEditing>();
-            Func<Task> episodeRatingEditingFunc = async () => await episodeRatingEditingHandler!.EditEpisodeRating(id, requestModel);
+            Func<Task> episodeRatingEditingFunc = async () => await episodeRatingEditingHandler!.EditEpisodeRating(id, requestModel, claims);
             var valEx = await episodeRatingEditingFunc.Should().ThrowAsync<ValidationException>();
             valEx.And.Errors.Should().BeEquivalentTo(errors, options => options.Excluding(x => x.Description));
         }
 
         [DataTestMethod,
             DynamicData(nameof(GetInvalidMessageData), DynamicDataSourceType.Method)]
-        public async Task EditEpisodeRating_InvalidMessage_ThrowException(long id, EpisodeRatingEditingRequestModel requestModel, ErrorCodes errorCode, string propertyName)
+        public async Task EditEpisodeRating_InvalidMessage_ThrowException(long id, EpisodeRatingEditingRequestModel requestModel, ErrorCodes errorCode, string propertyName, IEnumerable<Claim> claims)
         {
             var errors = CreateErrorList(errorCode, propertyName);
             EpisodeRating foundEpisodeRating = null;
@@ -447,14 +479,40 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeRatingTests
             });
 
             var episodeRatingEditingHandler = sp.GetService<IEpisodeRatingEditing>();
-            Func<Task> episodeRatingEditingFunc = async () => await episodeRatingEditingHandler!.EditEpisodeRating(id, requestModel);
+            Func<Task> episodeRatingEditingFunc = async () => await episodeRatingEditingHandler!.EditEpisodeRating(id, requestModel, claims);
             var valEx = await episodeRatingEditingFunc.Should().ThrowAsync<ValidationException>();
             valEx.And.Errors.Should().BeEquivalentTo(errors, options => options.Excluding(x => x.Description));
         }
 
         [DataTestMethod,
+           DynamicData(nameof(GetUnauthorizedData), DynamicDataSourceType.Method)]
+        public async Task EditEpisodeRating_Unauthorized_ThrowException(long id, EpisodeRatingEditingRequestModel requestModel, IEnumerable<Claim> claims)
+        {
+            EpisodeRating foundEpisodeRating = null;
+            var sp = SetupDI(services =>
+            {
+                var episodeRatingReadRepo = new Mock<IEpisodeRatingRead>();
+                var episodeReadRepo = new Mock<IEpisodeRead>();
+                var userReadRepo = new Mock<IUserRead>();
+                var episodeRatingWriteRepo = new Mock<IEpisodeRatingWrite>();
+
+                episodeRatingReadRepo.Setup(err => err.GetEpisodeRatingById(It.IsAny<long>())).Callback<long>(erId => foundEpisodeRating = allEpisodeRatings.SingleOrDefault(er => er.Id == erId)).ReturnsAsync(() => foundEpisodeRating);
+
+                services.AddTransient(factory => episodeRatingReadRepo.Object);
+                services.AddTransient(factory => episodeReadRepo.Object);
+                services.AddTransient(factory => userReadRepo.Object);
+                services.AddTransient(factory => episodeRatingWriteRepo.Object);
+                services.AddTransient<IEpisodeRatingEditing, EpisodeRatingEditingHandler>();
+            });
+
+            var episodeRatingEditingHandler = sp.GetService<IEpisodeRatingEditing>();
+            Func<Task> episodeRatingEditingFunc = async () => await episodeRatingEditingHandler!.EditEpisodeRating(id, requestModel, claims);
+            await episodeRatingEditingFunc.Should().ThrowAsync<UnauthorizedAccessException>();
+        }
+
+        [DataTestMethod,
             DynamicData(nameof(GetBasicData), DynamicDataSourceType.Method)]
-        public async Task EditEpisodeRating_ThrowException(long id, EpisodeRatingEditingRequestModel requestModel)
+        public async Task EditEpisodeRating_ThrowException(long id, EpisodeRatingEditingRequestModel requestModel, IEnumerable<Claim> claims)
         {
             var sp = SetupDI(services =>
             {
@@ -473,7 +531,7 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeRatingTests
             });
 
             var episodeRatingEditingHandler = sp.GetService<IEpisodeRatingEditing>();
-            Func<Task> episodeRatingEditingFunc = async () => await episodeRatingEditingHandler!.EditEpisodeRating(id, requestModel);
+            Func<Task> episodeRatingEditingFunc = async () => await episodeRatingEditingHandler!.EditEpisodeRating(id, requestModel, claims);
             await episodeRatingEditingFunc.Should().ThrowAsync<InvalidOperationException>();
         }
 

@@ -136,10 +136,12 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
                 null, Encoding.UTF8.GetBytes("C"), null, null, Encoding.UTF8.GetBytes("Cover CCCC"), null };
             var animeInfoIds = new long[] { 1, 2, 10, 15, 201, 201,
                 1, 2, 10, 15, 201, 201 };
+            var isActives = new bool[] { true, true, true, true, true, true,
+                true, true, true, true, true, true };
             for (var i = 0; i < seasonNumbers.Length; i++)
             {
                 allRequestModels.Add(new SeasonCreationRequestModel(seasonNumber: seasonNumbers[i], title: titles[i], description: descriptions[i], startDate: startDates[i], endDate: endDates[i],
-                    airStatus: airStatuses[i], numberOfEpisodes: numberOfEpisodes[i], coverCarousel: coverCarousels[i], cover: covers[i], animeInfoId: animeInfoIds[i]));
+                    airStatus: airStatuses[i], numberOfEpisodes: numberOfEpisodes[i], coverCarousel: coverCarousels[i], cover: covers[i], animeInfoId: animeInfoIds[i], isActive: isActives[i]));
             }
         }
 
@@ -149,7 +151,7 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
             {
                 var srm = allRequestModels[i];
                 yield return new object[] { new SeasonCreationRequestModel(seasonNumber: srm.SeasonNumber, title: srm.Title, description: srm.Description, startDate: srm.StartDate, endDate: srm.EndDate,
-                    airStatus: srm.AirStatus, numberOfEpisodes: srm.NumberOfEpisodes, coverCarousel: srm.CoverCarousel, cover: srm.Cover, animeInfoId: srm.AnimeInfoId) };
+                    airStatus: srm.AirStatus, numberOfEpisodes: srm.NumberOfEpisodes, coverCarousel: srm.CoverCarousel, cover: srm.Cover, animeInfoId: srm.AnimeInfoId, isActive: srm.IsActive) };
             }
         }
 
@@ -161,7 +163,7 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
             {
                 var srm = allRequestModels[i];
                 yield return new object[] { new SeasonCreationRequestModel(seasonNumber: seasonNumbers[i], title: srm.Title, description: srm.Description, startDate: srm.StartDate, endDate: srm.EndDate,
-                    airStatus: srm.AirStatus, numberOfEpisodes: srm.NumberOfEpisodes, coverCarousel: srm.CoverCarousel, cover: srm.Cover, animeInfoId: srm.AnimeInfoId), ErrorCodes.EmptyProperty, propertyName };
+                    airStatus: srm.AirStatus, numberOfEpisodes: srm.NumberOfEpisodes, coverCarousel: srm.CoverCarousel, cover: srm.Cover, animeInfoId: srm.AnimeInfoId, isActive: srm.IsActive), ErrorCodes.EmptyProperty, propertyName };
             }
         }
 
@@ -174,7 +176,7 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
             {
                 var srm = allRequestModels[i];
                 yield return new object[] { new SeasonCreationRequestModel(seasonNumber: srm.SeasonNumber, title: titles[i], description: srm.Description, startDate: srm.StartDate, endDate: srm.EndDate,
-                    airStatus: srm.AirStatus, numberOfEpisodes: srm.NumberOfEpisodes, coverCarousel: srm.CoverCarousel, cover: srm.Cover, animeInfoId: srm.AnimeInfoId), errorCodes[i], propertyName };
+                    airStatus: srm.AirStatus, numberOfEpisodes: srm.NumberOfEpisodes, coverCarousel: srm.CoverCarousel, cover: srm.Cover, animeInfoId: srm.AnimeInfoId, isActive: srm.IsActive), errorCodes[i], propertyName };
             }
         }
 
@@ -186,7 +188,7 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
             {
                 var srm = allRequestModels[i];
                 yield return new object[] { new SeasonCreationRequestModel(seasonNumber: srm.SeasonNumber, title: srm.Title, description: descriptions[i], startDate: srm.StartDate, endDate: srm.EndDate,
-                    airStatus: srm.AirStatus, numberOfEpisodes: srm.NumberOfEpisodes, coverCarousel: srm.CoverCarousel, cover: srm.Cover, animeInfoId: srm.AnimeInfoId), ErrorCodes.TooLongProperty, propertyName };
+                    airStatus: srm.AirStatus, numberOfEpisodes: srm.NumberOfEpisodes, coverCarousel: srm.CoverCarousel, cover: srm.Cover, animeInfoId: srm.AnimeInfoId, isActive: srm.IsActive), ErrorCodes.TooLongProperty, propertyName };
             }
         }
 
@@ -213,7 +215,7 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
             {
                 var srm = allRequestModels[i];
                 yield return new object[] { new SeasonCreationRequestModel(seasonNumber: srm.SeasonNumber, title: srm.Title, description: srm.Description, startDate: startDates[i], endDate: endDates[i],
-                    airStatus: airStatuses[i], numberOfEpisodes: srm.NumberOfEpisodes, coverCarousel: srm.CoverCarousel, cover: srm.Cover, animeInfoId: srm.AnimeInfoId), errorCodes[i], propertyName };
+                    airStatus: airStatuses[i], numberOfEpisodes: srm.NumberOfEpisodes, coverCarousel: srm.CoverCarousel, cover: srm.Cover, animeInfoId: srm.AnimeInfoId, isActive: srm.IsActive), errorCodes[i], propertyName };
             }
         }
 
@@ -239,7 +241,7 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
             {
                 var srm = allRequestModels[i];
                 yield return new object[] { new SeasonCreationRequestModel(seasonNumber: srm.SeasonNumber, title: srm.Title, description: srm.Description, startDate: startDates[i], endDate: endDates[i],
-                    airStatus: airStatuses[i], numberOfEpisodes: srm.NumberOfEpisodes, coverCarousel: srm.CoverCarousel, cover: srm.Cover, animeInfoId: srm.AnimeInfoId), ErrorCodes.OutOfRangeProperty, propertyName };
+                    airStatus: airStatuses[i], numberOfEpisodes: srm.NumberOfEpisodes, coverCarousel: srm.CoverCarousel, cover: srm.Cover, animeInfoId: srm.AnimeInfoId, isActive: srm.IsActive), ErrorCodes.OutOfRangeProperty, propertyName };
             }
         }
 
@@ -272,7 +274,7 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
             {
                 var srm = allRequestModels[i];
                 yield return new object[] { new SeasonCreationRequestModel(seasonNumber: srm.SeasonNumber, title: srm.Title, description: srm.Description, startDate: startDates[i], endDate: endDates[i],
-                    airStatus: airStatuses[i], numberOfEpisodes: srm.NumberOfEpisodes, coverCarousel: srm.CoverCarousel, cover: srm.Cover, animeInfoId: srm.AnimeInfoId), errorCodes[i], propertyNames[i] };
+                    airStatus: airStatuses[i], numberOfEpisodes: srm.NumberOfEpisodes, coverCarousel: srm.CoverCarousel, cover: srm.Cover, animeInfoId: srm.AnimeInfoId, isActive: srm.IsActive), errorCodes[i], propertyNames[i] };
             }
         }
 
@@ -284,7 +286,7 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
             {
                 var srm = allRequestModels[i];
                 yield return new object[] { new SeasonCreationRequestModel(seasonNumber: srm.SeasonNumber, title: srm.Title, description: srm.Description, startDate: srm.StartDate, endDate: srm.EndDate,
-                    airStatus: srm.AirStatus, numberOfEpisodes: numOfEpisodes[i], coverCarousel: srm.CoverCarousel, cover: srm.Cover, animeInfoId: srm.AnimeInfoId), ErrorCodes.EmptyProperty, propertyName };
+                    airStatus: srm.AirStatus, numberOfEpisodes: numOfEpisodes[i], coverCarousel: srm.CoverCarousel, cover: srm.Cover, animeInfoId: srm.AnimeInfoId, isActive: srm.IsActive), ErrorCodes.EmptyProperty, propertyName };
             }
         }
 
@@ -296,7 +298,7 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
             {
                 var srm = allRequestModels[i];
                 yield return new object[] { new SeasonCreationRequestModel(seasonNumber: srm.SeasonNumber, title: srm.Title, description: srm.Description, startDate: srm.StartDate, endDate: srm.EndDate,
-                    airStatus: srm.AirStatus, numberOfEpisodes: srm.NumberOfEpisodes, coverCarousel: coverCarousels[i], cover: srm.Cover, animeInfoId: srm.AnimeInfoId), ErrorCodes.EmptyProperty, propertyName };
+                    airStatus: srm.AirStatus, numberOfEpisodes: srm.NumberOfEpisodes, coverCarousel: coverCarousels[i], cover: srm.Cover, animeInfoId: srm.AnimeInfoId, isActive: srm.IsActive), ErrorCodes.EmptyProperty, propertyName };
             }
         }
 
@@ -308,7 +310,7 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
             {
                 var srm = allRequestModels[i];
                 yield return new object[] { new SeasonCreationRequestModel(seasonNumber: srm.SeasonNumber, title: srm.Title, description: srm.Description, startDate: srm.StartDate, endDate: srm.EndDate,
-                    airStatus: srm.AirStatus, numberOfEpisodes: srm.NumberOfEpisodes, coverCarousel: srm.CoverCarousel, cover: covers[i], animeInfoId: srm.AnimeInfoId), ErrorCodes.EmptyProperty, propertyName };
+                    airStatus: srm.AirStatus, numberOfEpisodes: srm.NumberOfEpisodes, coverCarousel: srm.CoverCarousel, cover: covers[i], animeInfoId: srm.AnimeInfoId, isActive: srm.IsActive), ErrorCodes.EmptyProperty, propertyName };
             }
         }
 
@@ -320,7 +322,7 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
             {
                 var srm = allRequestModels[i];
                 yield return new object[] { new SeasonCreationRequestModel(seasonNumber: srm.SeasonNumber, title: srm.Title, description: srm.Description, startDate: srm.StartDate, endDate: srm.EndDate,
-                    airStatus: srm.AirStatus, numberOfEpisodes: srm.NumberOfEpisodes, coverCarousel: srm.CoverCarousel, cover: srm.Cover, animeInfoId: animeInfoIds[i]), ErrorCodes.EmptyProperty, propertyName };
+                    airStatus: srm.AirStatus, numberOfEpisodes: srm.NumberOfEpisodes, coverCarousel: srm.CoverCarousel, cover: srm.Cover, animeInfoId: animeInfoIds[i], isActive: srm.IsActive), ErrorCodes.EmptyProperty, propertyName };
             }
         }
 
@@ -336,6 +338,7 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
             var coverCarousels = new byte[]?[] { null, Encoding.UTF8.GetBytes("C"), Encoding.UTF8.GetBytes("ASD"), Encoding.UTF8.GetBytes("421ASD"), Encoding.UTF8.GetBytes("asdFDSF3412") };
             var covers = new byte[]?[] { null, Encoding.UTF8.GetBytes("C"), Encoding.UTF8.GetBytes("ASD"), Encoding.UTF8.GetBytes("421ASD"), Encoding.UTF8.GetBytes("asdFDSF3412") };
             var animeInfoIds = new long[] { 3, 5, 37, 90, 122 };
+            var isActives = new bool[] { true, true, true, false, false };
             for (var i = 0; i < seasonNumbers.Length; i++)
             {
                 yield return new object[] { new SeasonCreationRequestModel(
@@ -348,7 +351,8 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
                     numberOfEpisodes: numOfEpisodes[i],
                     coverCarousel: coverCarousels[i],
                     cover: covers[i],
-                    animeInfoId: animeInfoIds[i]) };
+                    animeInfoId: animeInfoIds[i],
+                    isActive: isActives[i]) };
             }
         }
 
@@ -360,9 +364,10 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
             {
                 var srm = allRequestModels[i];
                 yield return new object[] { new SeasonCreationRequestModel(seasonNumber: seasonNumbers[i], title: srm.Title, description: srm.Description, startDate: srm.StartDate, endDate: srm.EndDate,
-                    airStatus: srm.AirStatus, numberOfEpisodes: srm.NumberOfEpisodes, coverCarousel: srm.CoverCarousel, cover: srm.Cover, animeInfoId: animeInfoIds[i]) };
+                    airStatus: srm.AirStatus, numberOfEpisodes: srm.NumberOfEpisodes, coverCarousel: srm.CoverCarousel, cover: srm.Cover, animeInfoId: animeInfoIds[i], isActive: srm.IsActive) };
             }
         }
+
 
         [DataTestMethod,
             DynamicData(nameof(GetBasicDatesData), DynamicDataSourceType.Method)]
@@ -380,7 +385,7 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
                     .Callback<long, int>((aiId, sn) => isSameEpisodeExists = allSeasons.Any(s => s.AnimeInfoId == aiId && s.SeasonNumber == sn))
                     .Returns(() => isSameEpisodeExists);
                 animeInfoReadRepo.Setup(air => air.GetAnimeInfoById(It.IsAny<long>())).Callback<long>(aiId => foundAnimeInfo = allAnimeInfos.SingleOrDefault(ai => ai.Id == aiId)).ReturnsAsync(() => foundAnimeInfo);
-                seasonWriteRepo.Setup(sw => sw.CreateSeason(It.IsAny<Season>())).Callback<Season>(s => { callbackSeason = s; callbackSeason.Id = 1; }).ReturnsAsync(() => callbackSeason);
+                seasonWriteRepo.Setup(sw => sw.CreateSeason(It.IsAny<Season>())).Callback<Season>(s => { callbackSeason = s; callbackSeason.Id = 1; }).ReturnsAsync(() => callbackSeason!);
                 services.AddTransient<IDateTime, DateTimeProvider>();
                 services.AddTransient(factory => animeInfoReadRepo.Object);
                 services.AddTransient(factory => seasonReadRepo.Object);
@@ -391,13 +396,13 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
             var responseModel = requestModel.ToSeason().ToCreationResponseModel();
             responseModel.Id = 1;
             var seasonCreationHandler = sp.GetService<ISeasonCreation>();
-            var createdSeason = await seasonCreationHandler.CreateSeason(requestModel);
+            var createdSeason = await seasonCreationHandler!.CreateSeason(requestModel);
 
             createdSeason.Should().NotBeNull();
             createdSeason.Should().BeEquivalentTo(responseModel);
         }
 
-        #region If I don't separate these tests into multiple tests, then VS kills itself when viewing test results.....
+        #region Validation Exceptions
 
         [DataTestMethod,
             DynamicData(nameof(GetInvalidSeasonNumbersData), DynamicDataSourceType.Method)]
@@ -417,7 +422,7 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
             });
 
             var seasonCreationHandler = sp.GetService<ISeasonCreation>();
-            Func<Task> createSeasonFunc = async () => await seasonCreationHandler.CreateSeason(requestModel);
+            Func<Task> createSeasonFunc = async () => await seasonCreationHandler!.CreateSeason(requestModel);
 
             var valEx = await createSeasonFunc.Should().ThrowAsync<ValidationException>();
             valEx.And.Errors.Should().BeEquivalentTo(errors, options => options.Excluding(e => e.Description));
@@ -441,7 +446,7 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
             });
 
             var seasonCreationHandler = sp.GetService<ISeasonCreation>();
-            Func<Task> createSeasonFunc = async () => await seasonCreationHandler.CreateSeason(requestModel);
+            Func<Task> createSeasonFunc = async () => await seasonCreationHandler!.CreateSeason(requestModel);
 
             var valEx = await createSeasonFunc.Should().ThrowAsync<ValidationException>();
             valEx.And.Errors.Should().BeEquivalentTo(errors, options => options.Excluding(e => e.Description));
@@ -465,7 +470,7 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
             });
 
             var seasonCreationHandler = sp.GetService<ISeasonCreation>();
-            Func<Task> createSeasonFunc = async () => await seasonCreationHandler.CreateSeason(requestModel);
+            Func<Task> createSeasonFunc = async () => await seasonCreationHandler!.CreateSeason(requestModel);
 
             var valEx = await createSeasonFunc.Should().ThrowAsync<ValidationException>();
             valEx.And.Errors.Should().BeEquivalentTo(errors, options => options.Excluding(e => e.Description));
@@ -489,7 +494,7 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
             });
 
             var seasonCreationHandler = sp.GetService<ISeasonCreation>();
-            Func<Task> createSeasonFunc = async () => await seasonCreationHandler.CreateSeason(requestModel);
+            Func<Task> createSeasonFunc = async () => await seasonCreationHandler!.CreateSeason(requestModel);
 
             var valEx = await createSeasonFunc.Should().ThrowAsync<ValidationException>();
             valEx.And.Errors.Should().BeEquivalentTo(errors, options => options.Excluding(e => e.Description));
@@ -513,7 +518,7 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
             });
 
             var seasonCreationHandler = sp.GetService<ISeasonCreation>();
-            Func<Task> createSeasonFunc = async () => await seasonCreationHandler.CreateSeason(requestModel);
+            Func<Task> createSeasonFunc = async () => await seasonCreationHandler!.CreateSeason(requestModel);
 
             var valEx = await createSeasonFunc.Should().ThrowAsync<ValidationException>();
             valEx.And.Errors.Should().BeEquivalentTo(errors, options => options.Excluding(e => e.Description));
@@ -537,7 +542,7 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
             });
 
             var seasonCreationHandler = sp.GetService<ISeasonCreation>();
-            Func<Task> createSeasonFunc = async () => await seasonCreationHandler.CreateSeason(requestModel);
+            Func<Task> createSeasonFunc = async () => await seasonCreationHandler!.CreateSeason(requestModel);
 
             var valEx = await createSeasonFunc.Should().ThrowAsync<ValidationException>();
             valEx.And.Errors.Should().BeEquivalentTo(errors, options => options.Excluding(e => e.Description));
@@ -561,7 +566,7 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
             });
 
             var seasonCreationHandler = sp.GetService<ISeasonCreation>();
-            Func<Task> createSeasonFunc = async () => await seasonCreationHandler.CreateSeason(requestModel);
+            Func<Task> createSeasonFunc = async () => await seasonCreationHandler!.CreateSeason(requestModel);
 
             var valEx = await createSeasonFunc.Should().ThrowAsync<ValidationException>();
             valEx.And.Errors.Should().BeEquivalentTo(errors, options => options.Excluding(e => e.Description));
@@ -585,7 +590,7 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
             });
 
             var seasonCreationHandler = sp.GetService<ISeasonCreation>();
-            Func<Task> createSeasonFunc = async () => await seasonCreationHandler.CreateSeason(requestModel);
+            Func<Task> createSeasonFunc = async () => await seasonCreationHandler!.CreateSeason(requestModel);
 
             var valEx = await createSeasonFunc.Should().ThrowAsync<ValidationException>();
             valEx.And.Errors.Should().BeEquivalentTo(errors, options => options.Excluding(e => e.Description));
@@ -609,7 +614,7 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
             });
 
             var seasonCreationHandler = sp.GetService<ISeasonCreation>();
-            Func<Task> createSeasonFunc = async () => await seasonCreationHandler.CreateSeason(requestModel);
+            Func<Task> createSeasonFunc = async () => await seasonCreationHandler!.CreateSeason(requestModel);
 
             var valEx = await createSeasonFunc.Should().ThrowAsync<ValidationException>();
             valEx.And.Errors.Should().BeEquivalentTo(errors, options => options.Excluding(e => e.Description));
@@ -633,14 +638,13 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
             });
 
             var seasonCreationHandler = sp.GetService<ISeasonCreation>();
-            Func<Task> createSeasonFunc = async () => await seasonCreationHandler.CreateSeason(requestModel);
+            Func<Task> createSeasonFunc = async () => await seasonCreationHandler!.CreateSeason(requestModel);
 
             var valEx = await createSeasonFunc.Should().ThrowAsync<ValidationException>();
             valEx.And.Errors.Should().BeEquivalentTo(errors, options => options.Excluding(e => e.Description));
         }
 
-        #endregion If I don't separate these tests into multiple tests, then VS kills itself when viewing test results.....
-
+        #endregion Validation Exceptions
 
         [DataTestMethod,
             DynamicData(nameof(GetNotExistingAnimeInfoIdData), DynamicDataSourceType.Method)]
@@ -665,7 +669,7 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
             });
 
             var seasonCreationHandler = sp.GetService<ISeasonCreation>();
-            Func<Task> createSeasonFunc = async () => await seasonCreationHandler.CreateSeason(requestModel);
+            Func<Task> createSeasonFunc = async () => await seasonCreationHandler!.CreateSeason(requestModel);
 
             await createSeasonFunc.Should().ThrowAsync<NotFoundObjectException<AnimeInfo>>();
         }
@@ -693,7 +697,7 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
             });
 
             var seasonCreationHandler = sp.GetService<ISeasonCreation>();
-            Func<Task> createSeasonFunc = async () => await seasonCreationHandler.CreateSeason(requestModel);
+            Func<Task> createSeasonFunc = async () => await seasonCreationHandler!.CreateSeason(requestModel);
 
             await createSeasonFunc.Should().ThrowAsync<AlreadyExistingObjectException<Season>>();
         }
@@ -714,7 +718,7 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
             });
 
             var seasonCreationHandler = sp.GetService<ISeasonCreation>();
-            Func<Task> createSeasonFunc = async () => await seasonCreationHandler.CreateSeason(null);
+            Func<Task> createSeasonFunc = async () => await seasonCreationHandler!.CreateSeason(null!);
 
             await createSeasonFunc.Should().ThrowAsync<EmptyObjectException<SeasonCreationRequestModel>>();
         }
@@ -737,16 +741,26 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
             });
 
             var seasonCreationHandler = sp.GetService<ISeasonCreation>();
-            Func<Task> createSeasonFunc = async () => await seasonCreationHandler.CreateSeason(requestModel);
+            Func<Task> createSeasonFunc = async () => await seasonCreationHandler!.CreateSeason(requestModel);
 
             await createSeasonFunc.Should().ThrowAsync<InvalidOperationException>();
         }
 
+
         [TestCleanup]
         public void CleanDb()
         {
+            allSeasons.Clear();
             allAnimeInfos.Clear();
             allAnimeInfos = null;
+            allSeasons = null;
+        }
+
+        [ClassCleanup]
+        public static void CleanRequests()
+        {
+            allRequestModels.Clear();
+            allRequestModels = null;
         }
     }
 }
