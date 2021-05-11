@@ -36,11 +36,11 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
         {
             allAnimeInfos = new List<AnimeInfo>
             {
-                new AnimeInfo {Id = 1, Title = "JoJo's Bizarre Adventure", Description = string.Empty, IsNsfw = false },
-                new AnimeInfo {Id = 2, Title = "Boku no Hero Academia", Description = string.Empty, IsNsfw = false },
-                new AnimeInfo {Id = 10, Title = "Dorohedoro", Description = string.Empty, IsNsfw = true},
-                new AnimeInfo {Id = 15, Title = "Shingeki no Kyojin", Description = string.Empty, IsNsfw = true },
-                new AnimeInfo {Id = 201, Title = "Yakusoku no Neverland", Description = "Neverland...", IsNsfw = false }
+                new AnimeInfo {Id = 1, Title = "JoJo's Bizarre Adventure", Description = string.Empty, IsNsfw = false, IsActive = true },
+                new AnimeInfo {Id = 2, Title = "Boku no Hero Academia", Description = string.Empty, IsNsfw = false, IsActive = true },
+                new AnimeInfo {Id = 10, Title = "Dorohedoro", Description = string.Empty, IsNsfw = true, IsActive = true },
+                new AnimeInfo {Id = 15, Title = "Shingeki no Kyojin", Description = string.Empty, IsNsfw = true, IsActive = true },
+                new AnimeInfo {Id = 201, Title = "Yakusoku no Neverland", Description = "Neverland...", IsNsfw = false, IsActive = true }
             };
 
             allSeasons = new List<Season>
@@ -49,31 +49,37 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
                     StartDate = new DateTime(2012, 1, 1, 0 ,0 ,0, DateTimeKind.Utc), EndDate = new DateTime(2012, 3, 5, 0 ,0 ,0, DateTimeKind.Utc),
                     AirStatus = (int)AirStatuses.Aired, NumberOfEpisodes = 24, AnimeInfoId = 1,
                     CoverCarousel = Encoding.UTF8.GetBytes("JoJoCarousel"), Cover = Encoding.UTF8.GetBytes("JoJoCover"),
+                    IsAnimeInfoActive = true, IsActive = true
                 },
                 new Season{Id = 2, SeasonNumber = 2, Title = "Stardust Crusaders", Description = "In this season we know the story of old Joseph and young Jotaro Kujo's story while they trying to get into Egypt.",
                     StartDate = new DateTime(2014, 3, 1, 0 ,0 ,0, DateTimeKind.Utc), EndDate = new DateTime(2014, 7, 10, 0 ,0 ,0, DateTimeKind.Utc),
                     AirStatus = (int)AirStatuses.Aired, NumberOfEpisodes = 24, AnimeInfoId = 1,
                     CoverCarousel = Encoding.UTF8.GetBytes("JoJoCarousel"), Cover = Encoding.UTF8.GetBytes("JoJoCover"),
+                    IsAnimeInfoActive = true, IsActive = true
                 },
                 new Season{Id = 3, SeasonNumber = 1, Title = "Season 1", Description = "I don't know this anime. Maybe they are just fighting. Who knows? I'm sure not.",
                     StartDate = new DateTime(2013, 1, 1, 0 ,0 ,0, DateTimeKind.Utc), EndDate = new DateTime(2014, 2, 10, 0 ,0 ,0, DateTimeKind.Utc),
                     AirStatus = (int)AirStatuses.Aired, NumberOfEpisodes = 40, AnimeInfoId = 2,
                     CoverCarousel = Encoding.UTF8.GetBytes("BnHACarousel"), Cover = Encoding.UTF8.GetBytes("BnHACover"),
+                    IsAnimeInfoActive = true, IsActive = true
                 },
                 new Season{Id = 10, SeasonNumber = 1, Title = "Season 1", Description = "Kayman and Nikkaido's story. Kayman is a man, but has a lizard body, well, some magician did it to him, but who?",
                     StartDate = new DateTime(2020, 9, 1, 0 ,0 ,0, DateTimeKind.Utc), EndDate = new DateTime(2020, 12, 20, 0 ,0 ,0, DateTimeKind.Utc),
                     AirStatus = (int)AirStatuses.Aired, NumberOfEpisodes = 10, AnimeInfoId = 10,
                     CoverCarousel = Encoding.UTF8.GetBytes("DorohedoroCarousel"), Cover = Encoding.UTF8.GetBytes("DorohedoroCover"),
+                    IsAnimeInfoActive = true, IsActive = true
                 },
                 new Season{Id = 20, SeasonNumber = 1, Title = "Season 4", Description = "I don't know this anime. Maybe they are just fighting. Who knows? I'm sure not.",
                     StartDate = new DateTime(2020, 11, 1, 0 ,0 ,0, DateTimeKind.Utc), EndDate = new DateTime(2021, 4, 10, 0 ,0 ,0, DateTimeKind.Utc),
                     AirStatus = (int)AirStatuses.Airing, NumberOfEpisodes = 24, AnimeInfoId = 15,
                     CoverCarousel = Encoding.UTF8.GetBytes("SnKCarousel"), Cover = Encoding.UTF8.GetBytes("SnKCover"),
+                    IsAnimeInfoActive = true, IsActive = true
                 },
                 new Season{Id = 22, SeasonNumber = 1, Title = "Season 2", Description = "I don't know this anime. But there will be a second season. That's for sure!",
                     StartDate = null, EndDate = null,
                     AirStatus = (int)AirStatuses.NotAired, NumberOfEpisodes = 20, AnimeInfoId = 201,
                     CoverCarousel = Encoding.UTF8.GetBytes("YnKCarousel"), Cover = Encoding.UTF8.GetBytes("YnKCover"),
+                    IsAnimeInfoActive = true, IsActive = true
                 }
             };
         }
@@ -398,7 +404,10 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
                 services.AddTransient<ISeasonEditing, SeasonEditingHandler>();
             });
 
-            var responseModel = requestModel.ToSeason().ToCreationResponseModel();
+            var season = requestModel.ToSeason();
+            season.IsAnimeInfoActive = true;
+            season.IsActive = true;
+            var responseModel = season.ToCreationResponseModel();
             var seasonEditingHandler = sp.GetService<ISeasonEditing>();
             var createdSeason = await seasonEditingHandler.EditSeason(seasonId, requestModel);
 
@@ -724,8 +733,6 @@ namespace AnimeBrowser.UnitTests.Write.SeasonTests
                 services.AddTransient(factory => seasonWriteRepo.Object);
                 services.AddTransient<ISeasonEditing, SeasonEditingHandler>();
             });
-
-            var responseModel = requestModel.ToSeason().ToCreationResponseModel();
 
             var seasonEditingHandler = sp.GetService<ISeasonEditing>();
             Func<Task> EditSeasonFunc = async () => await seasonEditingHandler.EditSeason(seasonId, requestModel);
