@@ -5,6 +5,7 @@ using AnimeBrowser.Common.Models.Enums;
 using AnimeBrowser.Data.Entities;
 using AnimeBrowser.Data.Entities.Identity;
 using AnimeBrowser.Data.Interfaces.Read.MainInterfaces;
+using AnimeBrowser.Data.Interfaces.Read.SecondaryInterfaces;
 using AnimeBrowser.Data.Interfaces.Write.MainInterfaces;
 using AnimeBrowser.UnitTests.Helpers;
 using FluentAssertions;
@@ -96,17 +97,20 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
         public async Task DeleteEpisode_ShouldWork(long episodeId)
         {
             Episode foundEpisode = null;
+            IEnumerable<EpisodeRating> foundEpisodeRatings = null;
             var sp = SetupDI(services =>
             {
                 var episodeReadRepo = new Mock<IEpisodeRead>();
+                var episodeRatingReadRepo = new Mock<IEpisodeRatingRead>();
                 var episodeWriteRepo = new Mock<IEpisodeWrite>();
 
                 episodeReadRepo.Setup(er => er.GetEpisodeById(It.IsAny<long>())).Callback<long>(eId => foundEpisode = allEpisodes.SingleOrDefault(e => e.Id == eId)).ReturnsAsync(() => foundEpisode);
+                episodeRatingReadRepo.Setup(err => err.GetEpisodeRatingsByEpisodeId(It.IsAny<long>())).Callback<long>(eId => foundEpisodeRatings = allEpisodeRatings.Where(er => er.EpisodeId == eId)).Returns(() => foundEpisodeRatings);
                 episodeWriteRepo.Setup(ew => ew.DeleteEpisode(It.IsAny<Episode>(), It.IsAny<IEnumerable<EpisodeRating>>())).Callback<Episode, IEnumerable<EpisodeRating>>((e, er) =>
                 {
                     if (er?.Any() == true)
                     {
-                        foreach (var epRating in er)
+                        foreach (var epRating in er.ToList())
                         {
                             allEpisodeRatings.Remove(epRating);
                         }
@@ -115,16 +119,19 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
                 });
 
                 services.AddTransient(factory => episodeReadRepo.Object);
+                services.AddTransient(factory => episodeRatingReadRepo.Object);
                 services.AddTransient(factory => episodeWriteRepo.Object);
                 services.AddTransient<IEpisodeDelete, EpisodeDeleteHandler>();
             });
 
             var beforeEpisodeCount = allEpisodes.Count;
+            var beforeEpisodeRatingsCount = allEpisodeRatings.Count;
             var episodeDeleteHandler = sp.GetService<IEpisodeDelete>();
             await episodeDeleteHandler!.DeleteEpisode(episodeId);
             foundEpisode.Should().NotBeNull();
             allEpisodes.Should().NotContain(foundEpisode);
             allEpisodes.Count.Should().Be(beforeEpisodeCount - 1);
+            allEpisodeRatings.Should().NotHaveCount(beforeEpisodeRatingsCount);
         }
 
 
@@ -135,9 +142,11 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
             var sp = SetupDI(services =>
             {
                 var episodeReadRepo = new Mock<IEpisodeRead>();
+                var episodeRatingReadRepo = new Mock<IEpisodeRatingRead>();
                 var episodeWriteRepo = new Mock<IEpisodeWrite>();
 
                 services.AddTransient(factory => episodeReadRepo.Object);
+                services.AddTransient(factory => episodeRatingReadRepo.Object);
                 services.AddTransient(factory => episodeWriteRepo.Object);
                 services.AddTransient<IEpisodeDelete, EpisodeDeleteHandler>();
             });
@@ -155,11 +164,13 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
             var sp = SetupDI(services =>
             {
                 var episodeReadRepo = new Mock<IEpisodeRead>();
+                var episodeRatingReadRepo = new Mock<IEpisodeRatingRead>();
                 var episodeWriteRepo = new Mock<IEpisodeWrite>();
 
                 episodeReadRepo.Setup(er => er.GetEpisodeById(It.IsAny<long>())).Callback<long>(eId => foundEpisode = allEpisodes.SingleOrDefault(e => e.Id == eId)).ReturnsAsync(() => foundEpisode);
 
                 services.AddTransient(factory => episodeReadRepo.Object);
+                services.AddTransient(factory => episodeRatingReadRepo.Object);
                 services.AddTransient(factory => episodeWriteRepo.Object);
                 services.AddTransient<IEpisodeDelete, EpisodeDeleteHandler>();
             });
@@ -175,11 +186,13 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
             var sp = SetupDI(services =>
             {
                 var episodeReadRepo = new Mock<IEpisodeRead>();
+                var episodeRatingReadRepo = new Mock<IEpisodeRatingRead>();
                 var episodeWriteRepo = new Mock<IEpisodeWrite>();
 
                 episodeReadRepo.Setup(er => er.GetEpisodeById(It.IsAny<long>())).ThrowsAsync(new InvalidOperationException());
 
                 services.AddTransient(factory => episodeReadRepo.Object);
+                services.AddTransient(factory => episodeRatingReadRepo.Object);
                 services.AddTransient(factory => episodeWriteRepo.Object);
                 services.AddTransient<IEpisodeDelete, EpisodeDeleteHandler>();
             });
@@ -195,9 +208,11 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
             allEpisodes.Clear();
             allSeasons.Clear();
             allAnimeInfos.Clear();
+            allUsers.Clear();
             allEpisodes = null;
             allSeasons = null;
             allAnimeInfos = null;
+            allUsers = null;
         }
     }
 }

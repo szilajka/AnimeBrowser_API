@@ -68,8 +68,8 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
             var today = new DateTime(now.Year, now.Month, now.Day, 0, 0, 0, DateTimeKind.Utc);
 
             allAnimeInfos = new List<AnimeInfo> {
-                new AnimeInfo { Id = 1, Title = "JoJo's Bizarre Adventure", Description = string.Empty, IsNsfw = false },
-                new AnimeInfo { Id = 2, Title = "Kuroku no Basketball", Description = string.Empty, IsNsfw = false }
+                new AnimeInfo { Id = 1, Title = "JoJo's Bizarre Adventure", Description = string.Empty, IsNsfw = false, IsActive = true },
+                new AnimeInfo { Id = 2, Title = "Kuroku no Basketball", Description = string.Empty, IsNsfw = false, IsActive = true }
             };
             allSeasons = new List<Season>
             {
@@ -77,37 +77,50 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
                     StartDate = new DateTime(2012, 1, 1, 0 ,0 ,0, DateTimeKind.Utc), EndDate = new DateTime(2012, 3, 5, 0 ,0 ,0, DateTimeKind.Utc),
                     AirStatus = (int)AirStatuses.Aired, NumberOfEpisodes = 24, AnimeInfoId = 1,
                     CoverCarousel = Encoding.UTF8.GetBytes("JoJoCarousel"), Cover = Encoding.UTF8.GetBytes("JoJoCover"),
+                    IsAnimeInfoActive = true, IsActive = true
                 },
-                new Season{ Id = 2, SeasonNumber = 1, Title = "Stardust Crusaders", Description = "In this season we know the story of old Joseph and young Jotaro Kujo's story while they trying to get into Egypt.",
+                new Season{ Id = 2, SeasonNumber = 2, Title = "Stardust Crusaders", Description = "In this season we know the story of old Joseph and young Jotaro Kujo's story while they trying to get into Egypt.",
                     StartDate = new DateTime(2014, 3, 1, 0 ,0 ,0, DateTimeKind.Utc), EndDate = new DateTime(2014, 7, 10, 0 ,0 ,0, DateTimeKind.Utc),
                     AirStatus = (int)AirStatuses.Aired, NumberOfEpisodes = 24, AnimeInfoId = 1,
                     CoverCarousel = Encoding.UTF8.GetBytes("JoJoCarousel"), Cover = Encoding.UTF8.GetBytes("JoJoCover"),
+                    IsAnimeInfoActive = true, IsActive = true
                 },
                 new Season{ Id = 5401, SeasonNumber = 1, Title = "The Pillarmen's revenge", Description = "In this season the pillarmen are taking revenge for their death.",
                     StartDate = new DateTime(2014, 3, 1, 0 ,0 ,0, DateTimeKind.Utc), EndDate = new DateTime(2014, 7, 10, 0 ,0 ,0, DateTimeKind.Utc),
                     AirStatus = (int)AirStatuses.Aired, NumberOfEpisodes = 24, AnimeInfoId = 2,
                     CoverCarousel = Encoding.UTF8.GetBytes("JoJoCarousel"), Cover = Encoding.UTF8.GetBytes("JoJoCover"),
+                    IsAnimeInfoActive = true, IsActive = true
                 },
-                new Season{ Id = 5405, SeasonNumber = 1, Title = "Life is basketball", Description = "We know the MC, who wants to get his revenge for kicking her out of the basketball team by making a new team.",
+                new Season{ Id = 5405, SeasonNumber = 2, Title = "Life is basketball", Description = "We know the MC, who wants to get his revenge for kicking her out of the basketball team by making a new team.",
                     StartDate = today.AddYears(-10).AddMonths(-3), EndDate = today.AddYears(-9),
                     AirStatus = (int)AirStatuses.Aired, NumberOfEpisodes = 24, AnimeInfoId = 2,
                     CoverCarousel = Encoding.UTF8.GetBytes("Basketball Carousel"), Cover = Encoding.UTF8.GetBytes("Basketball Cover"),
+                    IsAnimeInfoActive = true, IsActive = true
                 },
-                  new Season{ Id = 6001, SeasonNumber = 1, Title = "Monochrome", Description = "Mc sees everything in monochrome. Due to his illness, demons attack him.",
+                  new Season{ Id = 6001, SeasonNumber = 3, Title = "Monochrome", Description = "Mc sees everything in monochrome. Due to his illness, demons attack him.",
                     StartDate = null, EndDate = null,
                     AirStatus = (int)AirStatuses.NotAired, NumberOfEpisodes = 10, AnimeInfoId = 2,
                     CoverCarousel = Encoding.UTF8.GetBytes("Basketball Carousel"), Cover = Encoding.UTF8.GetBytes("Basketball Cover"),
+                    IsAnimeInfoActive = true, IsActive = true
                 }
             };
             allEpisodes = new List<Episode> {
                 new Episode { Id = 1, EpisodeNumber = 1, AirStatus = (int)AirStatuses.Aired, Title = "Prologue", Description = "This episode tells the backstory of Jonathan and Dio and their fights",
-                    AirDate =  new DateTime(2012, 1, 1, 0, 0, 0, DateTimeKind.Utc), Cover = Encoding.UTF8.GetBytes("S1Ep1Cover"), SeasonId = 1, AnimeInfoId = 1},
+                    AirDate =  new DateTime(2012, 1, 1, 0, 0, 0, DateTimeKind.Utc), Cover = Encoding.UTF8.GetBytes("S1Ep1Cover"), SeasonId = 1, AnimeInfoId = 1,
+                    IsAnimeInfoActive = true, IsSeasonActive = true, IsActive = true
+                },
                 new Episode { Id = 2, EpisodeNumber = 2, AirStatus = (int)AirStatuses.Aired, Title = "Beginning of something new", Description = "More fighting for the family.",
-                    AirDate =  new DateTime(2012, 1, 8, 0, 0, 0, DateTimeKind.Utc), Cover = Encoding.UTF8.GetBytes("S1Ep2Cover"), SeasonId = 1, AnimeInfoId = 1},
+                    AirDate =  new DateTime(2012, 1, 8, 0, 0, 0, DateTimeKind.Utc), Cover = Encoding.UTF8.GetBytes("S1Ep2Cover"), SeasonId = 1, AnimeInfoId = 1,
+                    IsAnimeInfoActive = true, IsSeasonActive = true, IsActive = true
+                },
                 new Episode { Id = 3, EpisodeNumber = 1, AirStatus = (int)AirStatuses.Aired, Title = "Family relations", Description = "Jotaro is in prison and we will know who is Jotaro and the old man.",
-                    AirDate =  new DateTime(2014, 3, 1, 0, 0, 0, DateTimeKind.Utc), Cover = Encoding.UTF8.GetBytes("S2Ep1Cover"), SeasonId = 2, AnimeInfoId = 1},
+                    AirDate =  new DateTime(2014, 3, 1, 0, 0, 0, DateTimeKind.Utc), Cover = Encoding.UTF8.GetBytes("S2Ep1Cover"), SeasonId = 2, AnimeInfoId = 1,
+                    IsAnimeInfoActive = true, IsSeasonActive = true, IsActive = true
+                },
                 new Episode { Id = 4, EpisodeNumber = 2, AirStatus = (int)AirStatuses.NotAired, Title = "Parasites", Description = "No one knows what it's like...",
-                    AirDate =  null, Cover = Encoding.UTF8.GetBytes("S2Ep2Cover"), SeasonId = 2, AnimeInfoId = 6001}
+                    AirDate =  null, Cover = Encoding.UTF8.GetBytes("S2Ep2Cover"), SeasonId = 2, AnimeInfoId = 6001,
+                    IsAnimeInfoActive = true, IsSeasonActive = true, IsActive = true
+                }
             };
         }
 
@@ -309,8 +322,12 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
                 services.AddTransient<IEpisodeCreation, EpisodeCreationHandler>();
             });
 
-            var responseModel = requestModel.ToEpisode().ToCreationResponseModel();
-            responseModel.Id = 10;
+            var episode = requestModel.ToEpisode();
+            episode.Id = 10;
+            episode.IsAnimeInfoActive = true;
+            episode.IsSeasonActive = true;
+            episode.IsActive = true;
+            var responseModel = episode.ToCreationResponseModel();
             var episodeCreationHandler = sp.GetService<IEpisodeCreation>();
             var createdEpisode = await episodeCreationHandler.CreateEpisode(requestModel);
             createdEpisode.Should().BeEquivalentTo(responseModel);
@@ -336,8 +353,6 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
                services.AddTransient<IEpisodeCreation, EpisodeCreationHandler>();
            });
 
-            var responseModel = requestModel.ToEpisode().ToCreationResponseModel();
-            responseModel.Id = 10;
             var episodeCreationHandler = sp.GetService<IEpisodeCreation>();
             Func<Task> createEpisodeFunc = async () => await episodeCreationHandler.CreateEpisode(requestModel);
             var valEx = await createEpisodeFunc.Should().ThrowAsync<ValidationException>();
@@ -363,8 +378,6 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
                 services.AddTransient<IEpisodeCreation, EpisodeCreationHandler>();
             });
 
-            var responseModel = requestModel.ToEpisode().ToCreationResponseModel();
-            responseModel.Id = 10;
             var episodeCreationHandler = sp.GetService<IEpisodeCreation>();
             Func<Task> createEpisodeFunc = async () => await episodeCreationHandler.CreateEpisode(requestModel);
             var valEx = await createEpisodeFunc.Should().ThrowAsync<ValidationException>();
@@ -390,8 +403,6 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
                 services.AddTransient<IEpisodeCreation, EpisodeCreationHandler>();
             });
 
-            var responseModel = requestModel.ToEpisode().ToCreationResponseModel();
-            responseModel.Id = 10;
             var episodeCreationHandler = sp.GetService<IEpisodeCreation>();
             Func<Task> createEpisodeFunc = async () => await episodeCreationHandler.CreateEpisode(requestModel);
             var valEx = await createEpisodeFunc.Should().ThrowAsync<ValidationException>();
@@ -417,8 +428,6 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
                 services.AddTransient<IEpisodeCreation, EpisodeCreationHandler>();
             });
 
-            var responseModel = requestModel.ToEpisode().ToCreationResponseModel();
-            responseModel.Id = 10;
             var episodeCreationHandler = sp.GetService<IEpisodeCreation>();
             Func<Task> createEpisodeFunc = async () => await episodeCreationHandler.CreateEpisode(requestModel);
             var valEx = await createEpisodeFunc.Should().ThrowAsync<ValidationException>();
@@ -444,8 +453,6 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
                 services.AddTransient<IEpisodeCreation, EpisodeCreationHandler>();
             });
 
-            var responseModel = requestModel.ToEpisode().ToCreationResponseModel();
-            responseModel.Id = 10;
             var episodeCreationHandler = sp.GetService<IEpisodeCreation>();
             Func<Task> createEpisodeFunc = async () => await episodeCreationHandler.CreateEpisode(requestModel);
             var valEx = await createEpisodeFunc.Should().ThrowAsync<ValidationException>();
@@ -471,8 +478,6 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
                 services.AddTransient<IEpisodeCreation, EpisodeCreationHandler>();
             });
 
-            var responseModel = requestModel.ToEpisode().ToCreationResponseModel();
-            responseModel.Id = 10;
             var episodeCreationHandler = sp.GetService<IEpisodeCreation>();
             Func<Task> createEpisodeFunc = async () => await episodeCreationHandler.CreateEpisode(requestModel);
             var valEx = await createEpisodeFunc.Should().ThrowAsync<ValidationException>();
@@ -497,8 +502,6 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
                 services.AddTransient<IEpisodeCreation, EpisodeCreationHandler>();
             });
 
-            var responseModel = requestModel.ToEpisode().ToCreationResponseModel();
-            responseModel.Id = 10;
             var episodeCreationHandler = sp.GetService<IEpisodeCreation>();
             Func<Task> createEpisodeFunc = async () => await episodeCreationHandler.CreateEpisode(requestModel);
             await createEpisodeFunc.Should().ThrowAsync<NotFoundObjectException<Season>>();
