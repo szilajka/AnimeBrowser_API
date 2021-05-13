@@ -18,14 +18,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AnimeBrowser.UnitTests.Write.EpisodeTests
+namespace AnimeBrowser.UnitTests.Write.SeasonTests
 {
     [TestClass]
-    public class EpisodeActivationTests : TestBase
+    public class SeasonActivationTests : TestBase
     {
         private IList<User> allUsers;
         private IList<AnimeInfo> allAnimeInfos;
         private IList<Season> allSeasons;
+        private IList<SeasonRating> allSeasonRatings;
         private IList<Episode> allEpisodes;
         private IList<EpisodeRating> allEpisodeRatings;
 
@@ -54,196 +55,245 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
                     StartDate = new DateTime(2012, 1, 1, 0 ,0 ,0, DateTimeKind.Utc), EndDate = new DateTime(2012, 3, 5, 0 ,0 ,0, DateTimeKind.Utc),
                     AirStatus = (int)AirStatuses.Aired, NumberOfEpisodes = 24, AnimeInfoId = 1,
                     CoverCarousel = Encoding.UTF8.GetBytes("JoJoCarousel"), Cover = Encoding.UTF8.GetBytes("JoJoCover"),
-                    IsAnimeInfoActive = true, IsActive = true
+                    IsAnimeInfoActive = true, IsActive = false
                 },
                 new Season {
                     Id = 2, SeasonNumber = 2, Title = "Stardust Crusaders", Description = "...",
                     StartDate = new DateTime(2014, 3, 1, 0 ,0 ,0, DateTimeKind.Utc), EndDate = new DateTime(2014, 7, 10, 0 ,0 ,0, DateTimeKind.Utc),
                     AirStatus = (int)AirStatuses.Aired, NumberOfEpisodes = 24, AnimeInfoId = 1,
                     CoverCarousel = Encoding.UTF8.GetBytes("JoJoCarousel"), Cover = Encoding.UTF8.GetBytes("JoJoCover"),
-                    IsAnimeInfoActive = true, IsActive = true
+                    IsAnimeInfoActive = true, IsActive = false
                 },
                 new Season {
                     Id = 3, SeasonNumber = 3, Title = "Diamond is Unbreakable", Description = "...",
                     StartDate = new DateTime(2016, 4, 2, 0 ,0 ,0, DateTimeKind.Utc), EndDate = new DateTime(2016, 12, 24, 0 ,0 ,0, DateTimeKind.Utc),
                     AirStatus = (int)AirStatuses.Aired, NumberOfEpisodes = 24, AnimeInfoId = 1,
                     CoverCarousel = Encoding.UTF8.GetBytes("JoJoCarousel"), Cover = Encoding.UTF8.GetBytes("JoJoCover"),
-                    IsAnimeInfoActive = true, IsActive = true
+                    IsAnimeInfoActive = true, IsActive = false
                 },
                 new Season {
                     Id = 4, SeasonNumber = 1, Title = "Season 1", Description = "...",
                     StartDate = new DateTime(2018, 11, 1, 0 ,0 ,0, DateTimeKind.Utc), EndDate = new DateTime(2019, 3, 5, 0 ,0 ,0, DateTimeKind.Utc),
                     AirStatus = (int)AirStatuses.Aired, NumberOfEpisodes = 24, AnimeInfoId = 2,
                     CoverCarousel = Encoding.UTF8.GetBytes("KurokunoBasketball"), Cover = Encoding.UTF8.GetBytes("BBCover"),
-                    IsAnimeInfoActive = true, IsActive = true
+                    IsAnimeInfoActive = true, IsActive = false
                 },
                 new Season {
                     Id = 5, SeasonNumber = 2, Title = "Season 2", Description = "...",
                     StartDate = new DateTime(2019, 8, 1, 0 ,0 ,0, DateTimeKind.Utc), EndDate = new DateTime(2019, 12, 30, 0 ,0 ,0, DateTimeKind.Utc),
                     AirStatus = (int)AirStatuses.Aired, NumberOfEpisodes = 24, AnimeInfoId = 2,
                     CoverCarousel = Encoding.UTF8.GetBytes("KurokunoBasketball"), Cover = Encoding.UTF8.GetBytes("BBCover"),
-                    IsAnimeInfoActive = true, IsActive = true
+                    IsAnimeInfoActive = true, IsActive = false
                 },
+            };
+
+            allSeasonRatings = new List<SeasonRating>
+            {
+                new SeasonRating { Id = 1, SeasonId = 1, UserId = "15A6B54C-98D0-4396-90E7-C94761DBA977", Rating = 5, Message = "Very good season! (Y)", IsAnimeInfoActive = true, IsSeasonActive = false },
+                new SeasonRating { Id = 2, SeasonId = 2, UserId = "15A6B54C-98D0-4396-90E7-C94761DBA977", Rating = 5, Message = "The first season was good, it is really better! (Y)", IsAnimeInfoActive = true, IsSeasonActive = false },
+                new SeasonRating { Id = 3, SeasonId = 3, UserId = "15A6B54C-98D0-4396-90E7-C94761DBA977", Rating = 4, Message = "Good season too, but not as good as the first two", IsAnimeInfoActive = true, IsSeasonActive = false },
+                new SeasonRating { Id = 4, SeasonId = 1, UserId = "5879560D-65C5-4699-9449-86CC57EF3111", Rating = 4, Message = "Good season!", IsAnimeInfoActive = true, IsSeasonActive = false },
+                new SeasonRating { Id = 5, SeasonId = 4, UserId = "5879560D-65C5-4699-9449-86CC57EF3111", Rating = 4, Message = "Not a sport anime fan, but it was really good.", IsAnimeInfoActive = true, IsSeasonActive = false },
+                new SeasonRating { Id = 6, SeasonId = 5, UserId = "D7623518-D2C2-4E71-9A9B-C825CE9A44B9", Rating = 4, Message = "A good sequel.", IsAnimeInfoActive = true, IsSeasonActive = false },
+                new SeasonRating { Id = 7, SeasonId = 1, UserId = "D7623518-D2C2-4E71-9A9B-C825CE9A44B9", Rating = 2, Message = "Good starting, but bad ending.", IsAnimeInfoActive = true, IsSeasonActive = false },
+                new SeasonRating { Id = 8, SeasonId = 2, UserId = "D7623518-D2C2-4E71-9A9B-C825CE9A44B9", Rating = 4, Message = "Finally, a worthy anime.", IsAnimeInfoActive = true, IsSeasonActive = false },
+                new SeasonRating { Id = 9, SeasonId = 5, UserId = "027AAEC6-ED12-420B-9467-1984D4396971", Rating = 4, Message = "Not bad.", IsAnimeInfoActive = true, IsSeasonActive = false }
             };
 
             allEpisodes = new List<Episode> {
                 new Episode {
                     Id = 1, EpisodeNumber = 1, AirStatus = (int)AirStatuses.Aired, Title = "Pilot", Description = "...",
                     AirDate =  new DateTime(2012, 1, 1, 0, 0, 0, DateTimeKind.Utc), Cover = Encoding.UTF8.GetBytes("S1Ep1Cover"), SeasonId = 1, AnimeInfoId = 1,
-                    IsAnimeInfoActive = true, IsSeasonActive = true, IsActive = false
+                    IsAnimeInfoActive = true, IsSeasonActive = false, IsActive = true
                 },
                 new Episode {
                     Id = 2, EpisodeNumber = 2, AirStatus = (int)AirStatuses.Aired, Title = "A new beginning", Description = "...",
                     AirDate =  new DateTime(2012, 1, 8, 0, 0, 0, DateTimeKind.Utc), Cover = Encoding.UTF8.GetBytes("S1Ep2Cover"), SeasonId = 1, AnimeInfoId = 1,
-                    IsAnimeInfoActive = true, IsSeasonActive = true, IsActive = false
+                    IsAnimeInfoActive = true, IsSeasonActive = false, IsActive = true
                 },
                 new Episode {
                     Id = 3, EpisodeNumber = 3, AirStatus = (int)AirStatuses.Aired, Title = "Secret of the mask", Description = "...",
                     AirDate =  new DateTime(2012, 1, 15, 0, 0, 0, DateTimeKind.Utc), Cover = Encoding.UTF8.GetBytes("S1Ep3Cover"), SeasonId = 1, AnimeInfoId = 1,
-                    IsAnimeInfoActive = true, IsSeasonActive = true, IsActive = false
+                    IsAnimeInfoActive = true, IsSeasonActive = false, IsActive = true
                 },
                 new Episode {
                     Id = 4, EpisodeNumber = 1, AirStatus = (int)AirStatuses.Aired, Title = "The beginning", Description = "...",
                     AirDate =  new DateTime(2018, 11, 1, 0, 0, 0, DateTimeKind.Utc), Cover = Encoding.UTF8.GetBytes("S1Ep1Cover"), SeasonId = 4, AnimeInfoId = 2,
-                    IsAnimeInfoActive = true, IsSeasonActive = true, IsActive = false
+                    IsAnimeInfoActive = true, IsSeasonActive = false, IsActive = true
                 },
                 new Episode {
                     Id = 5, EpisodeNumber = 1, AirStatus = (int)AirStatuses.Aired, Title = "A new basketball", Description = "...",
                     AirDate =  new DateTime(2019, 8, 1, 0, 0, 0, DateTimeKind.Utc), Cover = Encoding.UTF8.GetBytes("S1Ep1Cover"), SeasonId = 5, AnimeInfoId = 2,
-                    IsAnimeInfoActive = true, IsSeasonActive = true, IsActive = false
+                    IsAnimeInfoActive = true, IsSeasonActive = false, IsActive = true
                 }
             };
 
             allEpisodeRatings = new List<EpisodeRating> {
                 new EpisodeRating {
                     Id = 1, EpisodeId = 1, UserId = "15A6B54C-98D0-4396-90E7-C94761DBA977", Rating = 4, Message = "Very good opening for a season",
-                    IsAnimeInfoActive = true, IsSeasonActive = true, IsEpisodeActive = false
+                    IsAnimeInfoActive = true, IsSeasonActive = false, IsEpisodeActive = true
                 },
                 new EpisodeRating {
                     Id = 2, EpisodeId = 1, UserId = "5879560D-65C5-4699-9449-86CC57EF3111", Rating = 5, Message = "A terrifying episode, how long have I waited for an episode like this <3",
-                    IsAnimeInfoActive = true, IsSeasonActive = true, IsEpisodeActive = false
+                    IsAnimeInfoActive = true, IsSeasonActive = false, IsEpisodeActive = true
                 },
                 new EpisodeRating {
                     Id = 3, EpisodeId = 3, UserId = "F6560F7D-08B5-402D-90EC-C701952A0CF2", Rating = 4, Message = "Seems good, hope that it keeps the fun and horror elements",
-                    IsAnimeInfoActive = true, IsSeasonActive = true, IsEpisodeActive = false
+                    IsAnimeInfoActive = true, IsSeasonActive = false, IsEpisodeActive = true
                 },
                 new EpisodeRating {
                     Id = 4, EpisodeId = 4, UserId = "F6560F7D-08B5-402D-90EC-C701952A0CF2", Rating = 4, Message = "Very good sport anime",
-                    IsAnimeInfoActive = true, IsSeasonActive = true, IsEpisodeActive = false
+                    IsAnimeInfoActive = true, IsSeasonActive = false, IsEpisodeActive = true
                 },
                 new EpisodeRating {
                     Id = 5, EpisodeId = 5, UserId = "15A6B54C-98D0-4396-90E7-C94761DBA977", Rating = 2, Message = "Not the best opening for a new season...",
-                    IsAnimeInfoActive = true, IsSeasonActive = true, IsEpisodeActive = false
+                    IsAnimeInfoActive = true, IsSeasonActive = false, IsEpisodeActive = true
                 },
             };
         }
 
         [DataTestMethod,
             DataRow(1), DataRow(2), DataRow(3), DataRow(4), DataRow(5)]
-        public async Task ActivateEpisode_ShouldWork(long episodeId)
+        public async Task ActivateSeason_ShouldWork(long seasonId)
         {
-            Episode foundEpisode = null;
+            Season foundSeason = null;
+            IEnumerable<SeasonRating> foundSeasonRatings = null;
+            IEnumerable<Episode> foundEpisodes = null;
             IEnumerable<EpisodeRating> foundEpisodeRatings = null;
-            Episode savedEpisode = null;
-            IEnumerable<EpisodeRating> savedEpisodeRatings = null;
+
             var sp = SetupDI(services =>
             {
+                var seasonReadRepo = new Mock<ISeasonRead>();
+                var seasonRatingReadRepo = new Mock<ISeasonRatingRead>();
                 var episodeReadRepo = new Mock<IEpisodeRead>();
                 var episodeRatingReadRepo = new Mock<IEpisodeRatingRead>();
-                var episodeWriteRepo = new Mock<IEpisodeWrite>();
+                var seasonWriteRepo = new Mock<ISeasonWrite>();
 
-                episodeReadRepo.Setup(er => er.GetEpisodeById(It.IsAny<long>())).Callback<long>(eId => foundEpisode = allEpisodes.SingleOrDefault(e => e.Id == eId)).ReturnsAsync(() => foundEpisode);
-                episodeRatingReadRepo.Setup(err => err.GetEpisodeRatingsByEpisodeId(It.IsAny<long>())).Callback<long>(eId => foundEpisodeRatings = allEpisodeRatings.Where(er => er.EpisodeId == eId)).Returns(() => foundEpisodeRatings);
-                episodeWriteRepo.Setup(ew => ew.UpdateEpisodeAndRatings(It.IsAny<Episode>(), It.IsAny<IEnumerable<EpisodeRating>>()))
-                    .Callback<Episode, IEnumerable<EpisodeRating>>((episode, episodeRatings) =>
+                seasonReadRepo.Setup(sr => sr.GetSeasonById(It.IsAny<long>())).Callback<long>(sId => foundSeason = allSeasons.SingleOrDefault(s => s.Id == sId)).ReturnsAsync(() => foundSeason);
+                seasonRatingReadRepo.Setup(srr => srr.GetSeasonRatingsBySeasonId(It.IsAny<long>())).Callback<long>(sId => foundSeasonRatings = allSeasonRatings.Where(sr => sr.SeasonId == sId)).Returns(() => foundSeasonRatings);
+                episodeReadRepo.Setup(er => er.GetEpisodesBySeasonId(It.IsAny<long>())).Callback<long>(sId => foundEpisodes = allEpisodes.Where(e => e.SeasonId == sId)).Returns(() => foundEpisodes);
+                episodeRatingReadRepo.Setup(err => err.GetEpisodeRatingsByEpisodeIds(It.IsAny<IEnumerable<long>>()))
+                    .Callback<IEnumerable<long>>(episodeIds =>
                     {
-                        savedEpisode = episode;
-                        savedEpisodeRatings = episodeRatings;
+                        if (episodeIds?.Any() == true)
+                        {
+                            foundEpisodeRatings = allEpisodeRatings.Where(er => episodeIds.Contains(er.EpisodeId));
+                        }
+                    }).Returns(() => foundEpisodeRatings);
+                seasonWriteRepo.Setup(sw => sw.UpdateSeasonActiveStatus(It.IsAny<Season>(), It.IsAny<IEnumerable<SeasonRating>>(), It.IsAny<IEnumerable<Episode>>(), It.IsAny<IEnumerable<EpisodeRating>>()))
+                    .Callback<Season, IEnumerable<SeasonRating>, IEnumerable<Episode>, IEnumerable<EpisodeRating>>((s, sr, e, er) =>
+                    {
+                        foundSeason = s;
+                        foundSeasonRatings = sr;
+                        foundEpisodes = e;
+                        foundEpisodeRatings = er;
                     });
 
+                services.AddTransient(_ => seasonReadRepo.Object);
+                services.AddTransient(_ => seasonRatingReadRepo.Object);
                 services.AddTransient(_ => episodeReadRepo.Object);
-                services.AddTransient(_ => episodeWriteRepo.Object);
                 services.AddTransient(_ => episodeRatingReadRepo.Object);
-                services.AddTransient<IEpisodeActivation, EpisodeActivationHandler>();
+                services.AddTransient(_ => seasonWriteRepo.Object);
+                services.AddTransient<ISeasonActivation, SeasonActivationHandler>();
             });
 
-            var episodeActivationHandler = sp.GetService<IEpisodeActivation>();
-            var episode = await episodeActivationHandler!.Activate(episodeId);
-            episode.Should().NotBeNull();
-            episode.IsActive.Should().BeTrue();
-            episode.Should().BeEquivalentTo(savedEpisode);
-            if (savedEpisodeRatings?.Any() == true)
+            var seasonActivationHandler = sp.GetService<ISeasonActivation>();
+            var season = await seasonActivationHandler!.Activate(seasonId);
+            season.Should().NotBeNull();
+            season.IsActive.Should().BeTrue();
+            season.Should().BeEquivalentTo(foundSeason);
+            if (foundSeasonRatings?.Any() == true)
             {
-                savedEpisodeRatings.Should().Match(episodeRatings => episodeRatings.All(er => er.IsEpisodeActive == true));
+                foundSeasonRatings.Should().Match(seasonRatings => seasonRatings.All(sr => sr.IsSeasonActive == true));
+            }
+            if (foundEpisodeRatings?.Any() == true)
+            {
+                foundEpisodeRatings.Should().Match(episodeRatings => episodeRatings.All(er => er.IsSeasonActive == true));
+            }
+            if (foundEpisodes?.Any() == true)
+            {
+                foundEpisodes.Should().Match(episodes => episodes.All(e => e.IsSeasonActive == true));
             }
         }
 
         [DataTestMethod,
-           DataRow(0), DataRow(-1), DataRow(-5), DataRow(-1000)]
-        public async Task ActivateEpisode_NotExistingId_ThrowException(long episodeId)
+            DataRow(0), DataRow(-1), DataRow(-5), DataRow(-1000)]
+        public async Task ActivateSeason_NotExistingId_ThrowException(long seasonId)
         {
             var sp = SetupDI(services =>
             {
+                var seasonReadRepo = new Mock<ISeasonRead>();
+                var seasonRatingReadRepo = new Mock<ISeasonRatingRead>();
                 var episodeReadRepo = new Mock<IEpisodeRead>();
                 var episodeRatingReadRepo = new Mock<IEpisodeRatingRead>();
-                var episodeWriteRepo = new Mock<IEpisodeWrite>();
+                var seasonWriteRepo = new Mock<ISeasonWrite>();
 
+                services.AddTransient(_ => seasonReadRepo.Object);
+                services.AddTransient(_ => seasonRatingReadRepo.Object);
                 services.AddTransient(_ => episodeReadRepo.Object);
-                services.AddTransient(_ => episodeWriteRepo.Object);
                 services.AddTransient(_ => episodeRatingReadRepo.Object);
-                services.AddTransient<IEpisodeActivation, EpisodeActivationHandler>();
+                services.AddTransient(_ => seasonWriteRepo.Object);
+                services.AddTransient<ISeasonActivation, SeasonActivationHandler>();
             });
 
-            var episodeActivationHandler = sp.GetService<IEpisodeActivation>();
-            Func<Task> activateEpisodeFunc = async () => await episodeActivationHandler!.Activate(episodeId);
-            await activateEpisodeFunc.Should().ThrowAsync<NotExistingIdException>();
+            var seasonActivationHandler = sp.GetService<ISeasonActivation>();
+            Func<Task> activateSeasonFunc = async () => await seasonActivationHandler!.Activate(seasonId);
+            await activateSeasonFunc.Should().ThrowAsync<NotExistingIdException>();
         }
 
         [DataTestMethod,
             DataRow(67), DataRow(10), DataRow(213123), DataRow(111)]
-        public async Task ActivateEpisode_NotExistingEpisode_ThrowException(long episodeId)
+        public async Task ActivateSeason_NotExistingEpisode_ThrowException(long seasonId)
         {
-            Episode foundEpisode = null;
+            Season foundSeason = null;
             var sp = SetupDI(services =>
             {
+                var seasonReadRepo = new Mock<ISeasonRead>();
+                var seasonRatingReadRepo = new Mock<ISeasonRatingRead>();
                 var episodeReadRepo = new Mock<IEpisodeRead>();
                 var episodeRatingReadRepo = new Mock<IEpisodeRatingRead>();
-                var episodeWriteRepo = new Mock<IEpisodeWrite>();
+                var seasonWriteRepo = new Mock<ISeasonWrite>();
 
-                episodeReadRepo.Setup(er => er.GetEpisodeById(It.IsAny<long>())).Callback<long>(eId => foundEpisode = allEpisodes.SingleOrDefault(e => e.Id == eId)).ReturnsAsync(() => foundEpisode);
+                seasonReadRepo.Setup(sr => sr.GetSeasonById(It.IsAny<long>())).Callback<long>(sId => foundSeason = allSeasons.SingleOrDefault(s => s.Id == sId)).ReturnsAsync(() => foundSeason);
 
+                services.AddTransient(_ => seasonReadRepo.Object);
+                services.AddTransient(_ => seasonRatingReadRepo.Object);
                 services.AddTransient(_ => episodeReadRepo.Object);
-                services.AddTransient(_ => episodeWriteRepo.Object);
                 services.AddTransient(_ => episodeRatingReadRepo.Object);
-                services.AddTransient<IEpisodeActivation, EpisodeActivationHandler>();
+                services.AddTransient(_ => seasonWriteRepo.Object);
+                services.AddTransient<ISeasonActivation, SeasonActivationHandler>();
             });
 
-            var episodeActivationHandler = sp.GetService<IEpisodeActivation>();
-            Func<Task> activateEpisodeFunc = async () => await episodeActivationHandler!.Activate(episodeId);
-            await activateEpisodeFunc.Should().ThrowAsync<NotFoundObjectException<Episode>>();
+            var seasonActivationHandler = sp.GetService<ISeasonActivation>();
+            Func<Task> activateSeasonFunc = async () => await seasonActivationHandler!.Activate(seasonId);
+            await activateSeasonFunc.Should().ThrowAsync<NotFoundObjectException<Season>>();
         }
 
         [DataTestMethod,
             DataRow(1), DataRow(2)]
-        public async Task ActivateEpisode_ThrowException(long episodeId)
+        public async Task ActivateSeason_ThrowException(long seasonId)
         {
             var sp = SetupDI(services =>
             {
+                var seasonReadRepo = new Mock<ISeasonRead>();
+                var seasonRatingReadRepo = new Mock<ISeasonRatingRead>();
                 var episodeReadRepo = new Mock<IEpisodeRead>();
                 var episodeRatingReadRepo = new Mock<IEpisodeRatingRead>();
-                var episodeWriteRepo = new Mock<IEpisodeWrite>();
+                var seasonWriteRepo = new Mock<ISeasonWrite>();
 
-                episodeReadRepo.Setup(er => er.GetEpisodeById(It.IsAny<long>())).ThrowsAsync(new InvalidOperationException());
+                seasonReadRepo.Setup(sr => sr.GetSeasonById(It.IsAny<long>())).ThrowsAsync(new InvalidOperationException());
 
+                services.AddTransient(_ => seasonReadRepo.Object);
+                services.AddTransient(_ => seasonRatingReadRepo.Object);
                 services.AddTransient(_ => episodeReadRepo.Object);
-                services.AddTransient(_ => episodeWriteRepo.Object);
                 services.AddTransient(_ => episodeRatingReadRepo.Object);
-                services.AddTransient<IEpisodeActivation, EpisodeActivationHandler>();
+                services.AddTransient(_ => seasonWriteRepo.Object);
+                services.AddTransient<ISeasonActivation, SeasonActivationHandler>();
             });
 
-            var episodeActivationHandler = sp.GetService<IEpisodeActivation>();
-            Func<Task> activateEpisodeFunc = async () => await episodeActivationHandler!.Activate(episodeId);
-            await activateEpisodeFunc.Should().ThrowAsync<InvalidOperationException>();
+            var seasonActivationHandler = sp.GetService<ISeasonActivation>();
+            Func<Task> activateSeasonFunc = async () => await seasonActivationHandler!.Activate(seasonId);
+            await activateSeasonFunc.Should().ThrowAsync<InvalidOperationException>();
         }
 
 

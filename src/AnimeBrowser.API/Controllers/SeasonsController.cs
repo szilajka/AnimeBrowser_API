@@ -22,14 +22,16 @@ namespace AnimeBrowser.API.Controllers
         private readonly ISeasonEditing seasonEditingHandler;
         private readonly ISeasonDelete seasonDeleteHandler;
         private readonly ISeasonInactivation seasonInactivationHandler;
+        private readonly ISeasonActivation seasonActivationHandler;
 
         public SeasonsController(ISeasonCreation seasonCreationHandler, ISeasonEditing seasonEditingHandler, ISeasonDelete seasonDeleteHandler,
-            ISeasonInactivation seasonInactivationHandler)
+            ISeasonInactivation seasonInactivationHandler, ISeasonActivation seasonActivationHandler)
         {
             this.seasonCreationHandler = seasonCreationHandler;
             this.seasonEditingHandler = seasonEditingHandler;
             this.seasonDeleteHandler = seasonDeleteHandler;
             this.seasonInactivationHandler = seasonInactivationHandler;
+            this.seasonActivationHandler = seasonActivationHandler;
         }
 
         [HttpPost]
@@ -158,6 +160,37 @@ namespace AnimeBrowser.API.Controllers
                 logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method started. {nameof(id)}: [{id}].");
 
                 var updatedSeason = await seasonInactivationHandler.Inactivate(id);
+
+                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method finished.");
+
+                return Ok(updatedSeason);
+            }
+            catch (NotExistingIdException idEx)
+            {
+                logger.Warning(idEx, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{idEx.Message}].");
+                return BadRequest(idEx.Error);
+            }
+            catch (NotFoundObjectException<Season> ex)
+            {
+                logger.Warning(ex, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{ex.Message}].");
+                return NotFound(id);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"Error in [{MethodNameHelper.GetCurrentMethodName()}]. Message: [{ex.Message}].");
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        [HttpPatch("{id}/activate")]
+        [Authorize("SeasonAdmin")]
+        public async Task<IActionResult> Activate([FromRoute] long id)
+        {
+            try
+            {
+                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method started. {nameof(id)}: [{id}].");
+
+                var updatedSeason = await seasonActivationHandler.Activate(id);
 
                 logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method finished.");
 
