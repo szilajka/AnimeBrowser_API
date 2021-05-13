@@ -33,6 +33,7 @@ namespace AnimeBrowser.BL.Helpers
             services.AddTransient<IEpisodeDelete, EpisodeDeleteHandler>();
             services.AddTransient<IEpisodeInactivation, EpisodeInactivationHandler>();
             services.AddTransient<IEpisodeActivation, EpisodeActivationHandler>();
+            services.AddTransient<ISeasonInactivation, SeasonInactivationHandler>();
             #endregion Main Handlers
 
             #region Secondary Handlers

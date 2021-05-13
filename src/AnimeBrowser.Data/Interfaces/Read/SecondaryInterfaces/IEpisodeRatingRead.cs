@@ -9,6 +9,6 @@ namespace AnimeBrowser.Data.Interfaces.Read.SecondaryInterfaces
         Task<EpisodeRating?> GetEpisodeRatingById(long id);
         EpisodeRating? GetEpisodeRatingByEpisodeAndUserId(long episodeId, string userId);
         IEnumerable<EpisodeRating>? GetEpisodeRatingsByEpisodeId(long episodeId);
-        IEnumerable<EpisodeRating>? GetEpisodeRatingsByEpisodeIds(IEnumerable<long> episodeIds);
+        IEnumerable<EpisodeRating>? GetEpisodeRatingsByEpisodeIds(IEnumerable<long>? episodeIds);
     }
 }

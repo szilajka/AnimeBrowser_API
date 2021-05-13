@@ -49,14 +49,20 @@ namespace AnimeBrowser.Data.Repositories.Read.SecondaryRepositories
             return episodeRatings;
         }
 
-        public IEnumerable<EpisodeRating>? GetEpisodeRatingsByEpisodeIds(IEnumerable<long> episodeIds)
+        public IEnumerable<EpisodeRating>? GetEpisodeRatingsByEpisodeIds(IEnumerable<long>? episodeIds)
         {
             logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method started. {nameof(episodeIds)}.Count: [{episodeIds?.Count()}].");
 
-            var episodeRatings = abContext.EpisodeRatings.ToList().Where(er => episodeIds.Contains(er.EpisodeId));
+            if (episodeIds?.Any() == true)
+            {
+                var episodeRatings = abContext.EpisodeRatings.ToList().Where(er => episodeIds.Contains(er.EpisodeId));
 
-            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. {nameof(episodeRatings)}.Count: [{episodeRatings?.Count()}]");
-            return episodeRatings;
+                logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. {nameof(episodeRatings)}.Count: [{episodeRatings?.Count()}]");
+                return episodeRatings;
+            }
+
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. No ratings for empty {nameof(episodeIds)} list.");
+            return Enumerable.Empty<EpisodeRating>();
         }
     }
 }
