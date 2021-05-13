@@ -10,6 +10,6 @@ namespace AnimeBrowser.Data.Interfaces.Write.MainInterfaces
         Task<Episode> UpdateEpisode(Episode episode);
         Task DeleteEpisode(Episode episode, IEnumerable<EpisodeRating>? episodeRatings = null);
 
-        Task InactivateEpisodeAndRatings(Episode episode, IEnumerable<EpisodeRating>? episodeRatings = null);
+        Task UpdateEpisodeAndRatings(Episode episode, IEnumerable<EpisodeRating>? episodeRatings = null);
     }
 }

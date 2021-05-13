@@ -21,7 +21,7 @@ using System.Threading.Tasks;
 namespace AnimeBrowser.UnitTests.Write.EpisodeTests
 {
     [TestClass]
-    public class EpisodeInactivationTests : TestBase
+    public class EpisodeActivationTests : TestBase
     {
         private IList<User> allUsers;
         private IList<AnimeInfo> allAnimeInfos;
@@ -140,7 +140,7 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
 
         [DataTestMethod,
             DataRow(1), DataRow(2), DataRow(3), DataRow(4), DataRow(5)]
-        public async Task InactivateEpisode_ShouldWork(long episodeId)
+        public async Task ActivateEpisode_ShouldWork(long episodeId)
         {
             Episode foundEpisode = null;
             IEnumerable<EpisodeRating> foundEpisodeRatings = null;
@@ -164,23 +164,23 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
                 services.AddTransient(_ => episodeReadRepo.Object);
                 services.AddTransient(_ => episodeWriteRepo.Object);
                 services.AddTransient(_ => episodeRatingReadRepo.Object);
-                services.AddTransient<IEpisodeInactivation, EpisodeInactivationHandler>();
+                services.AddTransient<IEpisodeActivation, EpisodeActivationHandler>();
             });
 
-            var episodeInactivationHandler = sp.GetService<IEpisodeInactivation>();
-            var episode = await episodeInactivationHandler!.Inactivate(episodeId);
+            var episodeActivationHandler = sp.GetService<IEpisodeActivation>();
+            var episode = await episodeActivationHandler!.Activate(episodeId);
             episode.Should().NotBeNull();
-            episode.IsActive.Should().BeFalse();
+            episode.IsActive.Should().BeTrue();
             episode.Should().BeEquivalentTo(savedEpisode);
             if (savedEpisodeRatings?.Any() == true)
             {
-                savedEpisodeRatings.Should().Match(episodeRatings => episodeRatings.All(er => er.IsEpisodeActive == false));
+                savedEpisodeRatings.Should().Match(episodeRatings => episodeRatings.All(er => er.IsEpisodeActive == true));
             }
         }
 
         [DataTestMethod,
            DataRow(0), DataRow(-1), DataRow(-5), DataRow(-1000)]
-        public async Task InactivateEpisode_NotExistingId_ThrowException(long episodeId)
+        public async Task ActivateEpisode_NotExistingId_ThrowException(long episodeId)
         {
             var sp = SetupDI(services =>
             {
@@ -191,17 +191,17 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
                 services.AddTransient(_ => episodeReadRepo.Object);
                 services.AddTransient(_ => episodeWriteRepo.Object);
                 services.AddTransient(_ => episodeRatingReadRepo.Object);
-                services.AddTransient<IEpisodeInactivation, EpisodeInactivationHandler>();
+                services.AddTransient<IEpisodeActivation, EpisodeActivationHandler>();
             });
 
-            var episodeInactivationHandler = sp.GetService<IEpisodeInactivation>();
-            Func<Task> inactivateEpisodeFunc = async () => await episodeInactivationHandler!.Inactivate(episodeId);
-            await inactivateEpisodeFunc.Should().ThrowAsync<NotExistingIdException>();
+            var episodeActivationHandler = sp.GetService<IEpisodeActivation>();
+            Func<Task> activateEpisodeFunc = async () => await episodeActivationHandler!.Activate(episodeId);
+            await activateEpisodeFunc.Should().ThrowAsync<NotExistingIdException>();
         }
 
         [DataTestMethod,
             DataRow(67), DataRow(10), DataRow(213123), DataRow(111)]
-        public async Task InactivateEpisode_NotExistingEpisode_ThrowException(long episodeId)
+        public async Task ActivateEpisode_NotExistingEpisode_ThrowException(long episodeId)
         {
             Episode foundEpisode = null;
             var sp = SetupDI(services =>
@@ -215,17 +215,17 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
                 services.AddTransient(_ => episodeReadRepo.Object);
                 services.AddTransient(_ => episodeWriteRepo.Object);
                 services.AddTransient(_ => episodeRatingReadRepo.Object);
-                services.AddTransient<IEpisodeInactivation, EpisodeInactivationHandler>();
+                services.AddTransient<IEpisodeActivation, EpisodeActivationHandler>();
             });
 
-            var episodeInactivationHandler = sp.GetService<IEpisodeInactivation>();
-            Func<Task> inactivateEpisodeFunc = async () => await episodeInactivationHandler!.Inactivate(episodeId);
-            await inactivateEpisodeFunc.Should().ThrowAsync<NotFoundObjectException<Episode>>();
+            var episodeActivationHandler = sp.GetService<IEpisodeActivation>();
+            Func<Task> activateEpisodeFunc = async () => await episodeActivationHandler!.Activate(episodeId);
+            await activateEpisodeFunc.Should().ThrowAsync<NotFoundObjectException<Episode>>();
         }
 
         [DataTestMethod,
             DataRow(1), DataRow(2)]
-        public async Task InactivateEpisode_ThrowException(long episodeId)
+        public async Task ActivateEpisode_ThrowException(long episodeId)
         {
             var sp = SetupDI(services =>
             {
@@ -238,12 +238,12 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
                 services.AddTransient(_ => episodeReadRepo.Object);
                 services.AddTransient(_ => episodeWriteRepo.Object);
                 services.AddTransient(_ => episodeRatingReadRepo.Object);
-                services.AddTransient<IEpisodeInactivation, EpisodeInactivationHandler>();
+                services.AddTransient<IEpisodeActivation, EpisodeActivationHandler>();
             });
 
-            var episodeInactivationHandler = sp.GetService<IEpisodeInactivation>();
-            Func<Task> inactivateEpisodeFunc = async () => await episodeInactivationHandler!.Inactivate(episodeId);
-            await inactivateEpisodeFunc.Should().ThrowAsync<InvalidOperationException>();
+            var episodeActivationHandler = sp.GetService<IEpisodeActivation>();
+            Func<Task> activateEpisodeFunc = async () => await episodeActivationHandler!.Activate(episodeId);
+            await activateEpisodeFunc.Should().ThrowAsync<InvalidOperationException>();
         }
 
 

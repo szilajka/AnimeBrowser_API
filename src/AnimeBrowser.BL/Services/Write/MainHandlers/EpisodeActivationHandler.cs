@@ -13,21 +13,21 @@ using System.Threading.Tasks;
 
 namespace AnimeBrowser.BL.Services.Write.MainHandlers
 {
-    public class EpisodeInactivationHandler : IEpisodeInactivation
+    public class EpisodeActivationHandler : IEpisodeActivation
     {
-        private readonly ILogger logger = Log.ForContext<EpisodeInactivationHandler>();
+        private readonly ILogger logger = Log.ForContext<EpisodeActivationHandler>();
         private readonly IEpisodeRead episodeReadRepo;
-        private readonly IEpisodeWrite episodeWriteRepo;
         private readonly IEpisodeRatingRead episodeRatingReadRepo;
+        private readonly IEpisodeWrite episodeWriteRepo;
 
-        public EpisodeInactivationHandler(IEpisodeRead episodeReadRepo, IEpisodeWrite episodeWriteRepo, IEpisodeRatingRead episodeRatingReadRepo)
+        public EpisodeActivationHandler(IEpisodeRead episodeReadRepo, IEpisodeRatingRead episodeRatingReadRepo, IEpisodeWrite episodeWriteRepo)
         {
             this.episodeReadRepo = episodeReadRepo;
-            this.episodeWriteRepo = episodeWriteRepo;
             this.episodeRatingReadRepo = episodeRatingReadRepo;
+            this.episodeWriteRepo = episodeWriteRepo;
         }
 
-        public async Task<Episode> Inactivate(long episodeId)
+        public async Task<Episode> Activate(long episodeId)
         {
             try
             {
@@ -55,10 +55,10 @@ namespace AnimeBrowser.BL.Services.Write.MainHandlers
                 {
                     foreach (var er in episodeRatings)
                     {
-                        er.IsEpisodeActive = false;
+                        er.IsEpisodeActive = true;
                     }
                 }
-                episode.IsActive = false;
+                episode.IsActive = true;
                 await episodeWriteRepo.UpdateEpisodeAndRatings(episode, episodeRatings);
 
                 logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method finished.");
