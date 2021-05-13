@@ -10,5 +10,8 @@ namespace AnimeBrowser.Data.Interfaces.Write.MainInterfaces
         Task<AnimeInfo> UpdateAnimeInfo(AnimeInfo animeInfo);
         Task DeleteAnimeInfo(AnimeInfo animeInfo, IEnumerable<Season>? seasons = null, IEnumerable<Episode>? episodes = null,
             IEnumerable<SeasonRating>? seasonRatings = null, IEnumerable<EpisodeRating>? episodeRatings = null);
+
+        Task UpdateAnimeInfoActiveStatus(AnimeInfo animeInfo, IEnumerable<Season>? seasons, IEnumerable<SeasonRating>? seasonRatings,
+            IEnumerable<Episode>? episodes, IEnumerable<EpisodeRating>? episodeRatings);
     }
 }

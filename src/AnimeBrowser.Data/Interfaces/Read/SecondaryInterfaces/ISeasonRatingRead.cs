@@ -9,6 +9,6 @@ namespace AnimeBrowser.Data.Interfaces.Read.SecondaryInterfaces
         Task<SeasonRating?> GetSeasonRatingById(long id);
         SeasonRating? GetSeasonRatingBySeasonAndUserId(long seasonId, string userId);
         IEnumerable<SeasonRating>? GetSeasonRatingsBySeasonId(long seasonId);
-        IEnumerable<SeasonRating>? GetSeasonRatingsBySeasonIds(IEnumerable<long> seasonIds);
+        IEnumerable<SeasonRating>? GetSeasonRatingsBySeasonIds(IEnumerable<long>? seasonIds);
     }
 }

@@ -9,6 +9,6 @@ namespace AnimeBrowser.Data.Interfaces.Write.MainInterfaces
         Task<Season> CreateSeason(Season season);
         Task<Season> UpdateSeason(Season season);
         Task DeleteSeason(Season season, IEnumerable<Episode>? episodes = null, IEnumerable<SeasonRating>? seasonRatings = null, IEnumerable<EpisodeRating>? episodeRatings = null);
-        void UpdateSeasonActiveStatus(Season season, IEnumerable<SeasonRating>? seasonRatings, IEnumerable<Episode>? episodes, IEnumerable<EpisodeRating>? episodeRatings);
+        Task UpdateSeasonActiveStatus(Season season, IEnumerable<SeasonRating>? seasonRatings, IEnumerable<Episode>? episodes, IEnumerable<EpisodeRating>? episodeRatings);
     }
 }

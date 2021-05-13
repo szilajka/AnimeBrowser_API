@@ -10,6 +10,6 @@ namespace AnimeBrowser.Data.Interfaces.Read.MainInterfaces
         bool IsEpisodeWithEpisodeNumberExists(long seasonId, int episodeNumber);
         Task<bool> IsSeasonAndAnimeInfoExistsAndReferences(long seasonId, long animeInfoId);
         IEnumerable<Episode>? GetEpisodesBySeasonId(long seasonId);
-        IEnumerable<Episode>? GetEpisodesBySeasonIds(IEnumerable<long> seasonIds);
+        IEnumerable<Episode>? GetEpisodesBySeasonIds(IEnumerable<long>? seasonIds);
     }
 }

@@ -60,14 +60,19 @@ namespace AnimeBrowser.Data.Repositories.Read.MainRepositories
             return episodes;
         }
 
-        public IEnumerable<Episode>? GetEpisodesBySeasonIds(IEnumerable<long> seasonIds)
+        public IEnumerable<Episode>? GetEpisodesBySeasonIds(IEnumerable<long>? seasonIds)
         {
-            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method started. {nameof(seasonIds)}: [{string.Join(", ", seasonIds)}].");
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method started.");
+            if (seasonIds?.Any() == true)
+            {
+                logger.Debug($"{nameof(seasonIds)}: [{string.Join(", ", seasonIds)}].");
+                var episodes = abContext.Episodes.ToList().Where(e => seasonIds.Contains(e.SeasonId));
+                logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. {nameof(episodes)}.Count: [{episodes?.Count()}].");
+                return episodes;
+            }
 
-            var episodes = abContext.Episodes.ToList().Where(e => seasonIds.Contains(e.SeasonId));
-
-            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. {nameof(episodes)}.Count: [{episodes?.Count()}].");
-            return episodes;
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. {nameof(seasonIds)} list is empty.");
+            return Enumerable.Empty<Episode>();
         }
     }
 }

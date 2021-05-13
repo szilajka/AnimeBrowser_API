@@ -57,7 +57,7 @@ namespace AnimeBrowser.BL.Services.Write.MainHandlers
 
                 var seasonRatings = seasonRatingReadRepo.GetSeasonRatingsBySeasonId(seasonId);
                 var episodes = episodeReadRepo.GetEpisodesBySeasonId(seasonId);
-                var episodeIds = episodes?.Select(e => e.Id);
+                var episodeIds = episodes?.Select(e => e.Id)?.Distinct();
                 var episodeRatings = episodeRatingReadRepo.GetEpisodeRatingsByEpisodeIds(episodeIds);
                 if (episodeRatings?.Any() == true)
                 {

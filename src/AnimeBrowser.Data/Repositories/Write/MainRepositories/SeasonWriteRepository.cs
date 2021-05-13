@@ -62,7 +62,7 @@ namespace AnimeBrowser.Data.Repositories.Write.MainRepositories
             logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished.");
         }
 
-        public void UpdateSeasonActiveStatus(Season season, IEnumerable<SeasonRating>? seasonRatings, IEnumerable<Episode>? episodes, IEnumerable<EpisodeRating>? episodeRatings)
+        public async Task UpdateSeasonActiveStatus(Season season, IEnumerable<SeasonRating>? seasonRatings, IEnumerable<Episode>? episodes, IEnumerable<EpisodeRating>? episodeRatings)
         {
             logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method started. {nameof(Season)}: [{season}].");
 
@@ -79,6 +79,7 @@ namespace AnimeBrowser.Data.Repositories.Write.MainRepositories
                 abContext.UpdateRange(seasonRatings);
             }
             abContext.Update(season);
+            await abContext.SaveChangesAsync();
 
             logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished.");
         }

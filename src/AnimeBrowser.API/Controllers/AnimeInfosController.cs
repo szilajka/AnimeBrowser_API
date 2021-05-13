@@ -20,13 +20,16 @@ namespace AnimeBrowser.API.Controllers
         private readonly IAnimeInfoCreation animeInfoCreateHandler;
         private readonly IAnimeInfoEditing animeInfoEditorHandler;
         private readonly IAnimeInfoDelete animeInfoDeleteHandler;
+        private readonly IAnimeInfoInactivation animeInfoInactivationHandler;
         private readonly ILogger logger = Log.ForContext<AnimeInfosController>();
 
-        public AnimeInfosController(IAnimeInfoCreation animeInfoCreateHandler, IAnimeInfoEditing animeInfoEditorHandler, IAnimeInfoDelete animeInfoDeleteHandler)
+        public AnimeInfosController(IAnimeInfoCreation animeInfoCreateHandler, IAnimeInfoEditing animeInfoEditorHandler, IAnimeInfoDelete animeInfoDeleteHandler,
+            IAnimeInfoInactivation animeInfoInactivationHandler)
         {
             this.animeInfoCreateHandler = animeInfoCreateHandler;
             this.animeInfoEditorHandler = animeInfoEditorHandler;
             this.animeInfoDeleteHandler = animeInfoDeleteHandler;
+            this.animeInfoInactivationHandler = animeInfoInactivationHandler;
         }
 
 
@@ -118,6 +121,37 @@ namespace AnimeBrowser.API.Controllers
             {
                 logger.Warning(nfoEx, $"Error in [{MethodNameHelper.GetCurrentMethodName()}]. Message: [{nfoEx.Message}].");
                 return NotFound(nfoEx.Error);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"Error in [{MethodNameHelper.GetCurrentMethodName()}]. Message: [{ex.Message}].");
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        [HttpPatch("{id}/inactivate")]
+        [Authorize("AnimeInfoAdmin")]
+        public async Task<IActionResult> Inactivate([FromRoute] long id)
+        {
+            try
+            {
+                logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method started. {nameof(id)}: [{id}].");
+
+                var updatedAnimeInfo = await animeInfoInactivationHandler.Inactivate(id);
+
+                logger.Information($"{MethodNameHelper.GetCurrentMethodName()} method finished. result: [{updatedAnimeInfo}].");
+
+                return Ok(updatedAnimeInfo);
+            }
+            catch (NotExistingIdException idEx)
+            {
+                logger.Warning(idEx, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{idEx.Message}].");
+                return BadRequest(idEx.Error);
+            }
+            catch (NotFoundObjectException<AnimeInfo> ex)
+            {
+                logger.Warning(ex, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{ex.Message}].");
+                return NotFound(ex.Error);
             }
             catch (Exception ex)
             {

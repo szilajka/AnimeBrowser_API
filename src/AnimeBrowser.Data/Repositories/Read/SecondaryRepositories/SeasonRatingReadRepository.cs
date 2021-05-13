@@ -49,14 +49,20 @@ namespace AnimeBrowser.Data.Repositories.Read.SecondaryRepositories
             return seasonRatings;
         }
 
-        public IEnumerable<SeasonRating>? GetSeasonRatingsBySeasonIds(IEnumerable<long> seasonIds)
+        public IEnumerable<SeasonRating>? GetSeasonRatingsBySeasonIds(IEnumerable<long>? seasonIds)
         {
-            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method started. {nameof(seasonIds)}: [{string.Join(", ", seasonIds)}].");
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method started.");
 
-            var seasonRatings = abContext.SeasonRatings.ToList().Where(sr => seasonIds.Contains(sr.SeasonId));
+            if (seasonIds?.Any() == true)
+            {
+                logger.Debug($"{nameof(seasonIds)}: [{string.Join(", ", seasonIds)}].");
+                var seasonRatings = abContext.SeasonRatings.ToList().Where(sr => seasonIds.Contains(sr.SeasonId));
+                logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. {nameof(seasonRatings)}.Count: [{seasonRatings?.Count()}].");
+                return seasonRatings;
+            }
 
-            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. {nameof(seasonRatings)}.Count: [{seasonRatings?.Count()}].");
-            return seasonRatings;
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished. {nameof(seasonIds)} list is empty.");
+            return Enumerable.Empty<SeasonRating>();
         }
     }
 }

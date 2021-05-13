@@ -66,5 +66,32 @@ namespace AnimeBrowser.Data.Repositories.Write.MainRepositories
 
             logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished.");
         }
+
+        public async Task UpdateAnimeInfoActiveStatus(AnimeInfo animeInfo, IEnumerable<Season>? seasons, IEnumerable<SeasonRating>? seasonRatings,
+            IEnumerable<Episode>? episodes, IEnumerable<EpisodeRating>? episodeRatings)
+        {
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method started. {nameof(AnimeInfo)}: [{animeInfo}].");
+
+            if (episodeRatings?.Any() == true)
+            {
+                abContext.UpdateRange(episodeRatings);
+            }
+            if (seasonRatings?.Any() == true)
+            {
+                abContext.UpdateRange(seasonRatings);
+            }
+            if (episodes?.Any() == true)
+            {
+                abContext.UpdateRange(episodes);
+            }
+            if (seasons?.Any() == true)
+            {
+                abContext.UpdateRange(seasons);
+            }
+            abContext.Update(animeInfo);
+            await abContext.SaveChangesAsync();
+
+            logger.Debug($"[{MethodNameHelper.GetCurrentMethodName()}] method finished.");
+        }
     }
 }
