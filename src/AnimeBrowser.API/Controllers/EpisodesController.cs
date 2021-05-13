@@ -21,12 +21,14 @@ namespace AnimeBrowser.API.Controllers
         private readonly IEpisodeCreation episodeCreationHandler;
         private readonly IEpisodeEditing episodeEditingHandler;
         private readonly IEpisodeDelete episodeDeleteHandler;
+        private readonly IEpisodeInactivation episodeInactivationHandler;
 
-        public EpisodesController(IEpisodeCreation episodeCreationHandler, IEpisodeEditing episodeEditingHandler, IEpisodeDelete episodeDeleteHandler)
+        public EpisodesController(IEpisodeCreation episodeCreationHandler, IEpisodeEditing episodeEditingHandler, IEpisodeDelete episodeDeleteHandler, IEpisodeInactivation episodeInactivationHandler)
         {
             this.episodeCreationHandler = episodeCreationHandler;
             this.episodeEditingHandler = episodeEditingHandler;
             this.episodeDeleteHandler = episodeDeleteHandler;
+            this.episodeInactivationHandler = episodeInactivationHandler;
         }
 
         [HttpPost]
@@ -142,6 +144,37 @@ namespace AnimeBrowser.API.Controllers
             {
                 logger.Warning(nfoEx, $"Error in [{MethodNameHelper.GetCurrentMethodName()}]. Message: [{nfoEx.Message}].");
                 return NotFound(nfoEx.Error);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"Error in [{MethodNameHelper.GetCurrentMethodName()}]. Message: [{ex.Message}].");
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        [HttpPatch("{id}/inactivate")]
+        [Authorize("EpisodeAdmin")]
+        public async Task<IActionResult> Inactivate([FromRoute] long id)
+        {
+            try
+            {
+                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method started. {nameof(id)}: [{id}].");
+
+                var updatedEpisode = await episodeInactivationHandler.Inactivate(id);
+
+                logger.Information($"[{MethodNameHelper.GetCurrentMethodName()}] method finished.");
+
+                return Ok(updatedEpisode);
+            }
+            catch (NotExistingIdException idEx)
+            {
+                logger.Warning(idEx, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{idEx.Message}].");
+                return BadRequest(idEx.Error);
+            }
+            catch (NotFoundObjectException<Episode> ex)
+            {
+                logger.Warning(ex, $"Error in {MethodNameHelper.GetCurrentMethodName()}. Message: [{ex.Message}].");
+                return NotFound(id);
             }
             catch (Exception ex)
             {
