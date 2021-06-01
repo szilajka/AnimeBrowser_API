@@ -1,10 +1,9 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Text.Encodings.Web;
-using System.Text.Json;
+﻿using AnimeBrowser.Common.Attributes;
 
 namespace AnimeBrowser.Common.Models.BaseModels.SecondaryModels
 {
-    public class EpisodeRatingRequestModel
+    [ToJsonString]
+    public partial class EpisodeRatingRequestModel
     {
         public EpisodeRatingRequestModel(int rating, long episodeId, string userId, string message = "")
         {
@@ -18,12 +17,5 @@ namespace AnimeBrowser.Common.Models.BaseModels.SecondaryModels
         public string Message { get; set; }
         public long EpisodeId { get; set; }
         public string UserId { get; set; }
-
-        [ExcludeFromCodeCoverage]
-        public override string ToString() => JsonSerializer.Serialize(this, new JsonSerializerOptions
-        {
-            WriteIndented = true,
-            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-        });
     }
 }

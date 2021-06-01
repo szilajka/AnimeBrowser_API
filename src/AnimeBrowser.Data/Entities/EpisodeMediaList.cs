@@ -1,11 +1,10 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Text.Encodings.Web;
-using System.Text.Json;
+﻿using AnimeBrowser.Common.Attributes;
 
 #nullable disable
 
 namespace AnimeBrowser.Data.Entities
 {
+    [ToJsonString]
     public partial class EpisodeMediaList
     {
         public long Id { get; set; }
@@ -14,13 +13,5 @@ namespace AnimeBrowser.Data.Entities
 
         public virtual Episode Episode { get; set; }
         public virtual MediaList List { get; set; }
-
-
-        [ExcludeFromCodeCoverage]
-        public override string ToString() => JsonSerializer.Serialize(this, new JsonSerializerOptions
-        {
-            WriteIndented = true,
-            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
-        });
     }
 }

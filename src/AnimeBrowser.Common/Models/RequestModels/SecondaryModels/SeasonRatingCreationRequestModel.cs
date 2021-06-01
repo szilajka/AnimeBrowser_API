@@ -2,7 +2,7 @@
 
 namespace AnimeBrowser.Common.Models.RequestModels.SecondaryModels
 {
-    public class SeasonRatingCreationRequestModel : SeasonRatingRequestModel
+    public partial class SeasonRatingCreationRequestModel : SeasonRatingRequestModel
     {
         public SeasonRatingCreationRequestModel(int rating, long seasonId, string userId, string message = "")
             : base(rating: rating, seasonId: seasonId, userId: userId, message: message)

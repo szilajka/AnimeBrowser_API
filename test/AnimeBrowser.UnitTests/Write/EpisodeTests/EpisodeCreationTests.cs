@@ -297,7 +297,9 @@ namespace AnimeBrowser.UnitTests.Write.EpisodeTests
                 var episodeReadRepo = new Mock<IEpisodeRead>();
                 var episodeWriteRepo = new Mock<IEpisodeWrite>();
                 var seasonReadRepo = new Mock<ISeasonRead>();
-                seasonReadRepo.Setup(sr => sr.GetSeasonById(It.IsAny<long>())).Callback<long>(sId => foundSeason = allSeasons.SingleOrDefault(s => s.Id == sId)).ReturnsAsync(() => foundSeason);
+                seasonReadRepo.Setup(sr => sr.GetSeasonById(It.IsAny<long>()))
+                    .Callback<long>(sId => foundSeason = allSeasons.SingleOrDefault(s => s.Id == sId))
+                    .ReturnsAsync(() => foundSeason);
                 //episodeReadRepo.Setup(er => er.IsSeasonAndAnimeInfoExistsAndReferences(It.IsAny<long>(), It.IsAny<long>()))
                 //    .Callback<long, long>((sId, aiId) =>
                 //        {

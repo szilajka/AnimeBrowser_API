@@ -2,7 +2,7 @@
 
 namespace AnimeBrowser.Common.Models.RequestModels.SecondaryModels
 {
-    public class SeasonGenreCreationRequestModel : SeasonGenreRequestModel
+    public partial class SeasonGenreCreationRequestModel : SeasonGenreRequestModel
     {
         public SeasonGenreCreationRequestModel(long genreId, long seasonId)
             : base(genreId: genreId, seasonId: seasonId)

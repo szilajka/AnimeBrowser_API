@@ -1,12 +1,11 @@
-﻿using AnimeBrowser.Common.Models.Enums;
+﻿using AnimeBrowser.Common.Attributes;
+using AnimeBrowser.Common.Models.Enums;
 using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Text.Encodings.Web;
-using System.Text.Json;
 
 namespace AnimeBrowser.Common.Models.BaseModels.MainModels
 {
-    public class EpisodeResponseModel
+    [ToJsonString]
+    public partial class EpisodeResponseModel
     {
         public EpisodeResponseModel(long id, int episodeNumber, AirStatuses airStatus, byte[] cover, DateTime? airDate, long animeInfoId, long seasonId, bool isSeasonActive, bool isAnimeInfoActive,
             string title = "", string description = "", bool isActive = true)
@@ -37,13 +36,5 @@ namespace AnimeBrowser.Common.Models.BaseModels.MainModels
         public bool IsActive { get; set; }
         public bool IsSeasonActive { get; set; }
         public bool IsAnimeInfoActive { get; set; }
-
-
-        [ExcludeFromCodeCoverage]
-        public override string ToString() => JsonSerializer.Serialize(this, new JsonSerializerOptions
-        {
-            WriteIndented = true,
-            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-        });
     }
 }

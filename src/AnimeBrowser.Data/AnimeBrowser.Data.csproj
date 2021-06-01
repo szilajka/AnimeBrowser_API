@@ -3,15 +3,21 @@
   <PropertyGroup>
     <OutputType>Library</OutputType>
     <TargetFramework>net5.0</TargetFramework>
+    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="5.0.5.1" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="5.0.6" />
     <PackageReference Include="Serilog" Version="2.10.0" />
+    <PackageReference Include="Microsoft.Net.Compilers.Toolset" Version="3.9.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\AnimeBrowser.Common\AnimeBrowser.Common.csproj" />
+    <ProjectReference Include="..\AnimeBrowser.Generators\AnimeBrowser.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
   <PropertyGroup>

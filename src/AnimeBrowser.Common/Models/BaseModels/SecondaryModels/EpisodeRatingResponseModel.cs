@@ -1,10 +1,9 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Text.Encodings.Web;
-using System.Text.Json;
+﻿using AnimeBrowser.Common.Attributes;
 
 namespace AnimeBrowser.Common.Models.BaseModels.SecondaryModels
 {
-    public class EpisodeRatingResponseModel
+    [ToJsonString]
+    public partial class EpisodeRatingResponseModel
     {
         public EpisodeRatingResponseModel(long id, int rating, long episodeId, string userId,
             bool isAnimeInfoActive, bool isSeasonActive, bool isEpisodeActive, string message = "")
@@ -27,13 +26,5 @@ namespace AnimeBrowser.Common.Models.BaseModels.SecondaryModels
         public bool IsAnimeInfoActive { get; set; }
         public bool IsSeasonActive { get; set; }
         public bool IsEpisodeActive { get; set; }
-
-
-        [ExcludeFromCodeCoverage]
-        public override string ToString() => JsonSerializer.Serialize(this, new JsonSerializerOptions
-        {
-            WriteIndented = true,
-            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-        });
     }
 }

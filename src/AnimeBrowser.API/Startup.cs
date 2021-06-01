@@ -10,6 +10,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace AnimeBrowser_API
 {
@@ -31,6 +32,7 @@ namespace AnimeBrowser_API
                 .AddJsonOptions(options =>
                 {
                     options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+                    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
                 });
             services.AddSwaggerGen(c =>
             {

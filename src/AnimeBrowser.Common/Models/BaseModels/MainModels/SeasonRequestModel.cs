@@ -1,12 +1,11 @@
-﻿using AnimeBrowser.Common.Models.Enums;
+﻿using AnimeBrowser.Common.Attributes;
+using AnimeBrowser.Common.Models.Enums;
 using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Text.Encodings.Web;
-using System.Text.Json;
 
 namespace AnimeBrowser.Common.Models.BaseModels.MainModels
 {
-    public class SeasonRequestModel
+    [ToJsonString]
+    public partial class SeasonRequestModel
     {
         public SeasonRequestModel(int seasonNumber, string title, string description, DateTime? startDate, DateTime? endDate,
                                     AirStatuses airStatus, int? numberOfEpisodes, byte[] coverCarousel, byte[] cover, long animeInfoId)
@@ -42,13 +41,5 @@ namespace AnimeBrowser.Common.Models.BaseModels.MainModels
         public byte[] Cover { get; set; }
 
         public long AnimeInfoId { get; set; }
-
-
-        [ExcludeFromCodeCoverage]
-        public override string ToString() => JsonSerializer.Serialize(this, new JsonSerializerOptions
-        {
-            WriteIndented = true,
-            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-        });
     }
 }

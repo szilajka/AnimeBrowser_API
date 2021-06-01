@@ -1,11 +1,10 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Text.Encodings.Web;
-using System.Text.Json;
+﻿using AnimeBrowser.Common.Attributes;
+using System;
 
 namespace AnimeBrowser.Common.Models.BaseModels.MainModels
 {
-    public class SeasonResponseModel
+    [ToJsonString]
+    public partial class SeasonResponseModel
     {
         public SeasonResponseModel(long id, int seasonNumber, string title, string description, DateTime? startDate, DateTime? endDate,
                                     int airStatus, int? numberOfEpisodes, byte[] coverCarousel, byte[] cover, long animeInfoId,
@@ -51,13 +50,5 @@ namespace AnimeBrowser.Common.Models.BaseModels.MainModels
         public bool IsActive { get; set; }
 
         public bool IsAnimeInfoActive { get; set; }
-
-
-        [ExcludeFromCodeCoverage]
-        public override string ToString() => JsonSerializer.Serialize(this, new JsonSerializerOptions
-        {
-            WriteIndented = true,
-            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-        });
     }
 }

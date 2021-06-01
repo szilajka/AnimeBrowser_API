@@ -1,13 +1,12 @@
-﻿using AnimeBrowser.Data.Entities.Identity;
+﻿using AnimeBrowser.Common.Attributes;
+using AnimeBrowser.Data.Entities.Identity;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Text.Encodings.Web;
-using System.Text.Json;
 
 #nullable disable
 
 namespace AnimeBrowser.Data.Entities
 {
+    [ToJsonString]
     public partial class MediaList
     {
         public MediaList()
@@ -25,13 +24,5 @@ namespace AnimeBrowser.Data.Entities
         public virtual User User { get; set; }
         public virtual ICollection<EpisodeMediaList> EpisodeMediaLists { get; set; }
         public virtual ICollection<SeasonMediaList> SeasonMediaLists { get; set; }
-
-
-        [ExcludeFromCodeCoverage]
-        public override string ToString() => JsonSerializer.Serialize(this, new JsonSerializerOptions
-        {
-            WriteIndented = true,
-            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
-        });
     }
 }

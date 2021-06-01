@@ -1,9 +1,11 @@
-﻿using AnimeBrowser.Common.Models.BaseModels.MainModels;
+﻿using AnimeBrowser.Common.Attributes;
+using AnimeBrowser.Common.Models.BaseModels.MainModels;
 using System;
 
 namespace AnimeBrowser.Common.Models.ResponseModels.MainModels
 {
-    public class SeasonEditingResponseModel : SeasonResponseModel
+    [ToJsonString]
+    public partial class SeasonEditingResponseModel : SeasonResponseModel
     {
         public SeasonEditingResponseModel(long id, int seasonNumber, string title, string description, DateTime? startDate, DateTime? endDate,
                                             int airStatus, int? numberOfEpisodes, byte[] coverCarousel, byte[] cover, long animeInfoId,

@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "AnimeBrowser.Generators": {
+      "commandName": "DebugRoslynComponent",
+      "targetProject": "..\\AnimeBrowser.Data\\AnimeBrowser.Data.csproj"
+    }
+  }
+}

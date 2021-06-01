@@ -1,10 +1,9 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Text.Encodings.Web;
-using System.Text.Json;
+﻿using AnimeBrowser.Common.Attributes;
 
 namespace AnimeBrowser.Common.Models.BaseModels.MainModels
 {
-    public class AnimeInfoResponseModel
+    [ToJsonString]
+    public partial class AnimeInfoResponseModel
     {
         public AnimeInfoResponseModel(long id, string title = "", string description = "", bool isNsfw = false, bool isActive = true)
         {
@@ -20,13 +19,5 @@ namespace AnimeBrowser.Common.Models.BaseModels.MainModels
         public string Description { get; set; }
         public bool IsNsfw { get; set; }
         public bool IsActive { get; set; }
-
-
-        [ExcludeFromCodeCoverage]
-        public override string ToString() => JsonSerializer.Serialize(this, new JsonSerializerOptions
-        {
-            WriteIndented = true,
-            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
-        });
     }
 }
