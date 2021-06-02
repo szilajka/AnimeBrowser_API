@@ -21,23 +21,23 @@ namespace AnimeBrowser.Data.Helpers
             #region Main Repositories
             services.AddTransient<IAnimeInfoRead, AnimeInfoReadRepository>();
             services.AddTransient<IAnimeInfoWrite, AnimeInfoWriteRepository>();
+            services.AddTransient<IEpisodeRead, EpisodeReadRepository>();
+            services.AddTransient<IEpisodeWrite, EpisodeWriteRepository>();
             services.AddTransient<IGenreRead, GenreReadRepository>();
             services.AddTransient<IGenreWrite, GenreWriteRepository>();
             services.AddTransient<ISeasonRead, SeasonReadRepository>();
             services.AddTransient<ISeasonWrite, SeasonWriteRepository>();
-            services.AddTransient<IEpisodeRead, EpisodeReadRepository>();
-            services.AddTransient<IEpisodeWrite, EpisodeWriteRepository>();
             #endregion Main Repositories
 
             #region Secondary Repositories
             services.AddTransient<IAnimeInfoNameRead, AnimeInfoNameReadRepository>();
             services.AddTransient<IAnimeInfoNameWrite, AnimeInfoNameWriteRepository>();
-            services.AddTransient<ISeasonNameRead, SeasonNameReadRepository>();
-            services.AddTransient<ISeasonNameWrite, SeasonNameWriteRepository>();
-            services.AddTransient<ISeasonGenreRead, SeasonGenreReadRepository>();
-            services.AddTransient<ISeasonGenreWrite, SeasonGenreWriteRepository>();
             services.AddTransient<IEpisodeRatingRead, EpisodeRatingReadRepository>();
             services.AddTransient<IEpisodeRatingWrite, EpisodeRatingWriteRepository>();
+            services.AddTransient<ISeasonGenreRead, SeasonGenreReadRepository>();
+            services.AddTransient<ISeasonGenreWrite, SeasonGenreWriteRepository>();
+            services.AddTransient<ISeasonNameRead, SeasonNameReadRepository>();
+            services.AddTransient<ISeasonNameWrite, SeasonNameWriteRepository>();
             services.AddTransient<ISeasonRatingRead, SeasonRatingReadRepository>();
             services.AddTransient<ISeasonRatingWrite, SeasonRatingWriteRepository>();
             #endregion Secondary Repositories
