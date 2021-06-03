@@ -5,7 +5,7 @@
 -- Dumped from database version 13.2
 -- Dumped by pg_dump version 13.3
 
--- Started on 2021-06-03 13:22:46
+-- Started on 2021-06-03 15:07:04
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -130,7 +130,8 @@ SELECT
     NULL::date AS anime_end_date,
     NULL::bigint AS anime_episode_numbers,
     NULL::integer AS anime_status,
-    NULL::numeric AS anime_rating;
+    NULL::numeric AS anime_rating,
+    NULL::bigint AS anime_id;
 
 
 ALTER TABLE public.anime OWNER TO ab_user;
@@ -677,7 +678,8 @@ CREATE OR REPLACE VIEW public.anime AS
     max(s.end_date) AS anime_end_date,
     sum(s.number_of_episodes) AS anime_episode_numbers,
     ans.air_status AS anime_status,
-    ar.rating AS anime_rating
+    ar.rating AS anime_rating,
+    ai.id AS anime_id
    FROM (((public.anime_info ai
      LEFT JOIN public.season s ON ((ai.id = s.anime_info_id)))
      LEFT JOIN public.anime_status ans ON ((ans.anime_info_id = ai.id)))
@@ -879,7 +881,7 @@ ALTER TABLE ONLY public.season_rating
 
 
 
--- Completed on 2021-06-03 13:22:47
+-- Completed on 2021-06-03 15:07:06
 
 --
 -- PostgreSQL database dump complete
