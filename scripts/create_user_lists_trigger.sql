@@ -1,5 +1,5 @@
 --
--- TOC entry 239 (class 1255 OID 42445)
+-- TOC entry 248 (class 1255 OID 42445)
 -- Name: create_user_list(); Type: FUNCTION; Schema: public; Owner: ab_user
 --
 
@@ -21,7 +21,7 @@ $$;
 ALTER FUNCTION public.create_user_list() OWNER TO ab_user;
 
 --
--- TOC entry 3055 (class 2620 OID 42451)
+-- TOC entry 3116 (class 2620 OID 42451)
 -- Name: Users tg_create_user_list; Type: TRIGGER; Schema: identity; Owner: ab_user
 --
 
